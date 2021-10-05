@@ -15,13 +15,13 @@ module PgRls
         create_rls_setter_function
         create_rls_blocking_function
         create_table(table_name, **options, &block)
-        create_rls_column(table_name)
+        add_rls_column_to_tenant_table(table_name)
         append_blocking_function(table_name)
       end
 
       def create_rls_table(table_name, **options, &block)
         create_table(table_name, **options, &block)
-        create_rls_column(table_name)
+        add_rls_column(table_name)
         create_rls_policy(table_name)
         append_trigger_function(table_name)
       end
@@ -30,7 +30,6 @@ module PgRls
         drop_rls_user
         drop_rls_setter_function
         detach_blocking_function(table_name)
-        drop_rls_column(table_name)
         drop_table(table_name)
         drop_rls_blocking_function
       end
@@ -38,7 +37,6 @@ module PgRls
       def drop_rls_table(table_name)
         detach_trigger_function(table_name)
         drop_rls_policy(table_name)
-        drop_rls_column(table_name)
         drop_table(table_name)
       end
     end

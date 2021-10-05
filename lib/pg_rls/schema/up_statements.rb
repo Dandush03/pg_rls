@@ -52,10 +52,22 @@ module PgRls
         SQL
       end
 
-      def create_rls_column(table_name)
+      def add_rls_column_to_tenant_table(table_name)
         ActiveRecord::Migration.execute <<-SQL
           ALTER TABLE #{table_name}
-            ADD COLUMN IF NOT EXISTS tenant_id uuid;
+            ADD COLUMN IF NOT EXISTS
+              tenant_id uuid UNIQUE DEFAULT gen_random_uuid();
+        SQL
+      end
+
+      def add_rls_column(table_name)
+        ActiveRecord::Migration.execute <<-SQL
+          ALTER TABLE #{table_name}
+            ADD COLUMN IF NOT EXISTS tenant_id uuid,
+            ADD CONSTRAINT fk_companies
+              FOREIGN KEY (tenant_id)
+              REFERENCES companies(tenant_id)
+              ON DELETE CASCADE;
         SQL
       end
 
