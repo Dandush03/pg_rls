@@ -1,0 +1,19 @@
+README
+===============================================================================
+WARNING!!
+
+Once you remove a tenant all of his data would be removed as well
+
+PgRls::SecureConnection was included to your ApplicationRecord do not remove it
+
+===============================================================================
+
+to generate secure model run
+
+rails g pg_rls model_name
+
+or
+
+rails generate pg_rls model_name
+
+===============================================================================

@@ -4,11 +4,14 @@ require 'active_record'
 require 'forwardable'
 require_relative 'pg_rls/version'
 require_relative 'pg_rls/schema/statements'
-require_relative 'pg_rls/tenant/tenant'
+require_relative 'pg_rls/tenant'
+require_relative 'pg_rls/secure_connection'
+require_relative 'pg_rls/multi_tenancy'
 
 # PostgreSQL Row Level Security
 module PgRls
   class Error < StandardError; end
+  SECURE_USERNAME = 'app_user'
 
   class << self
     extend Forwardable
@@ -38,8 +41,12 @@ module PgRls
 
     def establish_new_connection
       connection_class.establish_connection(
-        connection_class.connection_config.dup.tap { |n| n[:username] = 'app_user' }
+        **database_configuration
       )
+    end
+
+    def current_connection_username
+      PgRls.connection_class.connection_db_config.configuration_hash[:username]
     end
 
     def execute(query)
@@ -48,7 +55,7 @@ module PgRls
 
     def database_configuration
       @database_configuration ||= database_connection_file[Rails.env].tap do |config|
-        config['username'] = 'app_user'
+        config['username'] = PgRls::SECURE_USERNAME
       end
     end
   end

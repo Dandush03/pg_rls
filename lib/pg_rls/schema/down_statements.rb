@@ -4,8 +4,8 @@ module PgRls
   module Schema
     # Down Schema Statements
     module DownStatements
-      def drop_rls_user(name = :app_user)
-        ActiveRecord::Migration.execute "DROP USER #{name};"
+      def drop_rls_user
+        ActiveRecord::Migration.execute "DROP USER #{PgRls::SECURE_USERNAME};"
       end
 
       def drop_rls_blocking_function
@@ -37,9 +37,9 @@ module PgRls
         SQL
       end
 
-      def drop_rls_policy(table_name, user = :app_user)
+      def drop_rls_policy(table_name)
         ActiveRecord::Migration.execute <<-SQL
-          DROP POLICY #{table_name}_#{user} ON #{table_name};
+          DROP POLICY #{table_name}_#{PgRls::SECURE_USERNAME} ON #{table_name};
           ALTER TABLE #{table_name} DISABLE ROW LEVEL SECURITY;
         SQL
       end

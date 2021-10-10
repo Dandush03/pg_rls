@@ -10,3 +10,12 @@ require 'rubocop/rake_task'
 RuboCop::RakeTask.new
 
 task default: %i[spec rubocop]
+
+desc 'Generate documentation for PgRls.'
+Rake::RDocTask.new(:rdoc) do |rdoc|
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title    = 'PgRls'
+  rdoc.options << '--line-numbers' << '--inline-source'
+  rdoc.rdoc_files.include('README.md')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+end

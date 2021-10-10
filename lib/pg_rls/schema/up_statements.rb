@@ -4,7 +4,7 @@ module PgRls
   module Schema
     # Up Schema Statements
     module UpStatements
-      def create_rls_user(name: :app_user, password: 'password')
+      def create_rls_user(name: PgRls::SECURE_USERNAME, password: 'password')
         PgRls.execute <<-SQL
           DROP ROLE IF EXISTS #{name};
           CREATE USER #{name} WITH PASSWORD '#{password}';
@@ -71,7 +71,7 @@ module PgRls
         SQL
       end
 
-      def create_rls_policy(table_name, user = :app_user)
+      def create_rls_policy(table_name, user = PgRls::SECURE_USERNAME)
         ActiveRecord::Migration.execute <<-SQL
           ALTER TABLE #{table_name} ENABLE ROW LEVEL SECURITY;
           CREATE POLICY #{table_name}_#{user}

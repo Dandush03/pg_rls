@@ -1,5 +1,7 @@
 AllCops:
   TargetRubyVersion: 3.0
   NewCops: enable
+  Exclude:
+    - lib/generators/pg_rls/active_record/templates/migration.rb
 Layout/LineLength:
   Max: 120

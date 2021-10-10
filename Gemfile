@@ -13,3 +13,5 @@ gem 'rake'
 gem 'rspec'
 
 gem 'rubocop'
+
+gem 'rspec-rails'

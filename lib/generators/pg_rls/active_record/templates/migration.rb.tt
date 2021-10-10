@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+class PgRlsCreate<%= table_name.camelize %> < ActiveRecord::Migration<%= migration_version %>
+  def up
+    create_rls_table :<%= table_name %><%= primary_key_type %> do |t|
+      <% attributes.each do |attribute| -%>
+      t.<%= attribute.type %> :<%= attribute.name %>
+      <% end -%>
+
+      t.timestamps null: false
+    end
+  end
+
+  def down
+    drop_rls_table :<%= table_name %>
+  end
+end

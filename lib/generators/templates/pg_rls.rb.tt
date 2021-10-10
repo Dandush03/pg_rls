@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+require 'pg_rls'
+
+PgRls.setup do |_config|
+  ActiveRecord::ConnectionAdapters::AbstractAdapter.include PgRls::Schema::Statements
+end
