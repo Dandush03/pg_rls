@@ -14,14 +14,25 @@ module PgRls
       hook_for :test_framework
 
       def create_migration_file
-        migration_template template_path, "#{migration_path}/#{file_sub_name}_#{table_name}.rb",
+        migration_template migration_template_path, "#{migration_path}/#{file_sub_name}_#{table_name}.rb",
                            migration_version: migration_version
       end
 
-      def template_path
+      def create_model_file
+        generate_abstract_class if database && !parent
+        template model_template_path, File.join('app/models', class_path, "#{file_name}.rb")
+      end
+
+      def migration_template_path
         return 'init_migration.rb.tt' if installation_in_progress?
 
         'migration.rb.tt'
+      end
+
+      def model_template_path
+        return 'init_model.rb.tt' if installation_in_progress?
+
+        'model.rb.tt'
       end
 
       def file_sub_name
