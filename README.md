@@ -10,6 +10,7 @@
 <p align="center">
  <h1 align="center">PgRls</h1>
  <h2 align="center"> PostgreSQL Row Level Security </h2>
+ <h2 align="center"> The Rails right way to do multitenancy </h2>
  <h1 align="center"></h1>
 
   <p align="center">
@@ -41,7 +42,9 @@
 * [Code of Conduct](#Code-of-Conduct)
 * [Show your support](#Show-your-support)
 
-This gem will help you to integrate PostgreSQL RLS to help you develop an easy multitenancy application
+### It's time we start doing multitenancy right, avoid, creating a separate Postgres schema/databases for each customer, or try to ensure the WHERE clause of every single query includes the particular company. just integrate seamlessly PgRls to your application
+
+### This gem will help you to integrate PostgreSQL RLS to help you develop a great multitenancy application
 
 ## Required Installations
 ### Installing
@@ -63,7 +66,7 @@ Or install it yourself as:
 ### Instructions
 
 ```bash
-rails generate pg_rls:install company #=> where app eq tenant model name
+rails generate pg_rls:install company #=> where company eq tenant model name
 ```
 You can change company to anything you'd like like for example `tenant`
 this will generate the model and inject all the required code
@@ -71,13 +74,13 @@ this will generate the model and inject all the required code
 for any new model that required to be under rls you can generate it by writing 
 
 ```bash
-rails generate pg_rls user #=> where app eq model name
+rails generate pg_rls user #=> where user eq model name
 ```
 and it will generate all the necesary information for you
 
 you can swtich tenant by using 
 ```ruby
-PgRls::Tenant::switch :app #=> where app eq tenant name
+PgRls::Tenant.switch :app #=> where app eq tenant name
 ```
 
 enjoy the gem :) 

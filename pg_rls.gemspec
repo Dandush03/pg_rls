@@ -9,7 +9,10 @@ Gem::Specification.new do |spec|
   spec.email         = ['daniel.laloush@influitive.com']
 
   spec.summary       = 'Write a short summary, because RubyGems requires one.'
-  spec.description   = 'Write a longer description or delete this line.'
+  spec.description = <<-MSG
+    This gem will help you to integrate PostgreSQL RLS to help you develop a great multitenancy application
+    checkout the repository at https://github.com/Dandush03/pg_rls
+  MSG
   spec.homepage      = 'https://github.com/Dandush03/pg_rls'
   spec.license       = 'MIT'
   spec.required_ruby_version = '>= 3.0.0'
