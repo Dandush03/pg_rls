@@ -64,9 +64,9 @@ module PgRls
         ActiveRecord::Migration.execute <<-SQL
           ALTER TABLE #{table_name}
             ADD COLUMN IF NOT EXISTS tenant_id uuid,
-            ADD CONSTRAINT fk_companies
+            ADD CONSTRAINT fk_#{PgRls.table_name}
               FOREIGN KEY (tenant_id)
-              REFERENCES companies(tenant_id)
+              REFERENCES #{PgRls.table_name}(tenant_id)
               ON DELETE CASCADE;
         SQL
       end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PgRlsTenantCreate<%= table_name.camelize %> < ActiveRecord::Migration<%= migration_version %>
+class PgRlsTenantCreate<%= PgRls.table_name.camelize %> < ActiveRecord::Migration<%= migration_version %>
   def up
     create_rls_tenant_table :<%= table_name %>, id: :uuid do |t|
       t.string :name
@@ -13,13 +13,13 @@ class PgRlsTenantCreate<%= table_name.camelize %> < ActiveRecord::Migration<%= m
       t.timestamps
     end
 
-    add_index :companies, :name,            unique: true
-    add_index :companies, :identification,  unique: true
-    add_index :companies, :domain,          unique: true
-    add_index :companies, :subdomain,       unique: true
+    add_index :<%= table_name %>, :name,            unique: true
+    add_index :<%= table_name %>, :identification,  unique: true
+    add_index :<%= table_name %>, :domain,          unique: true
+    add_index :<%= table_name %>, :subdomain,       unique: true
   end
 
   def down
-    drop_rls_tenant_table :companies
+    drop_rls_tenant_table :<%= table_name %>
   end
 end

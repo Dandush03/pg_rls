@@ -16,9 +16,13 @@ module PgRls
   class << self
     extend Forwardable
 
-    WRITER_METHODS = %i[].freeze
-    READER_METHODS = %i[connection_class database_configuration execute].freeze
-    DELEGATORS_METHODS = %i[connection_class database_configuration execute].freeze
+    WRITER_METHODS = %i[table_name class_name].freeze
+    READER_METHODS = %i[
+      connection_class database_configuration execute table_name class_name
+    ].freeze
+    DELEGATORS_METHODS = %i[
+      connection_class database_configuration execute table_name class_name
+    ].freeze
 
     attr_writer(*WRITER_METHODS)
     attr_reader(*READER_METHODS)
@@ -59,4 +63,9 @@ module PgRls
       end
     end
   end
+  mattr_accessor :table_name
+  @@table_name = 'companies'
+
+  mattr_accessor :class_name
+  @@class_name = 'Company'
 end

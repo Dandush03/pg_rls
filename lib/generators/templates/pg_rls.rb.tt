@@ -2,6 +2,10 @@
 
 require 'pg_rls'
 
-PgRls.setup do |_config|
+PgRls.setup do |config|
   ActiveRecord::ConnectionAdapters::AbstractAdapter.include PgRls::Schema::Statements
+
+  # Do not remove this value after initialization
+  config.class_name = :<%= PgRls.class_name %>
+  config.table_name = :<%= PgRls.table_name %>
 end

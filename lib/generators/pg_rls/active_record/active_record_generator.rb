@@ -11,8 +11,6 @@ module PgRls
 
       source_root File.expand_path('./templates', __dir__)
 
-      hook_for :test_framework
-
       def create_migration_file
         migration_template migration_template_path, "#{migration_path}/#{file_sub_name}_#{table_name}.rb",
                            migration_version: migration_version

@@ -8,13 +8,24 @@ module PgRls
     MissingORMError = Class.new(Thor::Error)
     # Installer Generator
     class InstallGenerator < Rails::Generators::Base
+      def initialize(*args)
+        tenant_model_or_table = args.first
+        if tenant_model_or_table.present?
+          PgRls.table_name = tenant_model_or_table.first.pluralize
+          PgRls.class_name = tenant_model_or_table.first.singularize
+        end
+        super
+      end
       APPLICATION_RECORD_LINE = 'class ApplicationRecord < ActiveRecord::Base'
       APPLICATION_RECORD_PATH = 'app/models/application_record.rb'
       APPLICATION_CONTROLLER_LINE = 'class ApplicationController < ActionController::Base'
       APPLICATION_CONTROLLER_PATH = 'app/controllers/application_controller.rb'
+
       source_root File.expand_path('../templates', __dir__)
 
       desc 'Creates a PgRls initializer and copy locale files to your application.'
+
+      hook_for :orm, required: true
 
       def orm_error_message
         <<-ERROR.strip_heredoc
@@ -30,10 +41,9 @@ module PgRls
       def copy_initializer
         raise MissingORMError, orm_error_message unless options[:orm]
 
-        template 'pg_rls.rb.tt', 'config/initializers/pg_rls.rb'
-
         inject_include_to_application_record
         inject_include_to_application_controller
+        template 'pg_rls.rb.tt', 'config/initializers/pg_rls.rb'
       end
 
       def inject_include_to_application_record
@@ -68,8 +78,6 @@ module PgRls
       def show_readme
         readme 'README' if behavior == :invoke
       end
-
-      hook_for :orm, required: true
     end
   end
 end
