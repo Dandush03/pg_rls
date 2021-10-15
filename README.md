@@ -42,11 +42,11 @@
 * [Code of Conduct](#Code-of-Conduct)
 * [Show your support](#Show-your-support)
 
-### It's time we start doing multitenancy right, avoid, creating a separate Postgres schema/databases for each customer, or try to ensure the WHERE clause of every single query includes the particular company. just integrate seamlessly PgRls to your application
+### It's time we start doing multitenancy right! You can avoid creating a separate Postgres schema/databases for each customer or trying to ensure the WHERE clause of every single query includes the particular company. Just integrate PgRls seamlessly to your application.
 
-### This gem will help you to integrate PostgreSQL RLS to help you develop a great multitenancy application
+### This gem will integrate PostgreSQL RLS to help you develop a great multitenancy application.
 
-## Required Installations
+## Required Installation
 ### Installing
 
 Add this line to your application's Gemfile:
@@ -59,7 +59,7 @@ And then execute:
 
     $ bundle install
 
-Or install it yourself as:
+Or install it yourself with:
 
     $ gem install pg_rls
 
@@ -68,22 +68,22 @@ Or install it yourself as:
 ```bash
 rails generate pg_rls:install company #=> where company eq tenant model name
 ```
-You can change company to anything you'd like like for example `tenant`
-this will generate the model and inject all the required code
+You can change company to anything you'd like, for example `tenant`
+This will generate the model and inject all the required code
 
-for any new model that required to be under rls you can generate it by writing 
+For any new model that needs to be under rls, you can generate it by writing 
 
 ```bash
 rails generate pg_rls user #=> where user eq model name
 ```
-and it will generate all the necesary information for you
+and it will generate all the necesary information for you.
 
-you can swtich tenant by using 
+You can swtich to another tenant by using 
 ```ruby
 PgRls::Tenant.switch :app #=> where app eq tenant name
 ```
 
-enjoy the gem :) 
+Enjoy the gem :) 
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -103,7 +103,7 @@ The gem is available as open source under the terms of the [MIT License](https:/
 Everyone interacting in the PgRls project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/dandush03/pg_rls/blob/master/CODE_OF_CONDUCT.md).
 
 ## Note
-Currently we only support subdomain as a searcher but soon will integrate slug/domain and cookies support 
+Currently we only support subdomain as a searcher but will soon integrate slug/domain and cookies support 
 
 ## Show your support
 
