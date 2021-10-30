@@ -4,29 +4,23 @@
 [![Issues][issues-shield]][issues-url]
 [![LinkedIn][linkedin-shield2]][linkedin-url2]
 [![Hireable][hireable]][hireable-url]
+[![Donate][donate]][paypal-donate-code]
 
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
- <h1 align="center">PgRls</h1>
- <h2 align="center"> PostgreSQL Row Level Security </h2>
- <h2 align="center"> The Rails right way to do multitenancy </h2>
- <h1 align="center"></h1>
+ <h1 align="center">PgRls<h2 align="center">PostgreSQL Row Level Security<br />The Rails right way to do multitenancy</h2></h1>
 
   <p align="center">
     <br />
-    <a href="https://github.com/Dandush03/pg_rls"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Dandush03/pg_rls/wiki"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://dl-final-webapp.herokuapp.com/">View Live Demo</a>
-    ·
     <a href="https://github.com/Dandush03/pg_rls/issues">Report Bug</a>
     ·
     <a href="https://github.com/Dandush03/pg_rls/issues">Request Feature</a>
     ·
     <a href="https://github.com/Dandush03/pg_rls">API Repo</a>
-    ·
-    <a href="https://github.com/Dandush03/pg_rls">WebApp Repo</a>
   </p>
 
 </p>
@@ -35,6 +29,7 @@
 * [Required Installations](#required-Installations)
   * [Installing](#installing)
   * [Instructions](#instructions)
+  * [Testing](#Testing)
 * [Development](#testing)
 * [Contact](#contact)
 * [Contributing](#contributing)
@@ -83,7 +78,25 @@ You can swtich to another tenant by using
 PgRls::Tenant.switch :app #=> where app eq tenant name
 ```
 
-Enjoy the gem :) 
+### Testing
+
+Many application uses some sort of database cleaner before running thair spec so on each test that we run we'll have an empty state. Usually, those gems clear our user configuration for the database. To solve this issue, we must implement the following:
+
+```ruby
+# spec/rails_helper.rb
+
+...
+# some database cleaning strategy
+
+config.before(:suite) do
+  # Create A Default Tenant and Grant Test User Credentials
+  PgRls::Test::PreparedDatabase.grant_user_credentials
+  FactoryBot.create(:company, subdomain: 'app')
+  PgRls::Tenant.switch :app
+end
+
+...
+```
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -109,6 +122,10 @@ Currently we only support subdomain as a searcher but will soon integrate slug/d
 
 Give a ⭐️ if you like this project!
 
+If this project help you reduce time to develop, you can give me a cup of coffee :)
+
+[![paypal][paypal-url]][paypal-donate-code]
+
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/Dandush03/React-Calculator.svg?style=flat-square
 [contributors-url]: https://github.com/Dandush03/pg_rls/graphs/contributors
@@ -123,4 +140,7 @@ Give a ⭐️ if you like this project!
 [linkedin-shield2]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url2]: https://www.linkedin.com/in/daniel-laloush/
 [hireable]: https://cdn.rawgit.com/hiendv/hireable/master/styles/flat/yes.svg
+[paypal-url]: https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif
+[paypal-donate-code]: https://www.paypal.com/donate?hosted_button_id=QKZFZAMQNC8JL
 [hireable-url]: https://www.linkedin.com/in/daniel-laloush/
+[donate]: https://img.shields.io/badge/Donate-PayPal-blue.svg
