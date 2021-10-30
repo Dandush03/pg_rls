@@ -3,6 +3,7 @@
 require 'active_record'
 require 'forwardable'
 require_relative 'pg_rls/version'
+require_relative 'pg_rls/test/prepared_database'
 require_relative 'pg_rls/schema/statements'
 require_relative 'pg_rls/tenant'
 require_relative 'pg_rls/secure_connection'
@@ -11,7 +12,7 @@ require_relative 'pg_rls/multi_tenancy'
 # PostgreSQL Row Level Security
 module PgRls
   class Error < StandardError; end
-  SECURE_USERNAME = 'app_user'
+  SECURE_USERNAME = "#{Rails.env}_app_user".freeze
 
   class << self
     extend Forwardable
