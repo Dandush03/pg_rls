@@ -63,7 +63,7 @@ Or install it yourself with:
 ```bash
 rails generate pg_rls:install company #=> where company eq tenant model name
 ```
-You can change company to anything you'd like, for example `tenant`
+You can change company to anything you'd like, for example, `tenant`
 This will generate the model and inject all the required code
 
 For any new model that needs to be under rls, you can generate it by writing 
@@ -77,7 +77,7 @@ You can swtich to another tenant by using
 ```ruby
 PgRls::Tenant.switch :app #=> where app eq tenant name
 ```
-
+Don't forget to update how you want `PgRls` to find your tenant, you can set multiple options by modifying `api/config/initializers/pg_rls.rb` `search_methods`  
 ### Testing
 
 Many application uses some sort of database cleaner before running thair spec so on each test that we run we'll have an empty state. Usually, those gems clear our user configuration for the database. To solve this issue, we must implement the following:
@@ -90,8 +90,10 @@ Many application uses some sort of database cleaner before running thair spec so
 
 config.before(:suite) do
   # Create A Default Tenant and Grant Test User Credentials
-  PgRls::Test::PreparedDatabase.grant_user_credentials
+  PgRls::Database::Prepared.grant_user_credentials
+  # Create the tenant which in this example is company and we are using FactoryBot
   FactoryBot.create(:company, subdomain: 'app')
+  # In this default case our initializer is set to search by subdomain so will use it
   PgRls::Tenant.switch :app
 end
 

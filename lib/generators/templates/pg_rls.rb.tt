@@ -8,4 +8,5 @@ PgRls.setup do |config|
   # Do not remove this value after initialization
   config.class_name = :<%= PgRls.class_name %>
   config.table_name = :<%= PgRls.table_name %>
+  config.search_methods = <%= PgRls.search_methods %>
 end

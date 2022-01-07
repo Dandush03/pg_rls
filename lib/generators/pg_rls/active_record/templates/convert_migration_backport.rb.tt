@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+class PgRlsBackport<%= table_name.camelize %> < ActiveRecord::Migration<%= migration_version %>
+  def up
+    PgRls.establish_default_connection
+
+    # Suggested Code:
+    # PgRls.all_tenants do |tenant|
+    #   tenant.<%= table_name %>.in_batches(of: 100) do |<%= table_name %>|
+    #     <%= table_name %>.each { |<%= table_name.singularize %>| <%= table_name.singularize %>.update_attribute('tenant_id', tenant.tenant_id) }
+    #   end
+    # end
+  end
+end

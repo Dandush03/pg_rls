@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+class PgRlsConvert<%= table_name.camelize %> < ActiveRecord::Migration<%= migration_version %>
+  def up
+    convert_to_rls_table :<%= table_name %>
+  end
+
+  def down
+    revert_rls_table :<%= table_name %>
+  end
+end
