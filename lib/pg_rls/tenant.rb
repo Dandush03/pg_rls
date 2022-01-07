@@ -6,21 +6,19 @@ module PgRls
     class << self
       def switch(resource)
         connection_adapter = PgRls.connection_class
-        tenant = tenant_by_subdomain_uuid_or_tenant_id(resource)
+        find_tenant(resource)
         connection_adapter.connection.execute(format('SET rls.tenant_id = %s',
                                                      connection_adapter.connection.quote(tenant.tenant_id)))
         "RLS changed to '#{tenant.name}'"
       rescue StandardError => e
         puts 'connection was not made'
-        puts e
+        puts @error || e
       end
 
-      def tenant
-        PgRls.class_name.to_s.camelize.constantize
-      end
+      attr_reader :tenant
 
       def fetch
-        tenant.find_by_tenant_id(
+        @fetch ||= tenant.find_by_tenant_id(
           PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
@@ -29,8 +27,14 @@ module PgRls
         'no tenant is selected'
       end
 
-      def tenant_by_subdomain_uuid_or_tenant_id(resource)
-        tenant.find_by_subdomain(resource) || tenant.find_by_id(resource) || tenant.find_by_tenant_id(resource)
+      def find_tenant(resource)
+        @tenant = nil
+
+        PgRls.search_methods.each do |method|
+          @tenant ||= PgRls.main_model.send("find_by_#{method}", resource)
+        rescue NoMethodError => e
+          @error = e
+        end
       end
     end
   end

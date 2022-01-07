@@ -5,7 +5,13 @@ module PgRls
     # Down Schema Statements
     module DownStatements
       def drop_rls_user
-        ActiveRecord::Migration.execute "DROP USER #{PgRls::SECURE_USERNAME};"
+        ActiveRecord::Migration.execute <<~SQL
+          DROP OWNED BY #{PgRls::SECURE_USERNAME};
+          REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM #{PgRls::SECURE_USERNAME};
+          REVOKE ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public FROM #{PgRls::SECURE_USERNAME};
+          REVOKE ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public FROM #{PgRls::SECURE_USERNAME};
+          DROP USER #{PgRls::SECURE_USERNAME};
+        SQL
       end
 
       def drop_rls_blocking_function

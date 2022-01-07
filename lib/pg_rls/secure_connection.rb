@@ -12,6 +12,8 @@ module PgRls
     private
 
     def establish_secure_connection
+      return if PgRls.default_connection?
+
       return if secure_connection_established?
 
       PgRls.establish_new_connection

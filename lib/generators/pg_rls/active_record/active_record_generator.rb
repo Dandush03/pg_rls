@@ -11,20 +11,66 @@ module PgRls
 
       source_root File.expand_path('./templates', __dir__)
 
-      def create_migration_file
-        migration_template migration_template_path, "#{migration_path}/#{file_sub_name}_#{table_name}.rb",
+      def check_class_collision; end
+
+      def create_migration_file; end
+
+      def migration_exist?
+        @migration_exist ||= Dir.glob("#{migration_path}/*create_#{table_name}.rb").present?
+      end
+
+      def create_tenant_migration_file
+        return if migration_exist?
+
+        migration_template create_migration_template_path,
+                           "#{migration_path}/#{create_file_sub_name}_#{table_name}.rb",
+                           migration_version: migration_version
+      end
+
+      def convert_tenant_migration_file
+        return unless migration_exist?
+
+        migration_template convert_migration_template_path,
+                           "#{migration_path}/#{convert_file_sub_name}_#{table_name}.rb",
+                           migration_version: migration_version
+
+        return if installation_in_progress?
+
+        migration_template 'convert_migration_backport.rb.tt',
+                           "#{migration_path}/pg_rls_backport_#{table_name}.rb",
                            migration_version: migration_version
       end
 
       def create_model_file
+        return if migration_exist?
+
         generate_abstract_class if database && !parent
-        template model_template_path, File.join('app/models', class_path, "#{file_name}.rb")
+
+        template model_template_path, model_file
       end
 
-      def migration_template_path
+      def inject_method_to_model
+        return unless installation_in_progress?
+
+        gsub_file(model_file, /Class #{class_name} < #{parent_class_name.classify}/mi) do |match|
+          "#{match}\n  def self.current\n    PgRls::Tenant.fetch\n  end\n"
+        end
+      end
+
+      def model_file
+        File.join('app/models', class_path, "#{file_name}.rb")
+      end
+
+      def create_migration_template_path
         return 'init_migration.rb.tt' if installation_in_progress?
 
         'migration.rb.tt'
+      end
+
+      def convert_migration_template_path
+        return 'init_convert_migration.rb.tt' if installation_in_progress?
+
+        'convert_migration.rb.tt'
       end
 
       def model_template_path
@@ -33,10 +79,16 @@ module PgRls
         'model.rb.tt'
       end
 
-      def file_sub_name
-        return 'pg_rls_tenant_create' if installation_in_progress?
+      def create_file_sub_name
+        return 'pg_rls_create_tenant' if installation_in_progress?
 
         'pg_rls_create'
+      end
+
+      def convert_file_sub_name
+        return 'pg_rls_convert_tenant' if installation_in_progress?
+
+        'pg_rls_convert'
       end
 
       def installation_in_progress?

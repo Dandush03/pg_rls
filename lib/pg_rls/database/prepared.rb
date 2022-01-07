@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module PgRls
-  module Test
+  module Database
     # Prepare database for test unit
-    module PreparedDatabase
+    module Prepared
       class << self
         def grant_user_credentials(name: PgRls::SECURE_USERNAME)
           return unless Rails.env.test?

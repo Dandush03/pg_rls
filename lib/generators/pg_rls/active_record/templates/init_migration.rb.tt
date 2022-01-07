@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PgRlsTenantCreate<%= PgRls.table_name.camelize %> < ActiveRecord::Migration<%= migration_version %>
+class PgRlsCreateTenant<%= PgRls.table_name.camelize %> < ActiveRecord::Migration<%= migration_version %>
   def up
     create_rls_tenant_table :<%= table_name %>, id: :uuid do |t|
       t.string :name

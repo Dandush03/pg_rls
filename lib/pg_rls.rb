@@ -3,7 +3,7 @@
 require 'active_record'
 require 'forwardable'
 require_relative 'pg_rls/version'
-require_relative 'pg_rls/test/prepared_database'
+require_relative 'pg_rls/database/prepared'
 require_relative 'pg_rls/schema/statements'
 require_relative 'pg_rls/tenant'
 require_relative 'pg_rls/secure_connection'
@@ -17,12 +17,13 @@ module PgRls
   class << self
     extend Forwardable
 
-    WRITER_METHODS = %i[table_name class_name].freeze
+    WRITER_METHODS = %i[table_name class_name search_methods].freeze
     READER_METHODS = %i[
-      connection_class database_configuration execute table_name class_name
+      connection_class database_configuration execute table_name class_name search_methods
     ].freeze
     DELEGATORS_METHODS = %i[
-      connection_class database_configuration execute table_name class_name
+      connection_class database_configuration execute table_name search_methods
+      class_name all_tenants main_model establish_default_connection
     ].freeze
 
     attr_writer(*WRITER_METHODS)
@@ -50,8 +51,29 @@ module PgRls
       )
     end
 
+    def establish_default_connection
+      @default_connection = true
+    end
+
+    def default_connection?
+      @default_connection
+    end
+
+    def main_model
+      class_name.to_s.camelize.constantize
+    end
+
+    def all_tenants
+      main_model.all.each do |tenant|
+        allowed_search_fields = search_methods.map(&:to_s).intersection(main_model.column_names)
+        Tenant.switch tenant.send(allowed_search_fields.first)
+
+        yield(tenant) if block_given?
+      end
+    end
+
     def current_connection_username
-      PgRls.connection_class.connection_db_config.configuration_hash[:username]
+      connection_class.connection_db_config.configuration_hash[:username]
     end
 
     def execute(query)
@@ -69,4 +91,7 @@ module PgRls
 
   mattr_accessor :class_name
   @@class_name = 'Company'
+
+  mattr_accessor :search_methods
+  @@search_methods = %i[subdomain id tenant_id]
 end
