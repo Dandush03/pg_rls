@@ -9,11 +9,15 @@ module PgRls
           DROP ROLE IF EXISTS #{name};
           CREATE USER #{name} WITH PASSWORD '#{password}';
           GRANT ALL PRIVILEGES ON TABLE schema_migrations TO #{name};
+          GRANT USAGE ON SCHEMA public TO #{name};
           ALTER DEFAULT PRIVILEGES IN SCHEMA public
             GRANT SELECT, INSERT, UPDATE, DELETE
             ON TABLES TO #{name};
           GRANT SELECT, INSERT, UPDATE, DELETE
-            ON ALL TABLES IN SCHEMA public#{' '}
+            ON ALL TABLES IN SCHEMA public
+            TO #{name};
+          GRANT USAGE, SELECT
+            ON ALL SEQUENCES IN SCHEMA public
             TO #{name};
         SQL
       end
