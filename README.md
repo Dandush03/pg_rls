@@ -1,3 +1,10 @@
+<!--
+  Title: PgRls Rails
+  Description: rails multitenancy with pg rls
+  Author: dandush03
+  -->
+<meta name="google-site-verification" content="Mc1vBv8PRYPw_cdd3EiKhF2vlOeIEIk3VYhAg75ertI" />
+
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
