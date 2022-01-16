@@ -1,0 +1,6 @@
+# frozen_string_literal: true
+
+require_relative '../pg_rls'
+
+path = File.expand_path(__dir__)
+Dir.glob("#{path}/database/tasks/**/*.rake").each { |f| import f }

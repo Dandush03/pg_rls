@@ -9,7 +9,7 @@ module PgRls
         find_tenant(resource)
         connection_adapter.connection.execute(format('SET rls.tenant_id = %s',
                                                      connection_adapter.connection.quote(tenant.tenant_id)))
-        "RLS changed to '#{tenant.name}'"
+        "RLS changed to '#{tenant.send(@method)}'"
       rescue StandardError => e
         puts 'connection was not made'
         puts @error || e
@@ -31,6 +31,7 @@ module PgRls
         @tenant = nil
 
         PgRls.search_methods.each do |method|
+          @method = method
           @tenant ||= PgRls.main_model.send("find_by_#{method}", resource)
         rescue NoMethodError => e
           @error = e

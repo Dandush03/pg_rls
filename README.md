@@ -84,7 +84,28 @@ You can swtich to another tenant by using
 ```ruby
 PgRls::Tenant.switch :app #=> where app eq tenant name
 ```
-Don't forget to update how you want `PgRls` to find your tenant, you can set multiple options by modifying `api/config/initializers/pg_rls.rb` `search_methods`  
+Don't forget to update how you want `PgRls` to find your tenant, you can set multiple options by modifying `api/config/initializers/pg_rls.rb` `search_methods`
+
+You can add the following configuration to your Database Config File to improve performance and remove `PgRls::SecureConnection` from `aplication_record.rb`
+
+```yml
+# app/config/database.yml
+<% def db_username
+    return PgRls::SECURE_USERNAME unless ENV['AS_DB_ADMIN']
+
+    Rails.application.credentials.dig(:database, :server_1, :username)
+   end %>
+
+...
+
+development:
+  <<: *default
+  database: example_development
+  username: <%= db_username %> # Apply this to production and all env including tests
+
+...
+
+```
 ### Testing
 
 Many application uses some sort of database cleaner before running thair spec so on each test that we run we'll have an empty state. Usually, those gems clear our user configuration for the database. To solve this issue, we must implement the following:

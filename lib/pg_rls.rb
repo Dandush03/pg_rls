@@ -8,6 +8,7 @@ require_relative 'pg_rls/schema/statements'
 require_relative 'pg_rls/tenant'
 require_relative 'pg_rls/secure_connection'
 require_relative 'pg_rls/multi_tenancy'
+require_relative 'pg_rls/railtie' if defined?(Rails)
 
 # PostgreSQL Row Level Security
 module PgRls
@@ -17,9 +18,9 @@ module PgRls
   class << self
     extend Forwardable
 
-    WRITER_METHODS = %i[table_name class_name search_methods].freeze
+    WRITER_METHODS = %i[table_name class_name search_methods establish_default_connection].freeze
     READER_METHODS = %i[
-      connection_class database_configuration execute table_name class_name search_methods
+      connection_class database_configuration execute table_name class_name search_methods establish_default_connection
     ].freeze
     DELEGATORS_METHODS = %i[
       connection_class database_configuration execute table_name search_methods
@@ -51,8 +52,20 @@ module PgRls
       )
     end
 
-    def establish_default_connection
-      @default_connection = true
+    def admin_execute(query = nil)
+      self.establish_default_connection = true
+      establish_new_connection
+      return yield if block_given?
+
+      execute(query)
+    ensure
+      self.establish_default_connection = false
+      establish_new_connection
+    end
+
+    def establish_default_connection=(value)
+      ENV['AS_DB_ADMIN'] = value.to_s
+      @default_connection = value
     end
 
     def default_connection?
@@ -77,12 +90,12 @@ module PgRls
     end
 
     def execute(query)
-      @execute = ActiveRecord::Migration.execute(query)
+      ActiveRecord::Migration.execute(query)
     end
 
     def database_configuration
-      @database_configuration ||= database_connection_file[Rails.env].tap do |config|
-        config['username'] = PgRls::SECURE_USERNAME
+      database_connection_file[Rails.env].tap do |config|
+        config['username'] = PgRls::SECURE_USERNAME unless default_connection?
       end
     end
   end
