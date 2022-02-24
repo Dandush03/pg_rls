@@ -5,6 +5,7 @@ module PgRls
   module Tenant
     class << self
       def switch(resource)
+        @fetch = nil
         connection_adapter = PgRls.connection_class
         find_tenant(resource)
         connection_adapter.connection.execute(format('SET rls.tenant_id = %s',
@@ -18,7 +19,7 @@ module PgRls
       attr_reader :tenant
 
       def fetch
-        @fetch ||= tenant.find_by_tenant_id(
+        @fetch ||= PgRls.main_model.find_by_tenant_id(
           PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
@@ -32,9 +33,11 @@ module PgRls
 
         PgRls.search_methods.each do |method|
           @method = method
-          @tenant ||= PgRls.main_model.send("find_by_#{method}", resource)
+          @tenant ||= PgRls.main_model.send("find_by_#{method}!", resource)
         rescue NoMethodError => e
           @error = e
+        rescue ActiveRecord::RecordNotFound
+          raise PgRls::Errors::TenantNotFound
         end
       end
     end
