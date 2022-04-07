@@ -9,6 +9,7 @@ require_relative 'pg_rls/tenant'
 require_relative 'pg_rls/secure_connection'
 require_relative 'pg_rls/multi_tenancy'
 require_relative 'pg_rls/railtie' if defined?(Rails)
+require_relative 'pg_rls/errors/tenant_not_found'
 
 # PostgreSQL Row Level Security
 module PgRls
