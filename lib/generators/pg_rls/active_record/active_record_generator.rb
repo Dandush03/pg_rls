@@ -20,25 +20,19 @@ module PgRls
       end
 
       def create_tenant_migration_file
-        return if migration_exist?
-
-        migration_template create_migration_template_path,
+        migration_template(create_migration_template_path,
                            "#{migration_path}/#{create_file_sub_name}_#{table_name}.rb",
-                           migration_version: migration_version
+                           migration_version: migration_version) if creating?
       end
 
       def convert_tenant_migration_file
-        return unless migration_exist?
-
-        migration_template convert_migration_template_path,
+        migration_template(convert_migration_template_path,
                            "#{migration_path}/#{convert_file_sub_name}_#{table_name}.rb",
-                           migration_version: migration_version
+                           migration_version: migration_version) unless creating?
 
-        return if installation_in_progress?
-
-        migration_template 'convert_migration_backport.rb.tt',
+        migration_template('convert_migration_backport.rb.tt',
                            "#{migration_path}/pg_rls_backport_#{table_name}.rb",
-                           migration_version: migration_version
+                           migration_version: migration_version) if installation_in_progress?
       end
 
       def create_model_file
@@ -101,6 +95,10 @@ module PgRls
 
       def migration_path
         db_migrate_path
+      end
+
+      def creating?
+        @creating ||= !migration_exist?
       end
 
       protected

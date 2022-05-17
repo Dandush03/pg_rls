@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   MSG
   spec.homepage      = 'https://github.com/Dandush03/pg_rls'
   spec.license       = 'MIT'
-  spec.required_ruby_version = '>= 3.0.0'
+  spec.required_ruby_version = '~> 3.1'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
-  spec.add_dependency 'bundler', '>= 2.2.10'
+  spec.add_dependency 'bundler', '~> 2.2'
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
   spec.metadata = {

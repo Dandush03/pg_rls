@@ -94,10 +94,14 @@ module PgRls
       ActiveRecord::Migration.execute(query)
     end
 
+    def database_default_configuration
+      connection_class.connection.pool.db_config.configuration_hash
+    end
+
     def database_configuration
-      database_connection_file[Rails.env].tap do |config|
-        config['username'] = PgRls::SECURE_USERNAME unless default_connection?
-      end
+      current_configuration = database_default_configuration.deep_dup
+      current_configuration.tap { |config| config[:username] = PgRls::SECURE_USERNAME unless default_connection? }
+      current_configuration.freeze
     end
   end
   mattr_accessor :table_name
