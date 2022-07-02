@@ -91,7 +91,7 @@ You can add the following configuration to your Database Config File to improve 
 ```yml
 # app/config/database.yml
 <% def db_username
-    return PgRls::SECURE_USERNAME unless ENV['AS_DB_ADMIN']
+    return PgRls.username unless ENV['AS_DB_ADMIN']
 
     Rails.application.credentials.dig(:database, :server_1, :username)
    end %>
@@ -108,6 +108,8 @@ development:
 ```
 ### Testing
 
+If you are getting `PG::InsufficientPrivilege: ERROR:  permission denied ` you can override does permistion by running `RAILS_ENV=test rake db:grant_usage`
+
 Many application uses some sort of database cleaner before running thair spec so on each test that we run we'll have an empty state. Usually, those gems clear our user configuration for the database. To solve this issue, we must implement the following:
 
 ```ruby
@@ -117,8 +119,6 @@ Many application uses some sort of database cleaner before running thair spec so
 # some database cleaning strategy
 
 config.before(:suite) do
-  # Create A Default Tenant and Grant Test User Credentials
-  PgRls::Database::Prepared.grant_user_credentials
   # Create the tenant which in this example is company and we are using FactoryBot
   FactoryBot.create(:company, subdomain: 'app')
   # In this default case our initializer is set to search by subdomain so will use it
@@ -147,7 +147,7 @@ Everyone interacting in the PgRls project's codebases, issue trackers, chat room
 
 ## Note
 Currently we only support subdomain as a searcher but will soon integrate slug/domain and cookies support 
-
+we recommed the use of ``
 ## Show your support
 
 Give a ⭐️ if you like this project!

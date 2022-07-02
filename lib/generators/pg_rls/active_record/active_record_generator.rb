@@ -20,19 +20,25 @@ module PgRls
       end
 
       def create_tenant_migration_file
-        migration_template(create_migration_template_path,
-                           "#{migration_path}/#{create_file_sub_name}_#{table_name}.rb",
-                           migration_version: migration_version) if creating?
+        if creating?
+          migration_template(create_migration_template_path,
+                             "#{migration_path}/#{create_file_sub_name}_#{table_name}.rb",
+                             migration_version: migration_version)
+        end
       end
 
       def convert_tenant_migration_file
-        migration_template(convert_migration_template_path,
-                           "#{migration_path}/#{convert_file_sub_name}_#{table_name}.rb",
-                           migration_version: migration_version) unless creating?
+        unless creating?
+          migration_template(convert_migration_template_path,
+                             "#{migration_path}/#{convert_file_sub_name}_#{table_name}.rb",
+                             migration_version: migration_version)
+        end
 
-        migration_template('convert_migration_backport.rb.tt',
-                           "#{migration_path}/pg_rls_backport_#{table_name}.rb",
-                           migration_version: migration_version) if installation_in_progress?
+        if installation_in_progress?
+          migration_template('convert_migration_backport.rb.tt',
+                             "#{migration_path}/pg_rls_backport_#{table_name}.rb",
+                             migration_version: migration_version)
+        end
       end
 
       def create_model_file
@@ -103,7 +109,7 @@ module PgRls
 
       protected
 
-      def migration_action() = 'add'
+      def migration_action = 'add'
     end
   end
 end

@@ -9,4 +9,14 @@ PgRls.setup do |config|
   config.class_name = :<%= PgRls.class_name %>
   config.table_name = :<%= PgRls.table_name %>
   config.search_methods = <%= PgRls.search_methods %>
+
+  ##
+  ## Uncomment this lines if you have a custome user per enviroment
+  ## don't forget to grant the required privilange in order for it to run
+  ##
+  ## Remember that PgRls is adding triggers that would set the RLS to the default user
+  ## make sure you recreate the structure.sql on each enviroment
+  ##
+  # config.username = Rails.application.credentials.dig(:database, :username)
+  # config.password = Rails.application.credentials.dig(:database, :password)
 end

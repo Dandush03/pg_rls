@@ -11,7 +11,7 @@ module PgRls
       include DownStatements
 
       def create_rls_tenant_table(table_name, **options, &block)
-        create_rls_user(password: PgRls.database_default_configuration[:password])
+        create_rls_user
         create_rls_setter_function
         create_rls_blocking_function
         create_table(table_name, **options, &block)
@@ -41,7 +41,7 @@ module PgRls
       end
 
       def convert_to_rls_tenant_table(table_name, **_options)
-        create_rls_user(password: PgRls.database_default_configuration[:password])
+        create_rls_user
         create_rls_setter_function
         create_rls_blocking_function
         add_rls_column_to_tenant_table(table_name)

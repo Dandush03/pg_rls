@@ -4,29 +4,32 @@ module PgRls
   module Schema
     # Up Schema Statements
     module UpStatements
-      def create_rls_user(name: PgRls::SECURE_USERNAME, password: 'password')
+      def create_rls_user(name: PgRls.username, password: PgRls.password, schema: 'public')
         PgRls.execute <<-SQL
           DO
           $do$
           BEGIN
             IF NOT EXISTS (
-                SELECT FROM pg_catalog.pg_roles  -- SELECT list can be empty for this
-                WHERE  rolname = '#{name}') THEN
+              SELECT FROM pg_catalog.pg_roles  -- SELECT list can be empty for this
+              WHERE  rolname = '#{name}') THEN
 
-                CREATE USER #{name} WITH PASSWORD '#{password}';
-                GRANT ALL PRIVILEGES ON TABLE schema_migrations TO #{name};
-                GRANT USAGE ON SCHEMA public TO #{name};
-                ALTER DEFAULT PRIVILEGES IN SCHEMA public
-                  GRANT SELECT, INSERT, UPDATE, DELETE
-                  ON TABLES TO #{name};
-                GRANT SELECT, INSERT, UPDATE, DELETE
-                  ON ALL TABLES IN SCHEMA public
-                  TO #{name};
-                GRANT USAGE, SELECT
-                  ON ALL SEQUENCES IN SCHEMA public
-                  TO #{name};
+              CREATE USER #{name} WITH PASSWORD '#{password}';
             END IF;
-          END
+            GRANT ALL PRIVILEGES ON TABLE schema_migrations TO #{name};
+            GRANT USAGE ON SCHEMA #{schema} TO #{name};
+            ALTER DEFAULT PRIVILEGES IN SCHEMA #{schema}
+              GRANT USAGE, SELECT
+              ON SEQUENCES TO #{name};
+            ALTER DEFAULT PRIVILEGES IN SCHEMA #{schema}
+              GRANT SELECT, INSERT, UPDATE, DELETE
+              ON TABLES TO #{name};
+            GRANT SELECT, INSERT, UPDATE, DELETE
+              ON ALL TABLES IN SCHEMA #{schema}
+              TO #{name};
+            GRANT USAGE, SELECT
+              ON ALL SEQUENCES IN SCHEMA #{schema}
+              TO #{name};
+          END;
           $do$;
         SQL
       end
@@ -87,7 +90,7 @@ module PgRls
         SQL
       end
 
-      def create_rls_policy(table_name, user = PgRls::SECURE_USERNAME)
+      def create_rls_policy(table_name, user = PgRls.username)
         ActiveRecord::Migration.execute <<-SQL
           ALTER TABLE #{table_name} ENABLE ROW LEVEL SECURITY;
           CREATE POLICY #{table_name}_#{user}

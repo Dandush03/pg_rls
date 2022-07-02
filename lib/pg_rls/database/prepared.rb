@@ -5,31 +5,33 @@ module PgRls
     # Prepare database for test unit
     module Prepared
       class << self
-        def grant_user_credentials(name: PgRls::SECURE_USERNAME, password: 'password')
-          return unless Rails.env.test? || PgRls.default_connection?
-
+        def grant_user_credentials(name: PgRls.username, password: PgRls.password, schema: 'public')
           PgRls.admin_execute <<-SQL
             DO
             $do$
             BEGIN
               IF NOT EXISTS (
-                SELECT FROM pg_catalog.pg_roles AS r
-                WHERE r.rolname = '#{name}') THEN
-
-                  CREATE USER #{name} WITH PASSWORD '#{password}';
-              END IF;
-            END
+                SELECT table_catalog, table_schema, table_name, privilege_type
+                  FROM   information_schema.table_privileges#{' '}
+                  WHERE  grantee = '#{name}'
+              ) THEN
+                  GRANT ALL PRIVILEGES ON TABLE schema_migrations TO #{name};
+                  GRANT USAGE ON SCHEMA #{schema} TO #{name};
+                  ALTER DEFAULT PRIVILEGES IN SCHEMA #{schema}
+                    GRANT USAGE, SELECT
+                    ON SEQUENCES TO #{name};
+                  ALTER DEFAULT PRIVILEGES IN SCHEMA #{schema}
+                    GRANT SELECT, INSERT, UPDATE, DELETE
+                    ON TABLES TO #{name};
+                  GRANT SELECT, INSERT, UPDATE, DELETE
+                    ON ALL TABLES IN SCHEMA #{schema}
+                    TO #{name};
+                  GRANT USAGE, SELECT
+                    ON ALL SEQUENCES IN SCHEMA #{schema}
+                    TO #{name};
+                END IF;
+            END;
             $do$;
-            GRANT USAGE ON SCHEMA public TO #{name};
-            ALTER DEFAULT PRIVILEGES IN SCHEMA public
-              GRANT SELECT, INSERT, UPDATE, DELETE
-              ON TABLES TO #{name};
-            GRANT SELECT, INSERT, UPDATE, DELETE
-              ON ALL TABLES IN SCHEMA public
-              TO #{name};
-            GRANT USAGE, SELECT
-              ON ALL SEQUENCES IN SCHEMA public
-              TO #{name};
           SQL
         end
       end

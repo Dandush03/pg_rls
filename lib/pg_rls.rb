@@ -14,7 +14,7 @@ require_relative 'pg_rls/errors/tenant_not_found'
 # PostgreSQL Row Level Security
 module PgRls
   class Error < StandardError; end
-  SECURE_USERNAME = "#{Rails.env}_app_user".freeze
+  SECURE_USERNAME = 'app_user'
 
   class << self
     extend Forwardable
@@ -32,7 +32,7 @@ module PgRls
     attr_reader(*READER_METHODS)
 
     def_delegators(*DELEGATORS_METHODS)
-    # Your code goes here...
+
     def setup
       yield self
     end
@@ -54,13 +54,13 @@ module PgRls
     end
 
     def admin_execute(query = nil)
-      self.establish_default_connection = true
+      self.as_db_admin = true
       establish_new_connection
       return yield if block_given?
 
       execute(query)
     ensure
-      self.establish_default_connection = false
+      self.as_db_admin = false
       establish_new_connection
     end
 
@@ -70,7 +70,7 @@ module PgRls
     end
 
     def default_connection?
-      @default_connection
+      as_db_admin
     end
 
     def main_model
@@ -96,19 +96,45 @@ module PgRls
 
     def database_default_configuration
       connection_class.connection.pool.db_config.configuration_hash
+    rescue ActiveRecord::NoDatabaseError
+      connection_class.connection_db_config.configuration_hash
+    end
+
+    def database_admin_configuration
+      enviroment_db_configuration = database_connection_file[Rails.env]
+
+      return enviroment_db_configuration if enviroment_db_configuration['username'].present?
+
+      enviroment_db_configuration.first.last
     end
 
     def database_configuration
+      return database_admin_configuration if default_connection?
+
       current_configuration = database_default_configuration.deep_dup
-      current_configuration.tap { |config| config[:username] = PgRls::SECURE_USERNAME unless default_connection? }
+      current_configuration.tap do |config|
+        config[:username] = PgRls.username
+        config[:password] = PgRls.password
+      end
+
       current_configuration.freeze
     end
   end
+
+  mattr_accessor :as_db_admin
+  @@as_db_admin = false
+
   mattr_accessor :table_name
   @@table_name = 'companies'
 
   mattr_accessor :class_name
   @@class_name = 'Company'
+
+  mattr_accessor :username
+  @@username = 'app_user'
+
+  mattr_accessor :password
+  @@password = 'password'
 
   mattr_accessor :search_methods
   @@search_methods = %i[subdomain id tenant_id]

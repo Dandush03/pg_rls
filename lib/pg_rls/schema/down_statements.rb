@@ -6,11 +6,11 @@ module PgRls
     module DownStatements
       def drop_rls_user
         ActiveRecord::Migration.execute <<~SQL
-          DROP OWNED BY #{PgRls::SECURE_USERNAME};
-          REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM #{PgRls::SECURE_USERNAME};
-          REVOKE ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public FROM #{PgRls::SECURE_USERNAME};
-          REVOKE ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public FROM #{PgRls::SECURE_USERNAME};
-          DROP USER #{PgRls::SECURE_USERNAME};
+          DROP OWNED BY #{PgRls.username};
+          REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM #{PgRls.username};
+          REVOKE ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public FROM #{PgRls.username};
+          REVOKE ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public FROM #{PgRls.username};
+          DROP USER #{PgRls.username};
         SQL
       end
 
@@ -45,7 +45,7 @@ module PgRls
 
       def drop_rls_policy(table_name)
         ActiveRecord::Migration.execute <<-SQL
-          DROP POLICY #{table_name}_#{PgRls::SECURE_USERNAME} ON #{table_name};
+          DROP POLICY #{table_name}_#{PgRls.username} ON #{table_name};
           ALTER TABLE #{table_name} DISABLE ROW LEVEL SECURITY;
         SQL
       end

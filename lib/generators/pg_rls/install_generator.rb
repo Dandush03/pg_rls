@@ -16,8 +16,12 @@ module PgRls
         end
         super
       end
+      APPLICATION_LINE = 'class Application < Rails::Application'
+      APPLICATION_PATH = 'config/application.rb'
+
       APPLICATION_RECORD_LINE = 'class ApplicationRecord < ActiveRecord::Base'
       APPLICATION_RECORD_PATH = 'app/models/application_record.rb'
+
       APPLICATION_CONTROLLER_LINE = 'class ApplicationController < ActionController::Base'
       APPLICATION_CONTROLLER_PATH = 'app/controllers/application_controller.rb'
 
@@ -41,9 +45,18 @@ module PgRls
       def copy_initializer
         raise MissingORMError, orm_error_message unless options[:orm]
 
+        inject_include_to_application
         inject_include_to_application_record
         inject_include_to_application_controller
         template 'pg_rls.rb.tt', 'config/initializers/pg_rls.rb'
+      end
+
+      def inject_include_to_application
+        return if aplication_already_included?
+
+        gsub_file(APPLICATION_PATH, /(#{Regexp.escape(APPLICATION_LINE)})/mi) do |match|
+          "#{match}\n  config.active_record.schema_format = :sql\n"
+        end
       end
 
       def inject_include_to_application_record
@@ -68,6 +81,10 @@ module PgRls
 
       def aplication_record_already_included?
         File.readlines(APPLICATION_RECORD_PATH).grep(/include PgRls::SecureConnection/).any?
+      end
+
+      def aplication_already_included?
+        File.readlines(APPLICATION_PATH).grep(/config.active_record.schema_format = :sql/).any?
       end
 
       def initialize_error_text
