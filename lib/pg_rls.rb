@@ -48,9 +48,9 @@ module PgRls
     end
 
     def establish_new_connection
-      connection_class.establish_connection(
-        **database_configuration
-      )
+      ActiveRecord::Base.connection.disconnect!
+
+      connection_class.establish_connection(**database_configuration)
     end
 
     def admin_execute(query = nil)
