@@ -149,10 +149,10 @@ namespace :db do
     end
   end
 
-  namespace :enviroment do
+  namespace :environment do
     override_task set: :load_config do
       admin_connection do
-        Rake::Task['db:enviroment:set:original'].invoke
+        Rake::Task['db:environment:set:original'].invoke
       end
     end
   end

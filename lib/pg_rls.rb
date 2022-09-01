@@ -48,7 +48,7 @@ module PgRls
     end
 
     def establish_new_connection
-      ActiveRecord::Base.connection.disconnect!
+      ActiveRecord::Base.connection.disconnect! if ActiveRecord::Base.connection_pool.connected?
 
       connection_class.establish_connection(**database_configuration)
     end
@@ -101,11 +101,11 @@ module PgRls
     end
 
     def database_admin_configuration
-      enviroment_db_configuration = database_connection_file[Rails.env]
+      environment_db_configuration = database_connection_file[Rails.env]
 
-      return enviroment_db_configuration if enviroment_db_configuration['username'].present?
+      return environment_db_configuration if environment_db_configuration['username'].present?
 
-      enviroment_db_configuration.first.last
+      environment_db_configuration.first.last
     end
 
     def database_configuration
