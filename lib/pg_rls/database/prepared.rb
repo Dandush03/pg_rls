@@ -5,14 +5,14 @@ module PgRls
     # Prepare database for test unit
     module Prepared
       class << self
-        def grant_user_credentials(name: PgRls.username, password: PgRls.password, schema: 'public')
+        def grant_user_credentials(name: PgRls.username, schema: 'public')
           PgRls.admin_execute <<-SQL
             DO
             $do$
             BEGIN
               IF NOT EXISTS (
                 SELECT table_catalog, table_schema, table_name, privilege_type
-                  FROM   information_schema.table_privileges#{' '}
+                  FROM   information_schema.table_privileges
                   WHERE  grantee = '#{name}'
               ) THEN
                   GRANT ALL PRIVILEGES ON TABLE schema_migrations TO #{name};

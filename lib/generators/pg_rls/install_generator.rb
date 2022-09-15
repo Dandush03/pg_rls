@@ -89,6 +89,7 @@ module PgRls
 
       def initialize_error_text
         <<-ERROR.strip_heredoc
+          TO DO
         ERROR
       end
 

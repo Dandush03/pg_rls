@@ -28,8 +28,8 @@ module PgRls
       end
 
       def fetch
-        @fetch ||= PgRls.main_model.find_by_tenant_id!(
-          PgRls.connection_class.connection.execute(
+        @fetch ||= PgRls.main_model.find_by!(
+          tenant_id: PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
         )
@@ -49,7 +49,7 @@ module PgRls
         connection_adapter = PgRls.connection_class
         find_tenant(resource)
 
-        raise PgRls::Errors::TenantNotFound unless tenant.present?
+        raise PgRls::Errors::TenantNotFound if tenant.blank?
 
         connection_adapter.connection.execute(format('SET rls.tenant_id = %s',
                                                      connection_adapter.connection.quote(tenant.tenant_id)))
@@ -60,7 +60,7 @@ module PgRls
         reset_rls!
 
         PgRls.search_methods.each do |method|
-          return if @tenant.present?
+          break if @tenant.present?
 
           @method = method
           @tenant = find_tenant_by_method(resource, method)
@@ -71,7 +71,8 @@ module PgRls
 
       def find_tenant_by_method(resource, method)
         PgRls.main_model.send("find_by_#{method}!", resource)
-      rescue ActiveRecord::RecordNotFound => e
+      rescue ActiveRecord::RecordNotFound
+        nil
       end
     end
   end

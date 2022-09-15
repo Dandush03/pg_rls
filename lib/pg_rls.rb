@@ -5,6 +5,8 @@ require 'forwardable'
 require_relative 'pg_rls/version'
 require_relative 'pg_rls/database/prepared'
 require_relative 'pg_rls/schema/statements'
+require_relative 'pg_rls/schema/solo/statements'
+require_relative 'pg_rls/solo/tenant'
 require_relative 'pg_rls/tenant'
 require_relative 'pg_rls/secure_connection'
 require_relative 'pg_rls/multi_tenancy'
@@ -37,8 +39,12 @@ module PgRls
       yield self
     end
 
+    def solo_mode?
+      solo_mode
+    end
+
     def database_connection_file
-      file = File.read(Rails.root.join('config', 'database.yml'))
+      file = File.read(Rails.root.join('config/database.yml'))
 
       YAML.safe_load(ERB.new(file).result, aliases: true)
     end
@@ -135,6 +141,9 @@ module PgRls
 
   mattr_accessor :password
   @@password = 'password'
+
+  mattr_accessor :solo_mode
+  @@solo_mode = false
 
   mattr_accessor :search_methods
   @@search_methods = %i[subdomain id tenant_id]

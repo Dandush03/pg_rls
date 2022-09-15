@@ -10,17 +10,17 @@ module PgRls
       include UpStatements
       include DownStatements
 
-      def create_rls_tenant_table(table_name, **options, &block)
+      def create_rls_tenant_table(table_name, **options, &)
         create_rls_user
         create_rls_setter_function
         create_rls_blocking_function
-        create_table(table_name, **options, &block)
+        create_table(table_name, **options, &)
         add_rls_column_to_tenant_table(table_name)
         append_blocking_function(table_name)
       end
 
-      def create_rls_table(table_name, **options, &block)
-        create_table(table_name, **options, &block)
+      def create_rls_table(table_name, **options, &)
+        create_table(table_name, **options, &)
         add_rls_column(table_name)
         create_rls_policy(table_name)
         append_trigger_function(table_name)

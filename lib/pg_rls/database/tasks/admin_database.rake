@@ -12,11 +12,11 @@ def alias_task(fq_name)
   Rake.application.alias_task(fq_name)
 end
 
-def override_task(*args, &block)
+def override_task(*args, &)
   name, _params, _deps = Rake.application.resolve_args(args.dup)
   fq_name = Rake.application.instance_variable_get(:@scope).to_a.reverse.push(name).join(':')
   alias_task(fq_name)
-  Rake::Task.define_task(*args, &block)
+  Rake::Task.define_task(*args, &)
 end
 
 namespace :db do

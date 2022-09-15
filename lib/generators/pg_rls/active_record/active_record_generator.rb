@@ -23,7 +23,7 @@ module PgRls
         if creating?
           migration_template(create_migration_template_path,
                              "#{migration_path}/#{create_file_sub_name}_#{table_name}.rb",
-                             migration_version: migration_version)
+                             migration_version:)
         end
       end
 
@@ -31,13 +31,13 @@ module PgRls
         unless creating?
           migration_template(convert_migration_template_path,
                              "#{migration_path}/#{convert_file_sub_name}_#{table_name}.rb",
-                             migration_version: migration_version)
+                             migration_version:)
         end
 
         if installation_in_progress?
           migration_template('convert_migration_backport.rb.tt',
                              "#{migration_path}/pg_rls_backport_#{table_name}.rb",
-                             migration_version: migration_version)
+                             migration_version:)
         end
       end
 

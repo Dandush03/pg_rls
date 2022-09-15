@@ -4,12 +4,14 @@ source 'https://rubygems.org'
 
 # Specify your gem's dependencies in pg_rls.gemspec
 gemspec
-ruby '3.1.1'
+ruby '3.1.2'
 
-gem 'rails', '~> 6.1.4', '>= 6.1.4.1'
+gem 'rails', '~> 7.0', '>= 7.0.4'
 
 gem 'rake'
 
 gem 'rspec'
 
 gem 'rubocop'
+gem 'rubocop-rspec'
+gem 'solargraph'
