@@ -15,11 +15,9 @@ module PgRls
       PgRls.current_connection_username == PgRls.username
     end
 
-    def self.included(_base)
+    def self.included(base)
       establish_secure_connection
-      # base.class_eval do
-      #   after_initialize :establish_secure_connection
-      # end
+      base.ignored_columns = %w(tenant_id)
     end
   end
 end
