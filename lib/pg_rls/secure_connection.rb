@@ -17,7 +17,7 @@ module PgRls
 
     def self.included(base)
       establish_secure_connection
-      base.ignored_columns = %w(tenant_id)
+      base.ignored_columns = %w[tenant_id]
     end
   end
 end

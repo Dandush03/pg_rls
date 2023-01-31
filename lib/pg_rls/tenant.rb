@@ -37,6 +37,15 @@ module PgRls
         'no tenant is selected'
       end
 
+      def find_main_model
+        PgRls.main_model.ignored_columns = []
+        PgRls.main_model.find_by!(
+          tenant_id: PgRls.connection_class.connection.execute(
+            "SELECT current_setting('rls.tenant_id')"
+          ).getvalue(0, 0)
+        )
+      end
+
       def reset_rls!
         @fetch = nil
         @tenant = nil
@@ -46,6 +55,8 @@ module PgRls
       private
 
       def switch_tenant!(resource)
+        PgRls.main_model.ignored_columns = []
+
         connection_adapter = PgRls.connection_class
         find_tenant(resource)
 
