@@ -81,7 +81,8 @@ module PgRls
       end
 
       def find_tenant_by_method(resource, method)
-        PgRls.main_model.send("find_by_#{method}!", resource.send(method))
+        look_up_value = resource.is_a?(PgRls.main_model) ? resource.send(method) : resource
+        PgRls.main_model.send("find_by_#{method}!", look_up_value)
       rescue ActiveRecord::RecordNotFound
         nil
       end
