@@ -40,13 +40,17 @@ module PgRls
       end
 
       def fetch
+        fetch!
+      rescue ActiveRecord::StatementInvalid
+        'no tenant is selected'
+      end
+
+      def fetch!
         @fetch ||= PgRls.main_model.find_by!(
           tenant_id: PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
         )
-      rescue ActiveRecord::StatementInvalid
-        'no tenant is selected'
       end
 
       def find_main_model
