@@ -145,6 +145,9 @@ module PgRls
   mattr_accessor :solo_mode
   @@solo_mode = false
 
+  mattr_accessor :test_inline_tenant
+  @@test_inline_tenant = false
+
   mattr_accessor :search_methods
   @@search_methods = %i[subdomain id tenant_id]
 end

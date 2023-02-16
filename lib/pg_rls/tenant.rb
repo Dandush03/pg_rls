@@ -36,7 +36,7 @@ module PgRls
 
         block.call(tenant) if block_given?
       ensure
-        reset_rls!
+        reset_rls! unless PgRls.test_inline_tenant == true
       end
 
       def fetch
