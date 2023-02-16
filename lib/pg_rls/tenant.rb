@@ -7,22 +7,34 @@ module PgRls
       attr_reader :tenant
 
       def switch(resource)
-        switch_tenant!(resource)
+        tenant = switch_tenant!(resource)
+
+        "RLS changed to '#{tenant.id}'"
       rescue StandardError => e
         Rails.logger.info('connection was not made')
         Rails.logger.info(e)
+        nil
       end
 
       def switch!(resource)
-        switch_tenant!(resource)
+        tenant = switch_tenant!(resource)
+
+        "RLS changed to '#{tenant.id}'"
       rescue StandardError => e
         Rails.logger.info('connection was not made')
         raise e
       end
 
-      def with_tenant(resource)
-        switch_tenant!(resource)
-        yield
+      def find_each(&block)
+        PgRls.main_model.find_each do |tenant|
+          with_tenant(tenant, &block)
+        end
+      end
+
+      def with_tenant(resource, &block)
+        tenant = switch_tenant!(resource)
+
+        block.call(tenant) if block_given?
       ensure
         reset_rls!
       end
@@ -62,9 +74,12 @@ module PgRls
 
         raise PgRls::Errors::TenantNotFound if tenant.blank?
 
-        connection_adapter.connection.execute(format('SET rls.tenant_id = %s',
-                                                     connection_adapter.connection.quote(tenant.tenant_id)))
-        "RLS changed to '#{tenant.send(@method)}'"
+        connection_adapter.connection.transaction do
+          connection_adapter.connection.execute(format('SET rls.tenant_id = %s',
+                                                      connection_adapter.connection.quote(tenant.tenant_id)))
+        end
+
+        tenant
       end
 
       def find_tenant(resource)
