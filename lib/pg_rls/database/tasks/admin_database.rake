@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 # OVERIDE RAILS TASK
-PG_RLS_TASKS = ['db:grant_usage', 'db:test:grant_usage']
-
 Rake::TaskManager.class_eval do
   def alias_task(fq_name)
     new_name = "#{fq_name}:original"
-    @tasks[new_name] = @tasks.delete(fq_name) unless @tasks[new_name].nil?
+    @tasks[new_name] = @tasks.delete(fq_name) unless @tasks[fq_name].nil?
   end
 end
 
@@ -114,9 +112,27 @@ namespace :db do
       end
     end
 
+    override_task create: :load_config do
+      admin_connection_test_db do
+        Rake::Task['db:test:create:original'].invoke
+      end
+    end
+
+    override_task drop: :load_config do
+      admin_connection_test_db do
+        Rake::Task['db:test:drop:original'].invoke
+      end
+    end
+
     override_task prepare: :load_config do
       admin_connection_test_db do
         Rake::Task['db:test:prepare:original'].invoke
+      end
+    end
+
+    override_task setup: :load_config do
+      admin_connection_test_db do
+        Rake::Task['db:test:setup:original'].invoke
       end
     end
 
