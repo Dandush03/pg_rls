@@ -18,9 +18,9 @@ module PgRls
 
     def switch_tenant!(&block)
       fetched_tenant = session[:_tenant] || current_tenant
-      return if PgRls::Tenant.fetch.present?
+      return block.call if PgRls::Tenant.fetch.present?
 
-      Tenant.with_tenant(fetched_tenant) do |tenant|
+      Tenant.with_tenant!(fetched_tenant) do |tenant|
         session[:_tenant] = tenant
         block.call(tenant)
       end

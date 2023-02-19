@@ -13,7 +13,9 @@ module PgRls
 
         return @app.call(env) if tenant.blank?
 
-        PgRls::Tenant.with_tenant(tenant) { @app.call(env) }
+        PgRls::Tenant.with_tenant!(tenant) { @app.call(env) }
+      rescue PgRls::Erorrs::TenantNotFound
+        @app.call(env)
       rescue ActiveRecord::RecordNotFound => e
         raise e unless rails_active_storage_request?(env)
 

@@ -7,8 +7,7 @@ module PgRls
       # Set PgRls Policies
       class Server
         def call(_job_instance, msg, _queue)
-          PgRls::Tenant.with_tenant(msg['pg_rls']) do
-            process_class = msg['args'].first['job_class']
+          PgRls::Tenant.with_tenant!(msg['pg_rls']) do
             yield
           end
         end

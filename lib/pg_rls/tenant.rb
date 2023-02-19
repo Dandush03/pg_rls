@@ -27,11 +27,11 @@ module PgRls
 
       def find_each(&)
         PgRls.main_model.find_each do |tenant|
-          with_tenant(tenant, &)
+          with_tenant!(tenant, &)
         end
       end
 
-      def with_tenant(resource, &block)
+      def with_tenant!(resource, &block)
         tenant = switch_tenant!(resource)
 
         block.call(tenant) if block_given?
