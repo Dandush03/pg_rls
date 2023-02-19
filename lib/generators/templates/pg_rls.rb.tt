@@ -26,4 +26,19 @@ PgRls.setup do |config|
   ## data structure across many project, Solo mode create a hidden tenant table
   ## which is autopopulated on each request
   # config.solo_mode = true
+
+  ##
+  ## After installing the PgRls gem, you can add the `PgRls::Middleware::SetResetConnection`
+  ## middleware to your Rails application to secure all database connections using Row Level Security.
+  ## To add the middleware using the `middleware.use` method, add the following
+  ## lines to your `config/application.rb` file:
+  ## require 'pg_rls/middleware/set_reset_connection'
+  ## config.middleware.use PgRls::Middleware::SetResetConnection
+  ## Note: Be sure to add the `PgRls::Middleware::SetResetConnection` middleware after any
+  ## middleware that sets up the Rails session, since the RLS middleware depends
+  ## on the presence of the session to work correctly.
+  ## Additionally, you will need to manually require the `PgRls::Middleware::SetResetConnection`
+  ## file in your application, as shown in the first line of the code snippet above.
+  # config.session_key = '_hub_sessions'
+  # config.session_prefix = '_session_id:2::'
 end

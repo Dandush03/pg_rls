@@ -148,6 +148,12 @@ module PgRls
   mattr_accessor :test_inline_tenant
   @@test_inline_tenant = false
 
+  mattr_accessor :session_key
+  @@session_key = '_hub_sessions'
+
+  mattr_accessor :session_prefix
+  @@session_prefix = '_session_id:2::'
+
   mattr_accessor :search_methods
   @@search_methods = %i[subdomain id tenant_id]
 end

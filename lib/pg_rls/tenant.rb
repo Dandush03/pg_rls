@@ -25,9 +25,9 @@ module PgRls
         raise e
       end
 
-      def find_each(&block)
+      def find_each(&)
         PgRls.main_model.find_each do |tenant|
-          with_tenant(tenant, &block)
+          with_tenant(tenant, &)
         end
       end
 
@@ -41,12 +41,12 @@ module PgRls
 
       def fetch
         fetch!
-      rescue ActiveRecord::StatementInvalid
-        'no tenant is selected'
+      rescue ActiveRecord::StatementInvalid, ActiveRecord::RecordNotFound
+        nil
       end
 
       def fetch!
-        @fetch ||= PgRls.main_model.find_by!(
+        @tenant ||= PgRls.main_model.find_by!(
           tenant_id: PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
@@ -63,7 +63,6 @@ module PgRls
       end
 
       def reset_rls!
-        @fetch = nil
         @tenant = nil
         PgRls.connection_class.connection.execute('RESET rls.tenant_id')
       end
@@ -80,7 +79,7 @@ module PgRls
 
         connection_adapter.connection.transaction do
           connection_adapter.connection.execute(format('SET rls.tenant_id = %s',
-                                                      connection_adapter.connection.quote(tenant.tenant_id)))
+                                                       connection_adapter.connection.quote(tenant.tenant_id)))
         end
 
         tenant

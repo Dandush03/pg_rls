@@ -5,18 +5,23 @@ module PgRls
   module MultiTenancy
     def self.included(base)
       base.class_eval do
-        before_action :switch_tenant!
+        around_action :switch_tenant!
+
+        def current_tenant
+          @current_tenant ||= request.subdomain
+        end
+        helper_method :current_tenant
       end
     end
 
     private
 
-    def switch_tenant!
-      tenant = request.subdomain
-      Tenant.switch!(tenant)
-      session[:_tenant] = tenant
-    rescue PgRls::Errors::TenantNotFound, ActiveRecord::RecordNotFound
-      Tenant.switch(session[:_tenant])
+    def switch_tenant!(&block)
+      fetched_tenant = session[:_tenant] || current_tenant
+      Tenant.with_tenant(fetched_tenant) do |tenant|
+        session[:_tenant] = tenant
+        block.call(tenant)
+      end
     rescue NoMethodError
       session[:_tenant] = nil
       redirect_to '/'
