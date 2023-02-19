@@ -4,13 +4,14 @@ module PgRls
   module Errors
     # Raise Tenant Not found and ensure that the tenant is resetted
     class TenantNotFound < StandardError
-      def initialize
+      def initialize(msg = nil)
         reset_tenant_id
-        super
+        @msg = msg
+        super(msg)
       end
 
       def message
-        "Tenant Doesn't exist"
+        @msg || "Tenant Doesn't exist"
       end
 
       def reset_tenant_id

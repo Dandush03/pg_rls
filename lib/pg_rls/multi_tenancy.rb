@@ -18,13 +18,15 @@ module PgRls
 
     def switch_tenant!(&block)
       fetched_tenant = session[:_tenant] || current_tenant
+      return if PgRls::Tenant.fetch.present?
+
       Tenant.with_tenant(fetched_tenant) do |tenant|
         session[:_tenant] = tenant
         block.call(tenant)
       end
     rescue NoMethodError
       session[:_tenant] = nil
-      redirect_to '/'
+      raise PgRls::Errors::TenantNotFound, 'No tenant was found'
     end
 
     def switch_tenant_by_resource!(resource = nil)
