@@ -37,7 +37,7 @@ module PgRls
         return if cookie.blank?
 
         sessions = Rails.cache.read("#{PgRls.session_prefix}#{Digest::SHA256.hexdigest(cookie)}")
-        sessions['_tenant']
+        sessions['_tenant'] if sessions.present?
       end
 
       def rails_active_storage_request?(env)
