@@ -27,18 +27,18 @@ PgRls.setup do |config|
   ## which is autopopulated on each request
   # config.solo_mode = true
 
+  ## ------------------------------ Middleware SetResetConnection -----------------------------
+  ## Uncomment this lines if you're using SetResetConnection Middleware
+  #
+  # config.session_store_server = Rails.application.config_for(:redis).session
+  #
+  ## Uncomment this line if you're not using warden as your authentication system or if you
+  ## changed the default warden key. Devise, uses warden authentication.
+  # config.session_store_default_warden_key = '2'
+  #
+  ## Uncomment this line if you're setting a diferent session key than stablished under your
+  ## redis server configuration
+  # config.session_key_prefix = '_hub_session'
   ##
-  ## After installing the PgRls gem, you can add the `PgRls::Middleware::SetResetConnection`
-  ## middleware to your Rails application to secure all database connections using Row Level Security.
-  ## To add the middleware using the `middleware.use` method, add the following
-  ## lines to your `config/application.rb` file:
-  ## require 'pg_rls/middleware/set_reset_connection'
-  ## config.middleware.use PgRls::Middleware::SetResetConnection
-  ## Note: Be sure to add the `PgRls::Middleware::SetResetConnection` middleware after any
-  ## middleware that sets up the Rails session, since the RLS middleware depends
-  ## on the presence of the session to work correctly.
-  ## Additionally, you will need to manually require the `PgRls::Middleware::SetResetConnection`
-  ## file in your application, as shown in the first line of the code snippet above.
-  # config.session_key = '_hub_sessions'
-  # config.session_prefix = '_session_id:2::'
+  ## ------------------------------ Middleware SetResetConnection -----------------------------
 end
