@@ -16,13 +16,13 @@ module PgRls
 
     private
 
-    def switch_tenant!(&block)
+    def switch_tenant!
       fetched_tenant = session[:_tenant] || current_tenant
-      return block.call if PgRls::Tenant.fetch.present?
+      return yield if PgRls::Tenant.fetch.present?
 
       Tenant.with_tenant!(fetched_tenant) do |tenant|
         session[:_tenant] = tenant
-        block.call(tenant)
+        yield(tenant)
       end
     rescue NoMethodError
       session[:_tenant] = nil

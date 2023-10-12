@@ -1,4 +1,3 @@
-# typed: false
 # frozen_string_literal: true
 
 module PgRls
@@ -40,13 +39,14 @@ module PgRls
         nil
       end
 
-      def fetch!
+      def tenant!
         @tenant ||= PgRls.main_model.find_by!(
           tenant_id: PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
         )
       end
+      alias fetch! tenant!
 
       def reset_rls!
         @tenant = nil
@@ -62,14 +62,16 @@ module PgRls
       private
 
       def switch_tenant!(resource)
+        # rubocop: disable Rails/IgnoredColumnsAssignment
         PgRls.main_model.ignored_columns = []
+        # rubocop: enable Rails/IgnoredColumnsAssignment
 
         find_tenant(resource)
 
         PgRls.execute_rls_in_shards do |connection_class|
           connection_class.transaction do
             connection_class.connection.execute(format('SET rls.tenant_id = %s',
-              connection_class.connection.quote(tenant.tenant_id)))
+                                                       connection_class.connection.quote(tenant.tenant_id)))
           end
         end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PgRls
   module Errors
     class RakeOnlyError < StandardError

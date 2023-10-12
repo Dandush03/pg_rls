@@ -6,7 +6,7 @@ module PgRls
     module Prepared
       class << self
         def grant_user_credentials(name: PgRls.username, schema: 'public')
-          PgRls.admin_execute <<-SQL
+          PgRls.admin_execute <<-SQL.squish
             DO
             $do$
             BEGIN

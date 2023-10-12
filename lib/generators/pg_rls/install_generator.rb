@@ -32,13 +32,13 @@ module PgRls
       hook_for :orm, required: true
 
       def orm_error_message
-        <<-ERROR.strip_heredoc
-        An ORM must be set to install PgRls in your application.
-        Be sure to have an ORM like Active Record or loaded in your
-        app or configure your own at `config/application.rb`.
-          config.generators do |g|
-            g.orm :your_orm_gem
-          end
+        <<~ERROR
+          An ORM must be set to install PgRls in your application.
+          Be sure to have an ORM like Active Record or loaded in your
+          app or configure your own at `config/application.rb`.
+            config.generators do |g|
+              g.orm :your_orm_gem
+            end
         ERROR
       end
 
@@ -53,7 +53,7 @@ module PgRls
       def inject_include_to_application
         return if aplication_already_included?
 
-        gsub_file(APPLICATION_PATH, /(#{Regexp.escape(APPLICATION_LINE)})/mi) do |match|
+        gsub_file(APPLICATION_PATH, /(#{Regexp.escape(APPLICATION_LINE)})/mio) do |match|
           "#{match}\n  config.active_record.schema_format = :sql\n"
         end
       end
@@ -61,7 +61,7 @@ module PgRls
       def inject_include_to_application_controller
         return if aplication_controller_already_included?
 
-        gsub_file(APPLICATION_CONTROLLER_PATH, /(#{Regexp.escape(APPLICATION_CONTROLLER_LINE)})/mi) do |match|
+        gsub_file(APPLICATION_CONTROLLER_PATH, /(#{Regexp.escape(APPLICATION_CONTROLLER_LINE)})/mio) do |match|
           "#{match}\n  include PgRls::MultiTenancy\n"
         end
       end
@@ -75,7 +75,7 @@ module PgRls
       end
 
       def initialize_error_text
-        <<-ERROR.strip_heredoc
+        <<~ERROR
           TO DO
         ERROR
       end

@@ -35,7 +35,7 @@ module PgRls
       end
 
       def create_rls_blocking_function
-        ActiveRecord::Migration.execute <<-SQL
+        ActiveRecord::Migration.execute <<-SQL.squish
           CREATE OR REPLACE FUNCTION id_safe_guard ()
             RETURNS TRIGGER LANGUAGE plpgsql AS $$
               BEGIN
@@ -45,7 +45,7 @@ module PgRls
       end
 
       def create_rls_setter_function
-        ActiveRecord::Migration.execute <<-SQL
+        ActiveRecord::Migration.execute <<-SQL.squish
           CREATE OR REPLACE FUNCTION tenant_id_setter ()
             RETURNS TRIGGER LANGUAGE plpgsql AS $$
               BEGIN
@@ -56,7 +56,7 @@ module PgRls
       end
 
       def append_blocking_function(table_name)
-        ActiveRecord::Migration.execute <<-SQL
+        ActiveRecord::Migration.execute <<-SQL.squish
           CREATE TRIGGER id_safe_guard
             BEFORE UPDATE OF id ON #{table_name}
               FOR EACH ROW EXECUTE PROCEDURE id_safe_guard();
@@ -64,7 +64,7 @@ module PgRls
       end
 
       def append_trigger_function(table_name)
-        ActiveRecord::Migration.execute <<-SQL
+        ActiveRecord::Migration.execute <<-SQL.squish
           CREATE TRIGGER tenant_id_setter
             BEFORE INSERT OR UPDATE ON #{table_name}
               FOR EACH ROW EXECUTE PROCEDURE tenant_id_setter();
@@ -72,7 +72,7 @@ module PgRls
       end
 
       def add_rls_column_to_tenant_table(table_name)
-        ActiveRecord::Migration.execute <<-SQL
+        ActiveRecord::Migration.execute <<-SQL.squish
           ALTER TABLE #{table_name}
             ADD COLUMN IF NOT EXISTS
               tenant_id uuid UNIQUE DEFAULT gen_random_uuid();
@@ -80,7 +80,7 @@ module PgRls
       end
 
       def add_rls_column(table_name)
-        ActiveRecord::Migration.execute <<-SQL
+        ActiveRecord::Migration.execute <<-SQL.squish
           ALTER TABLE #{table_name}
             ADD COLUMN IF NOT EXISTS tenant_id uuid,
             ADD CONSTRAINT fk_#{PgRls.table_name}
@@ -91,7 +91,7 @@ module PgRls
       end
 
       def create_rls_policy(table_name, user = PgRls.username)
-        ActiveRecord::Migration.execute <<-SQL
+        ActiveRecord::Migration.execute <<-SQL.squish
           ALTER TABLE #{table_name} ENABLE ROW LEVEL SECURITY;
           CREATE POLICY #{table_name}_#{user}
             ON #{table_name}

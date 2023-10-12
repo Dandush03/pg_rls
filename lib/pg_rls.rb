@@ -35,7 +35,7 @@ module PgRls
 
     def setup
       ActiveRecord::ConnectionAdapters::AbstractAdapter.include PgRls::Schema::Statements
-      ActiveRecord::Base.ignored_columns = %w[tenant_id]
+      ActiveRecord::Base.ignored_columns += %w[tenant_id]
 
       yield self
     end
@@ -50,31 +50,23 @@ module PgRls
       self.as_db_admin = true
 
       yield
-    rescue NoMethodError => error
-      if error.message.include?('Rake:Module')
-        raise PgRls::Errors::RakeOnlyError
-      else
-        raise error
-      end
+    rescue NoMethodError => e
+      raise PgRls::Errors::RakeOnlyError if e.message.include?('Rake:Module')
+
+      raise e
     ensure
       self.as_db_admin = false
     end
 
-    def admin_execute(query = nil)
+    def admin_execute(query = nil, &)
       current_tenant = PgRls::Tenant.fetch
 
       self.as_db_admin = true
       establish_new_connection!
 
-      result = nil
+      return ensure_block_execution(&) if block_given?
 
-      if block_given?
-        result = yield
-      else
-        result = execute(query)
-      end
-
-      result if result.present?
+      execute(query)
     ensure
       self.as_db_admin = false
       establish_new_connection!
@@ -100,7 +92,7 @@ module PgRls
         allowed_search_fields = search_methods.map(&:to_s).intersection(main_model.column_names)
         Tenant.switch tenant.send(allowed_search_fields.first)
 
-        result << { tenant: tenant, result: yield(tenant) }
+        result << { tenant:, result: yield(tenant) }
       end
 
       PgRls::Tenant.reset_rls!
@@ -133,8 +125,11 @@ module PgRls
 
     private
 
-    def as_db_admin=(value)
-      @as_db_admin = value
+    attr_writer :as_db_admin
+
+    def ensure_block_execution
+      result = yield
+      result.presence
     end
   end
 

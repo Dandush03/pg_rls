@@ -7,11 +7,11 @@ module PgRls
       # Set PgRls Policies
       class Client
         def call(_job_class, msg, _queue, _redis_pool)
-          set_tenant_attribute!(msg)
+          load_tenant_attribute!(msg)
           yield
         end
 
-        def set_tenant_attribute!(msg)
+        def load_tenant_attribute!(msg)
           if PgRls.username == PgRls.current_db_username
             tenant = PgRls::Tenant.fetch!
             msg['pg_rls'] = tenant.id
