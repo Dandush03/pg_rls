@@ -86,13 +86,13 @@ module PgRls
       class_name.to_s.camelize.constantize
     end
 
-    def on_each_tenant
+    def on_each_tenant(&)
       result = []
       main_model.find_each do |tenant|
         allowed_search_fields = search_methods.map(&:to_s).intersection(main_model.column_names)
         Tenant.switch tenant.send(allowed_search_fields.first)
 
-        result << { tenant:, result: yield(tenant) }
+        result << { tenant:, result: ensure_block_execution(tenant, &) }
       end
 
       PgRls::Tenant.reset_rls!
@@ -127,8 +127,8 @@ module PgRls
 
     attr_writer :as_db_admin
 
-    def ensure_block_execution
-      result = yield
+    def ensure_block_execution(*, **)
+      result = yield(*, **)
       result.presence
     end
   end

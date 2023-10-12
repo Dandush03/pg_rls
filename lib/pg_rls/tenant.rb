@@ -49,6 +49,8 @@ module PgRls
       alias fetch! tenant!
 
       def reset_rls!
+        return if @tenant.blank?
+
         @tenant = nil
         PgRls.execute_rls_in_shards do |connection_class|
           connection_class.transaction do
