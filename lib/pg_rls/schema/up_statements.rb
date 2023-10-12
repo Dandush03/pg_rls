@@ -5,7 +5,7 @@ module PgRls
     # Up Schema Statements
     module UpStatements
       def create_rls_user(name: PgRls.username, password: PgRls.password, schema: 'public')
-        PgRls.execute <<-SQL
+        ActiveRecord::Migration.execute <<-SQL
           DO
           $do$
           BEGIN

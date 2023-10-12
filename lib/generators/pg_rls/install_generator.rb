@@ -46,7 +46,6 @@ module PgRls
         raise MissingORMError, orm_error_message unless options[:orm]
 
         inject_include_to_application
-        inject_include_to_application_record
         inject_include_to_application_controller
         template 'pg_rls.rb.tt', 'config/initializers/pg_rls.rb'
       end
@@ -56,14 +55,6 @@ module PgRls
 
         gsub_file(APPLICATION_PATH, /(#{Regexp.escape(APPLICATION_LINE)})/mi) do |match|
           "#{match}\n  config.active_record.schema_format = :sql\n"
-        end
-      end
-
-      def inject_include_to_application_record
-        return if aplication_record_already_included?
-
-        gsub_file(APPLICATION_RECORD_PATH, /(#{Regexp.escape(APPLICATION_RECORD_LINE)})/mi) do |match|
-          "#{match}\n  include PgRls::SecureConnection\n"
         end
       end
 
@@ -77,10 +68,6 @@ module PgRls
 
       def aplication_controller_already_included?
         File.readlines(APPLICATION_CONTROLLER_PATH).grep(/include PgRls::MultiTenancy/).any?
-      end
-
-      def aplication_record_already_included?
-        File.readlines(APPLICATION_RECORD_PATH).grep(/include PgRls::SecureConnection/).any?
       end
 
       def aplication_already_included?

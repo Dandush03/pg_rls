@@ -73,20 +73,18 @@ rails generate pg_rls:install company #=> where company eq tenant model name
 You can change company to anything you'd like, for example, `tenant`
 This will generate the model and inject all the required code
 
-For any new model that needs to be under rls, you can generate it by writing 
+For any new model that needs to be under rls, you can generate it by writing
 
 ```bash
 rails generate pg_rls user #=> where user eq model name
 ```
 and it will generate all the necesary information for you.
 
-You can swtich to another tenant by using 
+You can swtich to another tenant by using
 ```ruby
 PgRls::Tenant.switch :app #=> where app eq tenant name
 ```
 Don't forget to update how you want `PgRls` to find your tenant, you can set multiple options by modifying `api/config/initializers/pg_rls.rb` `search_methods`
-
-You can add the following configuration to your Database Config File to improve performance and remove `PgRls::SecureConnection` from `aplication_record.rb`
 
 ```yml
 # app/config/database.yml
@@ -146,7 +144,7 @@ The gem is available as open source under the terms of the [MIT License](https:/
 Everyone interacting in the PgRls project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/dandush03/pg_rls/blob/master/CODE_OF_CONDUCT.md).
 
 ## Note
-Currently we only support subdomain as a searcher but will soon integrate slug/domain and cookies support 
+Currently we only support subdomain as a searcher but will soon integrate slug/domain and cookies support
 we recommed the use of ``
 ## Show your support
 

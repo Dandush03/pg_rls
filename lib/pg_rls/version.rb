@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module PgRls
-  VERSION = '0.0.2.6.12'
+  VERSION = '2.0.0'
 end

@@ -32,7 +32,7 @@ module PgRls
     def switch_tenant_by_resource!(resource = nil)
       Tenant.switch!(resource)
       session[:_tenant] = resource
-    rescue PgRls::Errors::TenantNotFound, ActiveRecord::RecordNotFound
+    rescue PgRls::Errors::TenantNotFound
       Tenant.switch(session[:_tenant])
     rescue NoMethodError
       session[:tenant] = nil

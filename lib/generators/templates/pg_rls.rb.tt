@@ -20,13 +20,6 @@ PgRls.setup do |config|
   # config.username = Rails.application.credentials.dig(:database, :username)
   # config.password = Rails.application.credentials.dig(:database, :password)
 
-  ##
-  ## Uncomment this lines in order to enable solo mode
-  ## Solo mode is made for API mode where we don't want to repeate the same
-  ## data structure across many project, Solo mode create a hidden tenant table
-  ## which is autopopulated on each request
-  # config.solo_mode = true
-
   ## ------------------------------ Middleware SetResetConnection -----------------------------
   ## Uncomment this lines if you're using SetResetConnection Middleware
   #
