@@ -44,16 +44,18 @@ module PgRls
       @connection_class ||= ActiveRecord::Base
     end
 
+    def rake_tasks?
+      Rake.application.top_level_tasks.present? || ARGV.any? { |arg| arg =~ /rake|dsl/ }
+    rescue NoMethodError
+      false
+    end
+
     def admin_tasks_execute
-      raise PgRls::Errors::RakeOnlyError if Rake.application.top_level_tasks.blank?
+      raise PgRls::Errors::RakeOnlyError unless rake_tasks?
 
       self.as_db_admin = true
 
       yield
-    rescue NoMethodError => e
-      raise PgRls::Errors::RakeOnlyError if e.message.include?('Rake:Module')
-
-      raise e
     ensure
       self.as_db_admin = false
     end
@@ -76,9 +78,7 @@ module PgRls
     def establish_new_connection!
       execute_rls_in_shards do |connection_class, pool|
         connection_class.remove_connection
-        connection_class.establish_connection(
-          pool.db_config
-        )
+        connection_class.establish_connection(pool.db_config)
       end
     end
 
@@ -128,8 +128,7 @@ module PgRls
     attr_writer :as_db_admin
 
     def ensure_block_execution(*, **)
-      result = yield(*, **)
-      result.presence
+      yield(*, **).presence
     end
   end
 
