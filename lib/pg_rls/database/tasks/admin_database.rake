@@ -84,43 +84,43 @@ namespace :db do
 
   namespace :test do
     override_task grant_usage: :load_config do
-      PgRls.admin_tasks_execute_test_db do
+      PgRls.admin_tasks_execute do
         create_rls_user
       end
     end
 
     override_task create: :load_config do
-      PgRls.admin_tasks_execute_test_db do
+      PgRls.admin_tasks_execute do
         Rake::Task['db:test:create:original'].invoke
       end
     end
 
     override_task drop: :load_config do
-      PgRls.admin_tasks_execute_test_db do
+      PgRls.admin_tasks_execute do
         Rake::Task['db:test:drop:original'].invoke
       end
     end
 
     override_task prepare: :load_config do
-      PgRls.admin_tasks_execute_test_db do
+      PgRls.admin_tasks_execute do
         Rake::Task['db:test:prepare:original'].invoke
       end
     end
 
     override_task setup: :load_config do
-      PgRls.admin_tasks_execute_test_db do
+      PgRls.admin_tasks_execute do
         Rake::Task['db:test:setup:original'].invoke
       end
     end
 
     override_task purge: :load_config do
-      PgRls.admin_tasks_execute_test_db do
+      PgRls.admin_tasks_execute do
         Rake::Task['db:test:purge:original'].invoke
       end
     end
 
     override_task load_schema: :load_config do
-      PgRls.admin_tasks_execute_test_db do
+      PgRls.admin_tasks_execute do
         Rake::Task['db:test:load_schema:original'].invoke
       end
     end
