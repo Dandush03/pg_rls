@@ -62,20 +62,19 @@ module PgRls
 
     def admin_execute(query = nil, &)
       current_tenant = PgRls::Tenant.fetch
-
-      self.as_db_admin = true
-      establish_new_connection!
+      establish_new_connection!(admin: true)
 
       return ensure_block_execution(&) if block_given?
 
       execute(query)
     ensure
-      self.as_db_admin = false
       establish_new_connection!
       PgRls::Tenant.switch(current_tenant) if current_tenant.present?
     end
 
-    def establish_new_connection!
+    def establish_new_connection!(admin: false)
+      self.as_db_admin = admin
+
       execute_rls_in_shards do |connection_class, pool|
         connection_class.remove_connection
         connection_class.establish_connection(pool.db_config)
@@ -87,24 +86,20 @@ module PgRls
     end
 
     def on_each_tenant(&)
-      set_rls_connection! if admin_connection?
+      with_rls_connection do
+        result = []
 
-      result = []
-      main_model.find_each do |tenant|
-        allowed_search_fields = search_methods.map(&:to_s).intersection(main_model.column_names)
-        Tenant.switch tenant.send(allowed_search_fields.first)
+        main_model.find_each do |tenant|
+          allowed_search_fields = search_methods.map(&:to_s).intersection(main_model.column_names)
+          Tenant.switch tenant.send(allowed_search_fields.first)
 
-        result << { tenant:, result: ensure_block_execution(tenant, &) }
+          result << { tenant:, result: ensure_block_execution(tenant, &) }
+        end
+
+        PgRls::Tenant.reset_rls!
+
+        result
       end
-
-      PgRls::Tenant.reset_rls!
-
-      result
-    end
-
-    def set_rls_connection!
-      self.as_db_admin = false
-      establish_new_connection!
     end
 
     def execute_rls_in_shards
@@ -137,6 +132,15 @@ module PgRls
     private
 
     attr_writer :as_db_admin
+
+    def with_rls_connection(&)
+      reset_connection = admin_connection?
+
+      establish_new_connection! if reset_connection
+      ensure_block_execution(&)
+    ensure
+      establish_new_connection!(admin: true) if reset_connection
+    end
 
     def ensure_block_execution(*, **)
       yield(*, **).presence
