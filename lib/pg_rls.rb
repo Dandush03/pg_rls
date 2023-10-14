@@ -72,7 +72,7 @@ module PgRls
     ensure
       self.as_db_admin = false
       establish_new_connection!
-      PgRls::Tenant.switch!(current_tenant) if current_tenant.present?
+      PgRls::Tenant.switch(current_tenant) if current_tenant.present?
     end
 
     def establish_new_connection!

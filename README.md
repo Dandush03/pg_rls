@@ -120,9 +120,8 @@ config.before(:suite) do
   # Create the tenant which in this example is company and we are using FactoryBot
   FactoryBot.create(:company, subdomain: 'app')
   # In this default case our initializer is set to search by subdomain so will use it
-  PgRls::Tenant.switch :app if PgRls.username != PgRls.current_db_username
+  PgRls::Tenant.switch :app
 end
-
 ...
 ```
 ## Development
