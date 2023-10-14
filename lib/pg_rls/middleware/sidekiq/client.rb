@@ -12,11 +12,11 @@ module PgRls
         end
 
         def load_tenant_attribute!(msg)
-          if PgRls.username == PgRls.current_db_username
+          if PgRls.admin_connection?
+            msg['admin'] = true
+          else
             tenant = PgRls::Tenant.fetch!
             msg['pg_rls'] = tenant.id
-          else
-            msg['admin'] = true
           end
         end
       end
