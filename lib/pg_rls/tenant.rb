@@ -81,6 +81,8 @@ module PgRls
       end
 
       def find_tenant(resource)
+        raise PgRls::Errors::AdminUsername if admin_username?
+
         reset_rls!
 
         PgRls.search_methods.each do |method|
@@ -91,6 +93,10 @@ module PgRls
         end
 
         raise PgRls::Errors::TenantNotFound if tenant.blank?
+      end
+
+      def admin_username?
+        PgRls.username != PgRls.current_db_username
       end
 
       def find_tenant_by_method(resource, method)
