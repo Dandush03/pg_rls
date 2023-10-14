@@ -21,3 +21,6 @@ Metrics/BlockLength:
 Security/MarshalLoad:
   Exclude:
   - 'lib/pg_rls/middleware/set_reset_connection.rb'
+Metrics/ModuleLength:
+  Exclude:
+  - 'lib/pg_rls.rb'

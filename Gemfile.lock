@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pg_rls (2.0.0)
+    pg_rls (0.1.1)
       bundler (~> 2.2)
 
 GEM

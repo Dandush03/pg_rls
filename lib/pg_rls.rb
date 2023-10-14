@@ -87,6 +87,8 @@ module PgRls
     end
 
     def on_each_tenant(&)
+      set_rls_connection! if admin_connection?
+
       result = []
       main_model.find_each do |tenant|
         allowed_search_fields = search_methods.map(&:to_s).intersection(main_model.column_names)
@@ -98,6 +100,11 @@ module PgRls
       PgRls::Tenant.reset_rls!
 
       result
+    end
+
+    def set_rls_connection!
+      self.as_db_admin = false
+      establish_new_connection!
     end
 
     def execute_rls_in_shards
@@ -121,6 +128,10 @@ module PgRls
 
     def as_db_admin?
       @as_db_admin || false
+    end
+
+    def admin_connection?
+      current_db_username != username
     end
 
     private
