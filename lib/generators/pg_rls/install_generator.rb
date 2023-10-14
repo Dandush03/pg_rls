@@ -32,13 +32,13 @@ module PgRls
       hook_for :orm, required: true
 
       def orm_error_message
-        <<-ERROR.strip_heredoc
-        An ORM must be set to install PgRls in your application.
-        Be sure to have an ORM like Active Record or loaded in your
-        app or configure your own at `config/application.rb`.
-          config.generators do |g|
-            g.orm :your_orm_gem
-          end
+        <<~ERROR
+          An ORM must be set to install PgRls in your application.
+          Be sure to have an ORM like Active Record or loaded in your
+          app or configure your own at `config/application.rb`.
+            config.generators do |g|
+              g.orm :your_orm_gem
+            end
         ERROR
       end
 
@@ -46,7 +46,6 @@ module PgRls
         raise MissingORMError, orm_error_message unless options[:orm]
 
         inject_include_to_application
-        inject_include_to_application_record
         inject_include_to_application_controller
         template 'pg_rls.rb.tt', 'config/initializers/pg_rls.rb'
       end
@@ -54,23 +53,15 @@ module PgRls
       def inject_include_to_application
         return if aplication_already_included?
 
-        gsub_file(APPLICATION_PATH, /(#{Regexp.escape(APPLICATION_LINE)})/mi) do |match|
+        gsub_file(APPLICATION_PATH, /(#{Regexp.escape(APPLICATION_LINE)})/mio) do |match|
           "#{match}\n  config.active_record.schema_format = :sql\n"
-        end
-      end
-
-      def inject_include_to_application_record
-        return if aplication_record_already_included?
-
-        gsub_file(APPLICATION_RECORD_PATH, /(#{Regexp.escape(APPLICATION_RECORD_LINE)})/mi) do |match|
-          "#{match}\n  include PgRls::SecureConnection\n"
         end
       end
 
       def inject_include_to_application_controller
         return if aplication_controller_already_included?
 
-        gsub_file(APPLICATION_CONTROLLER_PATH, /(#{Regexp.escape(APPLICATION_CONTROLLER_LINE)})/mi) do |match|
+        gsub_file(APPLICATION_CONTROLLER_PATH, /(#{Regexp.escape(APPLICATION_CONTROLLER_LINE)})/mio) do |match|
           "#{match}\n  include PgRls::MultiTenancy\n"
         end
       end
@@ -79,16 +70,12 @@ module PgRls
         File.readlines(APPLICATION_CONTROLLER_PATH).grep(/include PgRls::MultiTenancy/).any?
       end
 
-      def aplication_record_already_included?
-        File.readlines(APPLICATION_RECORD_PATH).grep(/include PgRls::SecureConnection/).any?
-      end
-
       def aplication_already_included?
         File.readlines(APPLICATION_PATH).grep(/config.active_record.schema_format = :sql/).any?
       end
 
       def initialize_error_text
-        <<-ERROR.strip_heredoc
+        <<~ERROR
           TO DO
         ERROR
       end

@@ -20,10 +20,18 @@ PgRls.setup do |config|
   # config.username = Rails.application.credentials.dig(:database, :username)
   # config.password = Rails.application.credentials.dig(:database, :password)
 
+  ## ------------------------------ Middleware SetResetConnection -----------------------------
+  ## Uncomment this lines if you're using SetResetConnection Middleware
+  #
+  # config.session_store_server = Rails.application.config_for(:redis).session
+  #
+  ## Uncomment this line if you're not using warden as your authentication system or if you
+  ## changed the default warden key. Devise, uses warden authentication.
+  # config.session_store_default_warden_key = '2'
+  #
+  ## Uncomment this line if you're setting a diferent session key than stablished under your
+  ## redis server configuration
+  # config.session_key_prefix = '_hub_session'
   ##
-  ## Uncomment this lines in order to enable solo mode
-  ## Solo mode is made for API mode where we don't want to repeate the same
-  ## data structure across many project, Solo mode create a hidden tenant table
-  ## which is autopopulated on each request
-  # config.solo_mode = true
+  ## ------------------------------ Middleware SetResetConnection -----------------------------
 end

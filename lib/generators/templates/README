@@ -2,11 +2,9 @@ README
 ===============================================================================
 WARNING!!
 
-PgRls required that ActiveRecord format migration as SQL 
+PgRls required that ActiveRecord format migration as SQL
 
 Once you remove a tenant all of his data would be removed as well
-
-PgRls::SecureConnection was included to your ApplicationRecord do not remove it
 
 If you're setting a custom user, make sure to regenerate the structure.sql since
 Postgresql policies are created on each user

@@ -5,13 +5,11 @@ require 'forwardable'
 require_relative 'pg_rls/version'
 require_relative 'pg_rls/database/prepared'
 require_relative 'pg_rls/schema/statements'
-require_relative 'pg_rls/schema/solo/statements'
-require_relative 'pg_rls/solo/tenant'
+require_relative 'pg_rls/database/configurations'
 require_relative 'pg_rls/tenant'
-require_relative 'pg_rls/secure_connection'
 require_relative 'pg_rls/multi_tenancy'
 require_relative 'pg_rls/railtie' if defined?(Rails)
-require_relative 'pg_rls/errors/tenant_not_found'
+require_relative 'pg_rls/errors/index'
 
 # PostgreSQL Row Level Security
 module PgRls
@@ -21,13 +19,13 @@ module PgRls
   class << self
     extend Forwardable
 
-    WRITER_METHODS = %i[table_name class_name search_methods establish_default_connection].freeze
+    WRITER_METHODS = %i[table_name class_name search_methods].freeze
     READER_METHODS = %i[
-      connection_class database_configuration execute table_name class_name search_methods establish_default_connection
+      connection_class execute table_name class_name search_methods
     ].freeze
     DELEGATORS_METHODS = %i[
-      connection_class database_configuration execute table_name search_methods
-      class_name all_tenants main_model establish_default_connection
+      connection_class execute table_name search_methods
+      class_name main_model
     ].freeze
 
     attr_writer(*WRITER_METHODS)
@@ -36,99 +34,103 @@ module PgRls
     def_delegators(*DELEGATORS_METHODS)
 
     def setup
+      ActiveRecord::ConnectionAdapters::AbstractAdapter.include PgRls::Schema::Statements
+      ActiveRecord::Base.ignored_columns += %w[tenant_id]
+
       yield self
-    end
-
-    def solo_mode?
-      solo_mode
-    end
-
-    def database_connection_file
-      file = File.read(Rails.root.join('config/database.yml'))
-
-      YAML.safe_load(ERB.new(file).result, aliases: true)
     end
 
     def connection_class
       @connection_class ||= ActiveRecord::Base
     end
 
-    def establish_new_connection
-      ActiveRecord::Base.connection.disconnect! if ActiveRecord::Base.connection_pool.connected?
-
-      connection_class.establish_connection(**database_configuration)
+    def rake_tasks?
+      Rake.application.top_level_tasks.present? || ARGV.any? { |arg| arg =~ /rake|dsl/ }
+    rescue NoMethodError
+      false
     end
 
-    def admin_execute(query = nil)
+    def admin_tasks_execute
+      raise PgRls::Errors::RakeOnlyError unless rake_tasks?
+
       self.as_db_admin = true
-      establish_new_connection
-      return yield if block_given?
+
+      yield
+    ensure
+      self.as_db_admin = false
+    end
+
+    def admin_execute(query = nil, &)
+      current_tenant = PgRls::Tenant.fetch
+
+      self.as_db_admin = true
+      establish_new_connection!
+
+      return ensure_block_execution(&) if block_given?
 
       execute(query)
     ensure
       self.as_db_admin = false
-      establish_new_connection
+      establish_new_connection!
+      PgRls::Tenant.switch(current_tenant) if current_tenant.present?
     end
 
-    def establish_default_connection=(value)
-      ENV['AS_DB_ADMIN'] = value.to_s
-      @default_connection = value
-    end
-
-    def default_connection?
-      as_db_admin
+    def establish_new_connection!
+      execute_rls_in_shards do |connection_class, pool|
+        connection_class.remove_connection
+        connection_class.establish_connection(pool.db_config)
+      end
     end
 
     def main_model
       class_name.to_s.camelize.constantize
     end
 
-    def all_tenants
-      main_model.all.each do |tenant|
+    def on_each_tenant(&)
+      result = []
+      main_model.find_each do |tenant|
         allowed_search_fields = search_methods.map(&:to_s).intersection(main_model.column_names)
         Tenant.switch tenant.send(allowed_search_fields.first)
 
-        yield(tenant) if block_given?
-      end
-    end
-
-    def current_connection_username
-      connection_class.connection_db_config.configuration_hash[:username]
-    end
-
-    def execute(query)
-      ActiveRecord::Migration.execute(query)
-    end
-
-    def database_default_configuration
-      connection_class.connection.pool.db_config.configuration_hash
-    rescue ActiveRecord::NoDatabaseError
-      connection_class.connection_db_config.configuration_hash
-    end
-
-    def database_admin_configuration
-      environment_db_configuration = database_connection_file[Rails.env]
-
-      return environment_db_configuration if environment_db_configuration['username'].present?
-
-      environment_db_configuration.first.last
-    end
-
-    def database_configuration
-      return database_admin_configuration if default_connection?
-
-      current_configuration = database_default_configuration.deep_dup
-      current_configuration.tap do |config|
-        config[:username] = PgRls.username
-        config[:password] = PgRls.password
+        result << { tenant:, result: ensure_block_execution(tenant, &) }
       end
 
-      current_configuration.freeze
+      PgRls::Tenant.reset_rls!
+
+      result
+    end
+
+    def execute_rls_in_shards
+      connection_pool_list = PgRls.connection_class.connection_handler.connection_pool_list
+      result = []
+
+      connection_pool_list.each do |pool|
+        pool.connection.transaction do
+          Rails.logger.info("Executing in #{pool.connection.connection_class}")
+
+          result << yield(pool.connection.connection_class, pool)
+        end
+      end
+
+      result
+    end
+
+    def current_db_username
+      ActiveRecord::Base.connection_db_config.configuration_hash[:username]
+    end
+
+    def as_db_admin?
+      @as_db_admin || false
+    end
+
+    private
+
+    attr_writer :as_db_admin
+
+    def ensure_block_execution(*, **)
+      yield(*, **).presence
     end
   end
-
-  mattr_accessor :as_db_admin
-  @@as_db_admin = false
 
   mattr_accessor :table_name
   @@table_name = 'companies'
@@ -142,8 +144,8 @@ module PgRls
   mattr_accessor :password
   @@password = 'password'
 
-  mattr_accessor :solo_mode
-  @@solo_mode = false
+  mattr_accessor :test_inline_tenant
+  @@test_inline_tenant = false
 
   mattr_accessor :search_methods
   @@search_methods = %i[subdomain id tenant_id]
