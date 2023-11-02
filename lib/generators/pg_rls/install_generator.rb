@@ -16,6 +16,8 @@ module PgRls
         end
         super
       end
+      ENVIRONMENT_PATH = 'config/environment.rb'
+
       APPLICATION_LINE = 'class Application < Rails::Application'
       APPLICATION_PATH = 'config/application.rb'
 
@@ -50,6 +52,12 @@ module PgRls
         template 'pg_rls.rb.tt', 'config/initializers/pg_rls.rb'
       end
 
+      def inject_include_to_environment
+        return if environment_already_included?
+
+        prepend_to_file(ENVIRONMENT_PATH, "\nrequire_relative 'initializers/pg_rls'\n")
+      end
+
       def inject_include_to_application
         return if aplication_already_included?
 
@@ -72,6 +80,10 @@ module PgRls
 
       def aplication_already_included?
         File.readlines(APPLICATION_PATH).grep(/config.active_record.schema_format = :sql/).any?
+      end
+
+      def environment_already_included?
+        File.readlines(ENVIRONMENT_PATH).grep(/require_relative 'initializers\/pg_rls'/).any?
       end
 
       def initialize_error_text
