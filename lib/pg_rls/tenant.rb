@@ -31,8 +31,7 @@ module PgRls
 
         connection = PgRls.connection_class.connection_pool.checkout
         current_tenant = find_tenant(resource)
-        connection.execute(format('SET rls.tenant_id = %s',
-                                  connection_class.connection.quote(current_tenant.tenant_id)))
+        connection.execute("SET rls.tenant_id = '#{current_tenant.tenant_id}'")
 
         yield(tenant).presence if block_given?
       ensure
