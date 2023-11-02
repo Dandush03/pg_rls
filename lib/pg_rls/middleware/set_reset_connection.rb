@@ -58,6 +58,8 @@ module PgRls
         raise e unless rails_active_storage_request?(env)
 
         [404, { 'Content-Type' => 'text/plain' }, ['Could not find asset']]
+      ensure
+        PgRls::Tenant.reset_rls! unless PgRls.test_inline_tenant == true
       end
 
       def load_session_cookie_value(env)
