@@ -81,6 +81,8 @@ module PgRls
         end
 
         tenant
+      rescue NoMethodError
+        raise PgRls::Errors::TenantNotFound
       end
 
       def find_tenant(resource)
