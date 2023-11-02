@@ -27,16 +27,13 @@ module PgRls
 
 
       def with_tenant!(resource)
-        PgRls.main_model.ignored_columns = []
+        PgRls.main_model.connection_pool.with_connection do
+          tenant = switch_tenant!(resource)
 
-        connection = PgRls.connection_class.connection_pool.checkout
-        current_tenant = find_tenant(resource)
-        connection.execute("SET rls.tenant_id = '#{current_tenant.tenant_id}'")
-
-        yield(tenant).presence if block_given?
-      ensure
-        connection.execute('RESET rls.tenant_id')
-        ActiveRecord::Base.connection_pool.checkin(connection)
+          yield(tenant).presence if block_given?
+        ensure
+          reset_rls! unless PgRls.test_inline_tenant == true
+        end
       end
 
       def fetch
@@ -57,10 +54,23 @@ module PgRls
       def reset_rls!
         return if @tenant.blank?
 
-        @tenant = nil
-        PgRls.execute_rls_in_shards do |connection_class|
-          connection_class.transaction do
-            connection_class.connection.execute('RESET rls.tenant_id')
+        retries = 3
+        begin
+          @tenant = nil
+          PgRls.execute_rls_in_shards do |connection_class|
+            connection_class.transaction do
+              connection_class.connection.execute('RESET rls.tenant_id')
+            end
+          end
+        rescue => e
+          if retries > 0
+            retries -= 1
+            retry
+          else
+            # Log the error and alert the developers
+            Rails.logger.error "Failed to reset RLS: #{e.message}"
+            # Optionally, raise the error to halt execution
+            raise
           end
         end
 
@@ -101,8 +111,6 @@ module PgRls
         end
 
         raise PgRls::Errors::TenantNotFound if tenant.blank?
-
-        tenant
       end
 
       def find_tenant_by_method(resource, method)
