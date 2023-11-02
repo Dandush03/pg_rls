@@ -27,13 +27,17 @@ module PgRls
 
 
       def with_tenant!(resource)
-        PgRls.main_model.connection_pool.with_connection do
-          tenant = switch_tenant!(resource)
+        PgRls.main_model.ignored_columns = []
 
-          yield(tenant) if block_given?
-        ensure
-          reset_rls! unless PgRls.test_inline_tenant == true
-        end
+        connection = PgRls.connection_class.connection_pool.checkout
+        current_tenant = find_tenant(resource)
+        connection.execute(format('SET rls.tenant_id = %s',
+                                  connection_class.connection.quote(current_tenant.tenant_id)))
+
+        yield(tenant).presence if block_given?
+      ensure
+        connection.execute('RESET rls.tenant_id')
+        ActiveRecord::Base.connection_pool.checkin(connection)
       end
 
       def fetch
@@ -98,6 +102,8 @@ module PgRls
         end
 
         raise PgRls::Errors::TenantNotFound if tenant.blank?
+
+        tenant
       end
 
       def find_tenant_by_method(resource, method)
