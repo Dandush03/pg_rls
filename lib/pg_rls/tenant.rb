@@ -40,14 +40,14 @@ module PgRls
         nil
       end
 
-      def tenant!
+      def fetch!
         PgRls.main_model.find_by!(
           tenant_id: PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
         )
       end
-      alias fetch! tenant!
+      alias fetch!
 
       def reset_rls!
         PgRls.execute_rls_in_shards do |connection_class|
