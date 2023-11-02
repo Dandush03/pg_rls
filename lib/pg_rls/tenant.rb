@@ -4,15 +4,9 @@ module PgRls
   # Tenant Controller
   module Tenant
     class << self
-      attr_reader :tenant
-
       def switch(resource)
-        tenant = switch_tenant!(resource)
-
-        "RLS changed to '#{tenant.id}'"
-      rescue StandardError => e
-        Rails.logger.info('connection was not made')
-        Rails.logger.info(e)
+        switch!(resource)
+      rescue PgRls::Errors::TenantNotFound
         nil
       end
 
@@ -22,15 +16,18 @@ module PgRls
         "RLS changed to '#{tenant.id}'"
       rescue StandardError => e
         Rails.logger.info('connection was not made')
-        raise e
+        raise PgRls::Errors::TenantNotFound
       end
 
-      def with_tenant!(resource)
-        tenant = switch_tenant!(resource)
 
-        yield(tenant) if block_given?
-      ensure
-        reset_rls! unless PgRls.test_inline_tenant == true
+      def with_tenant!(resource)
+        PgRls.main_model.connection_pool.with_connection do
+          tenant = switch_tenant!(resource)
+
+          yield(tenant).presence if block_given?
+        ensure
+          reset_rls! unless PgRls.test_inline_tenant == true
+        end
       end
 
       def fetch
@@ -39,19 +36,15 @@ module PgRls
         nil
       end
 
-      def tenant!
-        @tenant ||= PgRls.main_model.find_by!(
+      def fetch!
+        PgRls.main_model.find_by!(
           tenant_id: PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
         )
       end
-      alias fetch! tenant!
 
       def reset_rls!
-        return if @tenant.blank?
-
-        @tenant = nil
         PgRls.execute_rls_in_shards do |connection_class|
           connection_class.transaction do
             connection_class.connection.execute('RESET rls.tenant_id')
@@ -68,7 +61,7 @@ module PgRls
         PgRls.main_model.ignored_columns = []
         # rubocop: enable Rails/IgnoredColumnsAssignment
 
-        find_tenant(resource)
+        tenant = find_tenant(resource)
 
         PgRls.execute_rls_in_shards do |connection_class|
           connection_class.transaction do
@@ -78,6 +71,8 @@ module PgRls
         end
 
         tenant
+      rescue NoMethodError
+        raise PgRls::Errors::TenantNotFound
       end
 
       def find_tenant(resource)
@@ -85,14 +80,17 @@ module PgRls
 
         reset_rls!
 
-        PgRls.search_methods.each do |method|
-          break if @tenant.present?
+        tenant = nil
 
-          @method = method
-          @tenant = find_tenant_by_method(resource, method)
+        PgRls.search_methods.each do |method|
+          break if tenant.present?
+
+          tenant = find_tenant_by_method(resource, method)
         end
 
         raise PgRls::Errors::TenantNotFound if tenant.blank?
+
+        tenant
       end
 
       def find_tenant_by_method(resource, method)
