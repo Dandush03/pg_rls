@@ -25,10 +25,13 @@ module PgRls
         raise e
       end
 
-      def with_tenant!(resource)
-        tenant = switch_tenant!(resource)
 
-        yield(tenant) if block_given?
+      def with_tenant!(resource)
+        PgRls.main_model.connection_pool.with_connection do
+          tenant = switch_tenant!(resource)
+
+          yield(tenant) if block_given?
+        end
       ensure
         reset_rls! unless PgRls.test_inline_tenant == true
       end
