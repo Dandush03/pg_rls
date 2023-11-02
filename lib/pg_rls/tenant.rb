@@ -5,12 +5,8 @@ module PgRls
   module Tenant
     class << self
       def switch(resource)
-        tenant = switch_tenant!(resource)
-
-        "RLS changed to '#{tenant.id}'"
-      rescue StandardError => e
-        Rails.logger.info('connection was not made')
-        Rails.logger.info(e)
+        switch!(resource)
+      rescue PgRls::Errors::TenantNotFound
         nil
       end
 
@@ -20,7 +16,7 @@ module PgRls
         "RLS changed to '#{tenant.id}'"
       rescue StandardError => e
         Rails.logger.info('connection was not made')
-        raise e
+        raise PgRls::Errors::TenantNotFound
       end
 
 
