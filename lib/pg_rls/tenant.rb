@@ -54,23 +54,10 @@ module PgRls
       def reset_rls!
         return if @tenant.blank?
 
-        retries = 3
-        begin
-          @tenant = nil
-          PgRls.execute_rls_in_shards do |connection_class|
-            connection_class.transaction do
-              connection_class.connection.execute('RESET rls.tenant_id')
-            end
-          end
-        rescue => e
-          if retries > 0
-            retries -= 1
-            retry
-          else
-            # Log the error and alert the developers
-            Rails.logger.error "Failed to reset RLS: #{e.message}"
-            # Optionally, raise the error to halt execution
-            raise
+        @tenant = nil
+        PgRls.execute_rls_in_shards do |connection_class|
+          connection_class.transaction do
+            connection_class.connection.execute('RESET rls.tenant_id')
           end
         end
 
