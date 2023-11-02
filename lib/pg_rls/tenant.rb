@@ -57,7 +57,9 @@ module PgRls
         @tenant = nil
         PgRls.execute_rls_in_shards do |connection_class|
           connection_class.transaction do
-            connection_class.connection.execute('RESET rls.tenant_id')
+            connection = connection_class.connection
+            connection.execute('RESET rls.tenant_id')
+            ActiveRecord::Base.connection_pool.disconnect! { |conn| conn == connection }
           end
         end
 
