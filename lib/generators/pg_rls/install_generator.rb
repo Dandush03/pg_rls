@@ -16,6 +16,7 @@ module PgRls
         end
         super
       end
+      ENVIRONMENT_LINE = 'Rails.application.initialize!'
       ENVIRONMENT_PATH = 'config/environment.rb'
 
       APPLICATION_LINE = 'class Application < Rails::Application'
@@ -55,7 +56,9 @@ module PgRls
       def inject_include_to_environment
         return if environment_already_included?
 
-        prepend_to_file(ENVIRONMENT_PATH, "\nrequire_relative 'initializers/pg_rls'\n")
+        gsub_file(ENVIRONMENT_PATH, /(#{Regexp.escape(ENVIRONMENT_LINE)})/mio) do |match|
+          "require_relative 'initializers/pg_rls'\n#{match}"
+        end
       end
 
       def inject_include_to_application
