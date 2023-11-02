@@ -4,8 +4,6 @@ module PgRls
   # Tenant Controller
   module Tenant
     class << self
-      attr_reader :tenant
-
       def switch(resource)
         tenant = switch_tenant!(resource)
 
@@ -43,7 +41,7 @@ module PgRls
       end
 
       def tenant!
-        @tenant ||= PgRls.main_model.find_by!(
+        PgRls.main_model.find_by!(
           tenant_id: PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
@@ -52,9 +50,6 @@ module PgRls
       alias fetch! tenant!
 
       def reset_rls!
-        return if @tenant.blank?
-
-        @tenant = nil
         PgRls.execute_rls_in_shards do |connection_class|
           connection_class.transaction do
             connection_class.connection.execute('RESET rls.tenant_id')
@@ -71,7 +66,7 @@ module PgRls
         PgRls.main_model.ignored_columns = []
         # rubocop: enable Rails/IgnoredColumnsAssignment
 
-        find_tenant(resource)
+        tenant = find_tenant(resource)
 
         PgRls.execute_rls_in_shards do |connection_class|
           connection_class.transaction do
@@ -91,10 +86,9 @@ module PgRls
         reset_rls!
 
         PgRls.search_methods.each do |method|
-          break if @tenant.present?
+          break if tenant.present?
 
-          @method = method
-          @tenant = find_tenant_by_method(resource, method)
+          tenant = find_tenant_by_method(resource, method)
         end
 
         raise PgRls::Errors::TenantNotFound if tenant.blank?
