@@ -31,9 +31,9 @@ module PgRls
           tenant = switch_tenant!(resource)
 
           yield(tenant) if block_given?
+        ensure
+          reset_rls! unless PgRls.test_inline_tenant == true
         end
-      ensure
-        reset_rls! unless PgRls.test_inline_tenant == true
       end
 
       def fetch
