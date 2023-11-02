@@ -85,6 +85,8 @@ module PgRls
 
         reset_rls!
 
+        tenant = nil
+
         PgRls.search_methods.each do |method|
           break if tenant.present?
 
@@ -92,6 +94,8 @@ module PgRls
         end
 
         raise PgRls::Errors::TenantNotFound if tenant.blank?
+
+        tenant
       end
 
       def find_tenant_by_method(resource, method)
