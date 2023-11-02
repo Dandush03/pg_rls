@@ -47,7 +47,6 @@ module PgRls
           ).getvalue(0, 0)
         )
       end
-      alias fetch!
 
       def reset_rls!
         PgRls.execute_rls_in_shards do |connection_class|
