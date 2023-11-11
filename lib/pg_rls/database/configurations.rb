@@ -13,6 +13,8 @@ module ActiveRecord
       end
 
       def configuration_hash
+        reset_pg_rls_configuration if db_changed?
+
         return admin_configuration_hash if PgRls.as_db_admin?
 
         rls_configuration_hash
@@ -27,6 +29,15 @@ module ActiveRecord
           config[:username] = PgRls.username
           config[:password] = PgRls.password
         end.freeze
+      end
+
+      def db_changed?
+        admin_configuration_hash[:database] != @configuration_hash[:database]
+      end
+
+      def reset_pg_rls_configuration
+        @rls_configuration_hash = nil
+        @admin_configuration_hash = nil
       end
     end
   end
