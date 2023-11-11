@@ -24,3 +24,6 @@ Security/MarshalLoad:
 Metrics/ModuleLength:
   Exclude:
   - 'lib/pg_rls.rb'
+Naming/AccessorMethodName:
+  Exclude:
+  - 'lib/pg_rls/tenant.rb'

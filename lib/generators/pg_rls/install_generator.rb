@@ -86,7 +86,7 @@ module PgRls
       end
 
       def environment_already_included?
-        File.readlines(ENVIRONMENT_PATH).grep(/require_relative 'initializers\/pg_rls'/).any?
+        File.readlines(ENVIRONMENT_PATH).grep(%r{require_relative 'initializers/pg_rls'}).any?
       end
 
       def initialize_error_text

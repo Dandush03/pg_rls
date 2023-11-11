@@ -6,27 +6,24 @@ require_relative 'pg_rls/version'
 require_relative 'pg_rls/database/prepared'
 require_relative 'pg_rls/schema/statements'
 require_relative 'pg_rls/database/configurations'
+require_relative 'pg_rls/database/admin_statements'
 require_relative 'pg_rls/tenant'
 require_relative 'pg_rls/multi_tenancy'
 require_relative 'pg_rls/railtie' if defined?(Rails)
 require_relative 'pg_rls/errors/index'
 
+ActiveRecord::Migrator.prepend PgRls::Admin::ActiveRecord::Migrator
+ActiveRecord::Tasks::DatabaseTasks.prepend PgRls::Admin::ActiveRecord::Tasks::DatabaseTasks
+ActiveRecord::ConnectionAdapters::AbstractAdapter.include PgRls::Schema::Statements
 # PostgreSQL Row Level Security
 module PgRls
   class Error < StandardError; end
-  SECURE_USERNAME = 'app_user'
-
   class << self
     extend Forwardable
 
     WRITER_METHODS = %i[table_name class_name search_methods].freeze
-    READER_METHODS = %i[
-      connection_class execute table_name class_name search_methods
-    ].freeze
-    DELEGATORS_METHODS = %i[
-      connection_class execute table_name search_methods
-      class_name main_model
-    ].freeze
+    READER_METHODS = %i[connection_class execute table_name class_name search_methods].freeze
+    DELEGATORS_METHODS = %i[connection_class execute table_name search_methods class_name main_model].freeze
 
     attr_writer(*WRITER_METHODS)
     attr_reader(*READER_METHODS)
@@ -34,7 +31,6 @@ module PgRls
     def_delegators(*DELEGATORS_METHODS)
 
     def setup
-      ActiveRecord::ConnectionAdapters::AbstractAdapter.include PgRls::Schema::Statements
       ActiveRecord::Base.ignored_columns += %w[tenant_id]
 
       yield self
@@ -44,32 +40,11 @@ module PgRls
       @connection_class ||= ActiveRecord::Base
     end
 
-    def rake_tasks?
-      Rake.application.top_level_tasks.present? || ARGV.any? { |arg| arg =~ /rake|dsl/ }
-    rescue NoMethodError
-      false
-    end
-
-    def admin_tasks_execute
-      raise PgRls::Errors::RakeOnlyError unless rake_tasks?
-
-      self.as_db_admin = true
-
-      yield
-    ensure
-      self.as_db_admin = false
-    end
-
     def admin_execute(query = nil, &)
-      current_tenant = PgRls::Tenant.fetch
-      establish_new_connection!(admin: true)
-
-      return ensure_block_execution(&) if block_given?
-
-      execute(query)
+      current_tenant, reset_rls_connection = establish_admin_connection
+      execute_query_or_block(query, &)
     ensure
-      establish_new_connection!
-      PgRls::Tenant.switch(current_tenant) if current_tenant.present?
+      reset_connection_if_needed(current_tenant, reset_rls_connection)
     end
 
     def establish_new_connection!(admin: false)
@@ -142,8 +117,36 @@ module PgRls
       establish_new_connection!(admin: true) if reset_connection
     end
 
+    def establish_admin_connection
+      reset_rls_connection = false
+      current_tenant = nil
+
+      unless admin_connection?
+        reset_rls_connection = true
+        current_tenant = PgRls::Tenant.fetch
+        establish_new_connection!(admin: true)
+      end
+
+      [current_tenant, reset_rls_connection]
+    end
+
     def ensure_block_execution(*, **)
       yield(*, **).presence
+    end
+
+    def execute_query_or_block(query = nil, &)
+      if block_given?
+        ensure_block_execution(&)
+      else
+        execute(query)
+      end
+    end
+
+    def reset_connection_if_needed(current_tenant, reset_rls_connection)
+      return unless reset_rls_connection
+
+      establish_new_connection!
+      PgRls::Tenant.switch(current_tenant) if current_tenant.present?
     end
   end
 

@@ -1,8 +1,7 @@
 PATH
   remote: .
   specs:
-    pg_rls (0.1.1)
-      bundler (~> 2.2)
+    pg_rls (0.1.4)
 
 GEM
   remote: https://rubygems.org/
@@ -284,4 +283,4 @@ RUBY VERSION
    ruby 3.2.2p53
 
 BUNDLED WITH
-   2.3.15
+   2.4.22

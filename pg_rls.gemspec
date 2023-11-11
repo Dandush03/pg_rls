@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'pg_rls'
   spec.version       = PgRls::VERSION
   spec.authors       = ['Daniel Laloush']
-  spec.email         = ['daniel.laloush@influitive.com']
+  spec.email         = ['d.laloush@outlook.com']
 
   spec.summary       = 'Write a short summary, because RubyGems requires one.'
   spec.description = <<-MSG
@@ -30,7 +30,6 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
-  spec.add_dependency 'bundler', '~> 2.2'
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
   spec.metadata = {

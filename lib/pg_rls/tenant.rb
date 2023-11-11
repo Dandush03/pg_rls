@@ -14,11 +14,10 @@ module PgRls
         tenant = switch_tenant!(resource)
 
         "RLS changed to '#{tenant.id}'"
-      rescue StandardError => e
+      rescue StandardError
         Rails.logger.info('connection was not made')
         raise PgRls::Errors::TenantNotFound
       end
-
 
       def with_tenant!(resource)
         PgRls.main_model.connection_pool.with_connection do
@@ -54,6 +53,15 @@ module PgRls
         nil
       end
 
+      def set_rls!(tenant_id)
+        PgRls.execute_rls_in_shards do |connection_class|
+          connection_class.transaction do
+            connection_class.connection.execute(format('SET rls.tenant_id = %s',
+                                                       connection_class.connection.quote(tenant_id)))
+          end
+        end
+      end
+
       private
 
       def switch_tenant!(resource)
@@ -63,12 +71,7 @@ module PgRls
 
         tenant = find_tenant(resource)
 
-        PgRls.execute_rls_in_shards do |connection_class|
-          connection_class.transaction do
-            connection_class.connection.execute(format('SET rls.tenant_id = %s',
-                                                       connection_class.connection.quote(tenant.tenant_id)))
-          end
-        end
+        set_rls!(tenant.tenant_id)
 
         tenant
       rescue NoMethodError
@@ -76,8 +79,6 @@ module PgRls
       end
 
       def find_tenant(resource)
-        raise PgRls::Errors::AdminUsername if PgRls.admin_connection?
-
         reset_rls!
 
         tenant = nil
