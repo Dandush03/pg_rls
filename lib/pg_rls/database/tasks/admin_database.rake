@@ -22,14 +22,13 @@ end
 namespace :db do
   include PgRls::Schema::UpStatements
 
-  override_task grant_usage: :load_config do
+  override_task :load_config do
     PgRls.instance_variable_set(:@as_db_admin, true)
-    create_rls_user
+    Rake::Task['db:load_config:original'].invoke
   end
 
-  override_task abort_if_pending_migrations: :load_config do
-    PgRls.instance_variable_set(:@as_db_admin, true)
-    Rake::Task['db:abort_if_pending_migrations:original'].invoke
+  override_task grant_usage: :load_config do
+    create_rls_user
   end
 
   namespace :test do

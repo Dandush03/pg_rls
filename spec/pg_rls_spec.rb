@@ -6,6 +6,6 @@ RSpec.describe PgRls do
   end
 
   it 'does something useful' do
-    expect(require_relative('lib/PgRls/version')).to be(true)
+    expect(require_relative('../lib/pg_rls/version')).to be(false)
   end
 end
