@@ -32,6 +32,16 @@ namespace :db do
     Rake::Task['db:abort_if_pending_migrations:original'].invoke
   end
 
+  override_task :migrate do
+    PgRls.instance_variable_set(:@as_db_admin, true)
+    Rake::Task['db:migrate:original'].invoke
+  end
+
+  override_task :rollback do
+    PgRls.instance_variable_set(:@as_db_admin, true)
+    Rake::Task['db:rollback:original'].invoke
+  end
+
   namespace :test do
     override_task grant_usage: :load_config do
       PgRls.instance_variable_set(:@as_db_admin, true)
