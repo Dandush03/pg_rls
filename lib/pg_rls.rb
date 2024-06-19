@@ -32,6 +32,7 @@ module PgRls
 
     def setup
       ActiveRecord::Base.ignored_columns += %w[tenant_id]
+      PgRls.main_model.ignored_columns = []
 
       yield self
     end

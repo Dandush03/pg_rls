@@ -65,10 +65,6 @@ module PgRls
       private
 
       def switch_tenant!(resource)
-        # rubocop: disable Rails/IgnoredColumnsAssignment
-        PgRls.main_model.ignored_columns = []
-        # rubocop: enable Rails/IgnoredColumnsAssignment
-
         tenant = find_tenant(resource)
 
         set_rls!(tenant.tenant_id)
