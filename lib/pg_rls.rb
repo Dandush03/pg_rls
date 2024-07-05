@@ -34,7 +34,10 @@ module PgRls
       ActiveRecord::Base.ignored_columns += %w[tenant_id]
 
       yield self
-      PgRls.main_model.ignored_columns = []
+
+      Rails.application.config.to_prepare do
+        PgRls.main_model.ignored_columns = []
+      end
     end
 
     def connection_class
