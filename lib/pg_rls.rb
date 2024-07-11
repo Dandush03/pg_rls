@@ -146,6 +146,8 @@ module PgRls
       else
         execute(query)
       end
+    ensure
+      self.as_db_admin = false
     end
 
     def reset_connection_if_needed(current_tenant, reset_rls_connection)
