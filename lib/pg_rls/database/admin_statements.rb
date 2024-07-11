@@ -5,7 +5,7 @@ module PgRls
     module ActiveRecord
       module Migrator
         def initialize(*args)
-          PgRls.instance_variable_set(:@as_db_admin, true)
+          PgRls.instance_variable_set(:@as_db_admin, true) unless Rails.const_defined?('Server')
           super
         end
       end
