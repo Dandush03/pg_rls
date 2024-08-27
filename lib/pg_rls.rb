@@ -11,6 +11,7 @@ require_relative 'pg_rls/tenant'
 require_relative 'pg_rls/multi_tenancy'
 require_relative 'pg_rls/railtie' if defined?(Rails)
 require_relative 'pg_rls/errors/index'
+require_relative 'pg_rls/current/context'
 
 ActiveRecord::Migrator.prepend PgRls::Admin::ActiveRecord::Migrator
 ActiveRecord::Tasks::DatabaseTasks.prepend PgRls::Admin::ActiveRecord::Tasks::DatabaseTasks
@@ -54,7 +55,7 @@ module PgRls
     def establish_new_connection!(admin: false)
       self.as_db_admin = admin
 
-      db_config = PgRls.main_model.connection_db_config.configuration_hash
+      PgRls.main_model.connection_db_config.configuration_hash
       execute_rls_in_shards do |connection_class, pool|
         connection_class.connection_pool.disconnect!
         connection_class.remove_connection
@@ -141,11 +142,9 @@ module PgRls
     end
 
     def execute_query_or_block(query = nil, &)
-      if block_given?
-        ensure_block_execution(&)
-      else
-        execute(query)
-      end
+      return ensure_block_execution(&) if block_given?
+
+      execute(query)
     end
 
     def reset_connection_if_needed(current_tenant, reset_rls_connection)

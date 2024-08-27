@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pg_rls (0.1.6)
+    pg_rls (0.1.10)
 
 GEM
   remote: https://rubygems.org/
@@ -109,6 +109,7 @@ GEM
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
     language_server-protocol (3.17.0.3)
+    logger (1.6.0)
     loofah (2.21.4)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -184,6 +185,8 @@ GEM
     rbs (2.8.4)
     rdoc (6.5.0)
       psych (>= 4.0.0)
+    redis-client (0.22.2)
+      connection_pool
     regexp_parser (2.8.2)
     reline (0.3.9)
       io-console (~> 0.5)
@@ -236,6 +239,12 @@ GEM
       rubocop-factory_bot (~> 2.22)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
+    sidekiq (7.3.1)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      logger
+      rack (>= 2.2.4)
+      redis-client (>= 0.22.2)
     solargraph (0.49.0)
       backport (~> 1.2)
       benchmark
@@ -268,6 +277,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-22
+  arm64-darwin-23
   x86_64-linux
 
 DEPENDENCIES
@@ -280,6 +290,7 @@ DEPENDENCIES
   rubocop-rails
   rubocop-rake
   rubocop-rspec
+  sidekiq
   solargraph
 
 RUBY VERSION

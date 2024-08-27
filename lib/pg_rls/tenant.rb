@@ -36,7 +36,7 @@ module PgRls
       end
 
       def fetch!
-        PgRls::Current::Context.tenant || PgRls.main_model.find_by!(
+        PgRls::Current::Context.tenant ||= PgRls.main_model.find_by!(
           tenant_id: PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
