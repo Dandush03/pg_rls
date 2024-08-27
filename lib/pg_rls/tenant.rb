@@ -36,7 +36,7 @@ module PgRls
       end
 
       def fetch!
-        PgRls.main_model.find_by!(
+        PgRls::Current::Context.tenant || PgRls.main_model.find_by!(
           tenant_id: PgRls.connection_class.connection.execute(
             "SELECT current_setting('rls.tenant_id')"
           ).getvalue(0, 0)
@@ -50,6 +50,7 @@ module PgRls
           end
         end
 
+        clear_current_context
         nil
       end
 
@@ -69,7 +70,7 @@ module PgRls
 
         set_rls!(tenant.tenant_id)
 
-        tenant
+        PgRls::Current::Context.tenant = tenant
       rescue NoMethodError
         raise PgRls::Errors::TenantNotFound
       end
@@ -95,6 +96,10 @@ module PgRls
         PgRls.main_model.send("find_by_#{method}!", look_up_value)
       rescue ActiveRecord::RecordNotFound
         nil
+      end
+
+      def clear_current_context
+        PgRls::Current::Context.clear_all
       end
     end
   end
