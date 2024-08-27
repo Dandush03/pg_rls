@@ -70,7 +70,7 @@ module PgRls
 
         set_rls!(tenant.tenant_id)
 
-        PgRls::Current::Context.tenant = tenant
+        tenant
       rescue NoMethodError
         raise PgRls::Errors::TenantNotFound
       end
