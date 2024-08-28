@@ -50,7 +50,7 @@ module PgRls
           end
         end
 
-        clear_current_context
+        PgRls::Current::Context.clear_all
         nil
       end
 
@@ -96,10 +96,6 @@ module PgRls
         PgRls.main_model.send("find_by_#{method}!", look_up_value)
       rescue ActiveRecord::RecordNotFound
         nil
-      end
-
-      def clear_current_context
-        PgRls::Current::Context.clear_all
       end
     end
   end

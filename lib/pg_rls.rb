@@ -55,7 +55,6 @@ module PgRls
     def establish_new_connection!(admin: false)
       self.as_db_admin = admin
 
-      PgRls.main_model.connection_db_config.configuration_hash
       execute_rls_in_shards do |connection_class, pool|
         connection_class.connection_pool.disconnect!
         connection_class.remove_connection
