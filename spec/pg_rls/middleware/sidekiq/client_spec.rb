@@ -3,6 +3,11 @@
 require 'pg_rls/middleware/sidekiq/client'
 require 'sidekiq/testing'
 
+# Define dummy tenant
+class Tenant
+  attr_accessor :id
+end
+
 # Define the dummy workers
 class DummyAdminWorker
   include Sidekiq::Worker
@@ -33,7 +38,7 @@ class DummyFailingWorker
 end
 
 RSpec.describe PgRls::Middleware::Sidekiq::Client do
-  before(:all) do
+  before(:all) do # rubocop:disable RSpec/BeforeAfterAll
     Sidekiq.configure_client do |config|
       config.logger.level = Logger::WARN
       config.client_middleware do |chain|
@@ -50,13 +55,13 @@ RSpec.describe PgRls::Middleware::Sidekiq::Client do
 
       it 'sets admin attribute to true for the job' do
         Sidekiq::Testing.inline! do
-          DummyAdminWorker.perform_async
+          expect { DummyTenantWorker.perform_async }.to raise_error('Not a tenant connection')
         end
       end
     end
 
     context 'when admin connection is false' do
-      let(:tenant) { double('Tenant', id: 123) }
+      let(:tenant) { instance_double(Tenant, id: 123) }
 
       before do
         allow(PgRls).to receive(:admin_connection?).and_return(false)
@@ -65,13 +70,13 @@ RSpec.describe PgRls::Middleware::Sidekiq::Client do
 
       it 'sets pg_rls attribute with tenant id for the job' do
         Sidekiq::Testing.inline! do
-          DummyTenantWorker.perform_async
+          expect { DummyTenantWorker.perform_async }.not_to raise_error
         end
       end
     end
 
     context 'when the job fails' do
-      let(:tenant) { double('Tenant', id: 123) }
+      let(:tenant) { instance_double(Tenant, id: 123) }
 
       before do
         allow(PgRls).to receive(:admin_connection?).and_return(false)
