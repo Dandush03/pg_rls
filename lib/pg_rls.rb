@@ -26,9 +26,9 @@ module PgRls
   class << self
     extend Forwardable
 
-    WRITER_METHODS = %i[table_name class_name search_methods logger].freeze
-    READER_METHODS = %i[connection_class execute table_name class_name search_methods logger].freeze
-    DELEGATORS_METHODS = %i[connection_class execute table_name search_methods class_name main_model logger].freeze
+    WRITER_METHODS = %i[table_name class_name search_methods logger excluded_shards].freeze
+    READER_METHODS = %i[connection_class execute table_name class_name search_methods logger excluded_shards].freeze
+    DELEGATORS_METHODS = %i[connection_class execute table_name search_methods class_name main_model logger excluded_shards].freeze
 
     attr_writer(*WRITER_METHODS)
     attr_reader(*READER_METHODS)
@@ -84,6 +84,8 @@ module PgRls
 
       connection_pool_list.each do |pool|
         connection = pool.lease_connection
+        next if excluded_shards.include?(connection.connection_class.connection_db_config.name)
+
         connection.transaction do
           Rails.logger.info("Executing in #{connection.connection_class}")
 
@@ -170,4 +172,7 @@ module PgRls
 
   mattr_accessor :logger
   @@logger = PgRls::Logger.new
+
+  mattr_accessor :excluded_shards
+  @@excluded_shards = []
 end

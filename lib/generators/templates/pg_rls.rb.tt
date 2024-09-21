@@ -9,6 +9,17 @@ PgRls.setup do |config|
   config.class_name = :<%= PgRls.class_name %>
   config.table_name = :<%= PgRls.table_name %>
   config.search_methods = <%= PgRls.search_methods %>
+  # If you are using `solid_queue`, `solid_cache`, or `solid_cable` with a sharding configuration,
+  # we recommend excluding these shards from Row-Level Security (RLS) to avoid the need to reset
+  # RLS on each shard.
+  #
+  # By default, RLS will be enabled for all shards.
+  # You can specify which shards to exclude from RLS using the `config.excluded_shards` option:
+  #
+  #   config.excluded_shards = []
+  #
+  # Note: While it's technically possible to leave `solid_cache` and `solid_cable` under RLS,
+  # it is generally unnecessary and may introduce complexity without added benefit.
 
   ##
   ## Uncomment this lines if you have a custome user per environment
