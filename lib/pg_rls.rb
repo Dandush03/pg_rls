@@ -5,6 +5,7 @@ require 'forwardable'
 require_relative 'pg_rls/version'
 require_relative 'pg_rls/database/prepared'
 require_relative 'pg_rls/schema/statements'
+require_relative 'pg_rls/schema/dumper'
 require_relative 'pg_rls/database/configurations'
 require_relative 'pg_rls/database/admin_statements'
 require_relative 'pg_rls/tenant'
@@ -12,19 +13,22 @@ require_relative 'pg_rls/multi_tenancy'
 require_relative 'pg_rls/railtie' if defined?(Rails)
 require_relative 'pg_rls/errors/index'
 require_relative 'pg_rls/current/context'
+require_relative 'pg_rls/logger'
 
 ActiveRecord::Migrator.prepend PgRls::Admin::ActiveRecord::Migrator
 ActiveRecord::Tasks::DatabaseTasks.prepend PgRls::Admin::ActiveRecord::Tasks::DatabaseTasks
 ActiveRecord::ConnectionAdapters::AbstractAdapter.include PgRls::Schema::Statements
+ActiveRecord::SchemaDumper.prepend PgRls::Schema::Dumper
+
 # PostgreSQL Row Level Security
 module PgRls
   class Error < StandardError; end
   class << self
     extend Forwardable
 
-    WRITER_METHODS = %i[table_name class_name search_methods].freeze
-    READER_METHODS = %i[connection_class execute table_name class_name search_methods].freeze
-    DELEGATORS_METHODS = %i[connection_class execute table_name search_methods class_name main_model].freeze
+    WRITER_METHODS = %i[table_name class_name search_methods logger].freeze
+    READER_METHODS = %i[connection_class execute table_name class_name search_methods logger].freeze
+    DELEGATORS_METHODS = %i[connection_class execute table_name search_methods class_name main_model logger].freeze
 
     attr_writer(*WRITER_METHODS)
     attr_reader(*READER_METHODS)
@@ -66,21 +70,12 @@ module PgRls
       class_name.to_s.camelize.constantize
     end
 
-    def on_each_tenant(&)
-      with_rls_connection do
-        result = []
-
-        main_model.find_each do |tenant|
-          allowed_search_fields = search_methods.map(&:to_s).intersection(main_model.column_names)
-          Tenant.switch tenant.send(allowed_search_fields.first)
-
-          result << { tenant:, result: ensure_block_execution(tenant, &) }
-        end
-
-        PgRls::Tenant.reset_rls!
-
-        result
-      end
+    def on_each_tenant(ids: [], scope: nil, &)
+      logger.deprecation_warning(
+        "PgRls.on_each_tenant is deprecated and will be removed in future versions. " \
+        "Please use PgRls::Tenant.on_find_each instead."
+      )
+      Tenant.on_find_each(ids: ids, scope: scope, &)
     end
 
     def execute_rls_in_shards
@@ -88,10 +83,11 @@ module PgRls
       result = []
 
       connection_pool_list.each do |pool|
-        pool.connection.transaction do
-          Rails.logger.info("Executing in #{pool.connection.connection_class}")
+        connection = pool.lease_connection
+        connection.transaction do
+          Rails.logger.info("Executing in #{connection.connection_class}")
 
-          result << yield(pool.connection.connection_class, pool)
+          result << yield(connection.connection_class, pool)
         end
       end
 
@@ -171,4 +167,7 @@ module PgRls
 
   mattr_accessor :search_methods
   @@search_methods = %i[subdomain id tenant_id]
+
+  mattr_accessor :logger
+  @@logger = PgRls::Logger.new
 end
