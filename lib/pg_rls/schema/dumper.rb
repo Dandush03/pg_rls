@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PgRls
   module Schema
     module Dumper
@@ -19,7 +21,7 @@ module PgRls
       def rls_table?(table_name)
         # Logic to determine if the table uses RLS
         # You can check if the table has RLS policies or use a naming convention
-        @connection.execute(<<-SQL).any?
+        @connection.execute(<<-SQL.squish).any?
           SELECT 1 FROM pg_policies WHERE tablename = #{ActiveRecord::Base.connection.quote(table_name)};
         SQL
       end

@@ -38,17 +38,23 @@ module PgRls
       def fetch!
         PgRls::Current::Context.tenant ||= PgRls.main_model.connection_pool.with_connection do |connection|
           tenant_id = get_tenant_id(connection)
-          PgRls.main_model.find_by!(
-            tenant_id:
-          ) if tenant_id.present?
+          if tenant_id.present?
+            PgRls.main_model.find_by!(
+              tenant_id:
+            )
+          end
         end
       end
 
+      # rubocop:disable Lint/RescueStandardError
+      # rubocop:disable Lint/UselessAssignment
       def get_tenant_id(connection)
         connection.execute("SELECT current_setting('rls.tenant_id')").getvalue(0, 0)
       rescue => e
         nil
       end
+      # rubocop:enable Lint/RescueStandardError
+      # rubocop:enable Lint/UselessAssignment
 
       def reset_rls!
         PgRls.execute_rls_in_shards do |connection_class|
@@ -137,7 +143,7 @@ module PgRls
       def find_tenant_by_method(resource, method)
         return resource if resource.is_a?(PgRls.main_model)
 
-        PgRls.main_model.unscoped.send("find_by_#{method}!", resource)
+        PgRls.main_model.unscoped.send(:"find_by_#{method}!", resource)
       rescue ActiveRecord::RecordNotFound
         nil
       end

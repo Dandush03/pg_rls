@@ -28,7 +28,8 @@ module PgRls
 
     WRITER_METHODS = %i[table_name class_name search_methods logger excluded_shards].freeze
     READER_METHODS = %i[connection_class execute table_name class_name search_methods logger excluded_shards].freeze
-    DELEGATORS_METHODS = %i[connection_class execute table_name search_methods class_name main_model logger excluded_shards].freeze
+    DELEGATORS_METHODS = %i[connection_class execute table_name search_methods class_name main_model logger
+                            excluded_shards].freeze
 
     attr_writer(*WRITER_METHODS)
     attr_reader(*READER_METHODS)
@@ -41,7 +42,7 @@ module PgRls
       yield self
 
       Rails.application.config.to_prepare do
-        PgRls.main_model.ignored_columns = []
+        PgRls.main_model.ignored_columns = [] # rubocop:disable Rails/IgnoredColumnsAssignment
       end
     end
 
@@ -72,10 +73,22 @@ module PgRls
 
     def on_each_tenant(ids: [], scope: nil, &)
       logger.deprecation_warning(
-        "PgRls.on_each_tenant is deprecated and will be removed in future versions. " \
-        "Please use PgRls::Tenant.on_find_each instead."
+        'PgRls.on_each_tenant is deprecated and will be removed in future versions. ' \
+        'Please use PgRls::Tenant.on_find_each instead.'
       )
-      Tenant.on_find_each(ids: ids, scope: scope, &)
+      Tenant.on_find_each(ids:, scope:, &)
+    end
+
+    rails_version = Gem.loaded_specs['rails'].version
+    if rails_version >= Gem::Version.new('7.2') && rails_version < Gem::Version.new('7.3')
+      def pool_connection(pool)
+        pool.lease_connection
+      end
+    else
+      def pool_connection(pool)
+        PgRls.deprecation_warning('PgRls.pool_connection is deprecated and will be removed in future PgRls 0.2.0. Please use pool.lease_connection instead.')
+        pool.connection
+      end
     end
 
     def execute_rls_in_shards
@@ -83,7 +96,7 @@ module PgRls
       result = []
 
       connection_pool_list.each do |pool|
-        connection = pool.lease_connection
+        connection = pool_connection(pool)
         next if excluded_shards.include?(connection.connection_class.connection_db_config.name)
 
         connection.transaction do

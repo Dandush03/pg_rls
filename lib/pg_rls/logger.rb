@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'logger'
 
 module PgRls
   class Logger
     def initialize
-      @logger = ::Logger.new(STDOUT) # You can output to a file if needed
+      @logger = ::Logger.new($stdout) # You can output to a file if needed
       @logger.level = ::Logger::DEBUG
     end
 

@@ -6,7 +6,7 @@ module PgRls
     class TenantNotFound < StandardError
       def initialize(msg = nil)
         msg ||= "Tenant Doesn't exist"
-        super(msg)
+        super
       end
     end
   end
