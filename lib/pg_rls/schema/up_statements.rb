@@ -15,6 +15,7 @@ module PgRls
 
               CREATE USER #{name} WITH PASSWORD '#{password}';
             END IF;
+            GRANT ALL PRIVILEGES ON TABLE schema_migrations TO #{name};
             GRANT USAGE ON SCHEMA #{schema} TO #{name};
             ALTER DEFAULT PRIVILEGES IN SCHEMA #{schema}
               GRANT USAGE, SELECT
