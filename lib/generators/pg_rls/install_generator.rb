@@ -48,7 +48,6 @@ module PgRls
       def copy_initializer
         raise MissingORMError, orm_error_message unless options[:orm]
 
-        inject_include_to_application
         inject_include_to_application_controller
         template 'pg_rls.rb.tt', 'config/initializers/pg_rls.rb'
       end
@@ -58,14 +57,6 @@ module PgRls
 
         gsub_file(ENVIRONMENT_PATH, /(#{Regexp.escape(ENVIRONMENT_LINE)})/mio) do |match|
           "require_relative 'initializers/pg_rls'\n#{match}"
-        end
-      end
-
-      def inject_include_to_application
-        return if aplication_already_included?
-
-        gsub_file(APPLICATION_PATH, /(#{Regexp.escape(APPLICATION_LINE)})/mio) do |match|
-          "#{match}\n  config.active_record.schema_format = :sql\n"
         end
       end
 
@@ -79,10 +70,6 @@ module PgRls
 
       def aplication_controller_already_included?
         File.readlines(APPLICATION_CONTROLLER_PATH).grep(/include PgRls::MultiTenancy/).any?
-      end
-
-      def aplication_already_included?
-        File.readlines(APPLICATION_PATH).grep(/config.active_record.schema_format = :sql/).any?
       end
 
       def environment_already_included?

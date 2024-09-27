@@ -2,9 +2,6 @@
 
 <% module_namespacing do -%>
 class <%= PgRls.class_name.camelize %> < <%= parent_class_name.classify %>
-  def self.current
-    PgRls::Tenant.fetch
-  end
 <% attributes.select(&:reference?).each do |attribute| -%>
   belongs_to :<%= attribute.name %><%= ", polymorphic: true" if attribute.polymorphic? %>
 <% end -%>
