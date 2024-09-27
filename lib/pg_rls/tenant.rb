@@ -112,6 +112,7 @@ module PgRls
       def switch_tenant!(resource)
         tenant = find_tenant(resource)
 
+        PgRls.establish_new_connection! if PgRls.admin_connection?
         set_rls!(tenant)
 
         tenant
