@@ -1,0 +1,24 @@
+require:
+  - rubocop-rspec
+  - rubocop-performance
+  - rubocop-rake
+
+AllCops:
+  TargetRubyVersion: 3.0
+  NewCops: enable
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+Style/ClassVars:
+  Enabled: true
+  Exclude:
+    - "lib/pg_rls.rb"
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+    - "pg_rls.gemspec"
