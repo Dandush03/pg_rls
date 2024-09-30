@@ -1,25 +1,26 @@
+# PgRls Rails
 
-<!--
-  Title: PgRls Rails
-  Description: rails multitenancy with pg rls
-  Author: dandush03
--->
-<meta name="google-site-verification" content="Mc1vBv8PRYPw_cdd3EiKhF2vlOeIEIk3VYhAg75ertI" />
+> PostgreSQL Row Level Security: The Rails right way to do multitenancy
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![LinkedIn][linkedin-shield2]][linkedin-url2]
-[![Hireable][hireable]][hireable-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 [![Donate][donate]][paypal-donate-code]
+[![Hireable][hireable]][hireable-url]
 
-<!-- PROJECT LOGO -->
-<br />
 <p align="center">
- <h1 align="center">PgRls<h2 align="center">PostgreSQL Row Level Security<br />The Rails right way to do multitenancy</h2></h1>
+  
+  <h3 align="center">
+    <a href="https://github.com/Dandush03/pg_rls">
+        <img src="./assets/logo.svg" alt="Logo" width="80" height="80">
+    </a>
+  </h3>
 
   <p align="center">
+    PostgreSQL Row Level Security: The Rails right way to do multitenancy
     <br />
     <a href="https://github.com/Dandush03/pg_rls/wiki"><strong>Explore the docs »</strong></a>
     <br />
@@ -27,167 +28,166 @@
     <a href="https://github.com/Dandush03/pg_rls/issues">Report Bug</a>
     ·
     <a href="https://github.com/Dandush03/pg_rls/issues">Request Feature</a>
-    ·
-    <a href="https://github.com/Dandush03/pg_rls">API Repo</a>
   </p>
-
 </p>
 
-### Table of Contents
+## Table of Contents
 
-* [Required Installations](#required-installations)
-  * [Installing](#installing)
-  * [Instructions](#instructions)
-  * [Testing](#testing)
-* [Development](#development)
-  * [Development Workflow](#development-workflow)
-  * [Releasing a New Version](#releasing-a-new-version)
-  * [Contribution Guidelines](#contribution-guidelines)
-* [Contact](#contact)
-* [Contributing](#contributing)
-* [License](#license)
-* [Code of Conduct](#code-of-conduct)
-* [Show your support](#show-your-support)
+- [About The Project](#about-the-project)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+- [Testing](#testing)
+- [Development](#development)
+  - [Development Workflow](#development-workflow)
+  - [Releasing a New Version](#releasing-a-new-version)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgements](#acknowledgements)
 
-### It's time we start doing multitenancy right! You can avoid creating a separate Postgres schema/databases for each customer or trying to ensure the WHERE clause of every single query includes the particular company. Just integrate PgRls seamlessly to your application
+## About The Project
 
-### This gem will integrate PostgreSQL RLS to help you develop a great multitenancy application
+It's time we start doing multitenancy right! You can avoid creating a separate Postgres schema/databases for each customer or trying to ensure the WHERE clause of every single query includes the particular company. Just integrate PgRls seamlessly to your application.
 
-## Required Installations
+This gem will integrate PostgreSQL RLS to help you develop a great multitenancy application.
 
-### Installing
+## Getting Started
 
-Add this line to your application's Gemfile:
+### Prerequisites
 
-```ruby
-gem 'pg_rls'
-```
+- Ruby (~> 3.0)
+- ActiveRecord (~> 7.0)
+- PostgreSQL (> 9.0)
+- Warden
+- pg (~> 1.2)
 
-And then execute:
+### Installation
 
-    bundle install
+1. Add this line to your application's Gemfile:
 
-Or install it yourself with:
+   ```ruby
+   gem 'pg_rls'
+   ```
 
-    gem install pg_rls
+2. Execute:
 
-### Instructions
+   ```bash
+   bundle install
+   ```
 
-```bash
-rails generate pg_rls:install company #=> where company eq tenant model name
-```
+   Or install it yourself with:
 
-You can change company to anything you'd like, for example, `tenant`.
-This will generate the model and inject all the required code.
+   ```bash
+   gem install pg_rls
+   ```
 
-For any new model that needs to be under RLS, you can generate it by writing:
+## Usage
 
-```bash
-rails generate pg_rls user #=> where user eq model name
-```
+1. Generate the necessary files:
 
-and it will generate all the necessary information for you.
+   ```bash
+   rails generate pg_rls:install company  # where 'company' is your tenant model name
+   ```
 
-You can switch to another tenant by using:
+   You can change 'company' to anything you'd like, for example, 'tenant'.
 
-```ruby
-PgRls::Tenant.switch :app #=> where app eq tenant name
-```
+2. For any new model that needs to be under RLS:
 
-### Testing
+   ```bash
+   rails generate pg_rls user  # where 'user' is your model name
+   ```
 
-If you are getting `PG::InsufficientPrivilege: ERROR:  permission denied`, you can override those permissions by running:
+3. Switch to another tenant:
+
+   ```ruby
+   PgRls::Tenant.switch :app  # where 'app' is your tenant name
+   ```
+
+## Testing
+
+If you encounter `PG::InsufficientPrivilege: ERROR: permission denied`, override permissions by running:
 
 ```bash
 RAILS_ENV=test rake db:grant_usage
 ```
 
-Many applications use some sort of database cleaner before running their specs so on each test run, you'll have an empty state. Usually, those gems clear user configuration for the database. To solve this issue, implement the following:
+For database cleaning strategies, implement the following in your `spec/rails_helper.rb`:
 
 ```ruby
-# spec/rails_helper.rb
-
-# some database cleaning strategy
-
 config.before(:suite) do
-  # Create the tenant, which in this example is company, and we are using FactoryBot
   FactoryBot.create(:company, subdomain: 'app')
-  # In this default case, our initializer is set to search by subdomain so will use it
   PgRls::Tenant.switch :app
 end
 ```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt.
 
 ### Development Workflow
 
-Before each push, you **must** follow this workflow to ensure code quality and compliance:
+Before each push, follow this workflow:
 
-1. **Run Quality Checks:**
-
-   Use the following command to ensure all checks pass before committing your code:
+1. Run quality checks:
 
    ```bash
    ./review_code.sh
    ```
 
-   This script performs the following checks:
-   * **Rubocop**: Ensures there are no style violations.
-   * **RSpec**: Runs the test suite. Code coverage must remain at **100%**.
-   * **Steep**: Type checks using RBS. All type errors must be resolved.
+   This script performs:
+   - Rubocop
+   - RSpec (100% code coverage required)
+   - Steep (type checking)
 
-   **Note**: The `rbs collection` is committed to the repository, so developers don't need to run `rbs collection install`. Just make sure the collection is up to date when setting up the project.
+2. Ensure 100% documentation coverage.
 
-2. **Documentation Coverage**:
-
-   All methods, classes, and modules must be fully documented. Documentation coverage should remain at **100%**. Use tools like `yard` to verify that your documentation is complete.
-
-3. **Running Tests**:
-
-   Run tests using:
+3. Run tests:
 
    ```bash
    bundle exec rspec
    ```
 
-   Ensure that all tests pass before committing code and that test coverage is complete.
-
 ### Releasing a New Version
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+1. Update the version number in `version.rb`
+2. Run `bundle exec rake release`
 
-### Contribution Guidelines
+## Contributing
 
-* **Code coverage** must remain at **100%**.
-* **Documentation coverage** must also remain at **100%**.
-* **No Rubocop errors** are acceptable.
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-Bug reports and pull requests are welcome on GitHub at <https://github.com/dandush03/pg_rls>. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/dandush03/pg_rls/blob/master/CODE_OF_CONDUCT.md).
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
 If you need help, feel free to reach out through the repository [issues](https://github.com/dandush03/pg_rls/issues) page or contact me via [LinkedIn](https://www.linkedin.com/in/daniel-laloush/).
 
-## License
+Project Link: [https://github.com/Dandush03/pg_rls](https://github.com/Dandush03/pg_rls)
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+## Acknowledgements
 
-## Code of Conduct
+- [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
 
-Everyone interacting in the PgRls project's codebases, issue trackers, chat rooms, and mailing lists is expected to follow the [code of conduct](https://github.com/dandush03/pg_rls/blob/master/CODE_OF_CONDUCT.md).
+- [Choose an Open Source License](https://choosealicense.com)
+- [GitHub Pages](https://pages.github.com)
 
-## Show Your Support
+## Show your support
 
 Give a ⭐️ if you like this project!
 
-If this project helps you reduce development time, you can buy me a cup of coffee :)
+If this project help you reduce time to develop, you can give me a cup of coffee :)
 
 [![paypal][paypal-url]][paypal-donate-code]
 
-<!-- MARKDOWN LINKS & IMAGES -->
-[contributors-shield]: https://img.shields.io/github/contributors/Dandush03/React-Calculator.svg?style=flat-square
+[contributors-shield]: https://img.shields.io/github/contributors/Dandush03/pg_rls.svg?style=flat-square
 [contributors-url]: https://github.com/Dandush03/pg_rls/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/Dandush03/pg_rls.svg?style=flat-square
 [forks-url]: https://github.com/Dandush03/pg_rls/network/members
@@ -195,5 +195,12 @@ If this project helps you reduce development time, you can buy me a cup of coffe
 [stars-url]: https://github.com/Dandush03/pg_rls/stargazers
 [issues-shield]: https://img.shields.io/github/issues/Dandush03/pg_rls.svg?style=flat-square
 [issues-url]: https://github.com/Dandush03/pg_rls/issues
-[linkedin-shield2]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
-[linkedin-url2]: https://www.linkedin.com/in/daniel-laloush
+[license-shield]: https://img.shields.io/github/license/Dandush03/pg_rls.svg?style=flat-square
+[license-url]: https://github.com/Dandush03/pg_rls/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/in/daniel-laloush/
+[hireable-url]: https://www.linkedin.com/in/daniel-laloush/
+[paypal-url]: https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif
+[paypal-donate-code]: https://www.paypal.com/donate?hosted_button_id=QKZFZAMQNC8JL
+[donate]: https://img.shields.io/badge/Donate-PayPal-blue.svg
+[hireable]: https://cdn.rawgit.com/hiendv/hireable/master/styles/flat/yes.svg
