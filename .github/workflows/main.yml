@@ -65,4 +65,4 @@ jobs:
           bundler-cache: true
 
       - name: Strong types code for consistent types
-        run: bundle exec steep check
+        run: bin/steep

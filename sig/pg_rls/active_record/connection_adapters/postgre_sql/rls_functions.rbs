@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module PostgreSQL
+        module RlsFunctions
+          def function_exists?: (String) -> bool
+                              
+          def execute: (String) -> PG::Result
+        end
+      end
+    end
+  end
+end

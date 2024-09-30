@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module PostgreSQL
+      end
+    end
+  end
+end

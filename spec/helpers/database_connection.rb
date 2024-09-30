@@ -7,13 +7,13 @@ require "active_record"
 #  db_config = YAML.load(ERB.new(File.read(db_config_file)).result, aliases: true)
 #  db_config = db_config.deep_symbolize_keys
 
-#  db_task = ActiveRecord::Tasks::DatabaseTasks
+#  db_task = ::ActiveRecord::Tasks::DatabaseTasks
 #  db_task.send(:with_temporary_pool, db_config, clobber: true) do
 #    db_task.purge(db_config)
-#  rescue ActiveRecord::NoDatabaseError
+#  rescue ::ActiveRecord::NoDatabaseError
 #    db_task.create(db_config)
 #  end
-#  ActiveRecord::Base.establish_connection(db_config)
+#  ::ActiveRecord::Base.establish_connection(db_config)
 
 module PgRls
   class DatabaseConnection
@@ -33,15 +33,15 @@ module PgRls
     end
 
     def establish_connection
-      ActiveRecord::Base.establish_connection(db_config)
+      ::ActiveRecord::Base.establish_connection(db_config)
     end
 
     def reconstruct_db
-      db_task = ActiveRecord::Tasks::DatabaseTasks
+      db_task = ::ActiveRecord::Tasks::DatabaseTasks
       db_task.migration_class.connection_handler.establish_connection(db_config, clobber: true) do
         db_task.purge(db_config)
       end
-    rescue ActiveRecord::NoDatabaseError
+    rescue ::ActiveRecord::NoDatabaseError
       db_task.create(db_config)
     end
   end

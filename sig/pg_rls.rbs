@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PgRls
   VERSION: String
   # See the writing guide of rbs: https://github.com/ruby/rbs#guides

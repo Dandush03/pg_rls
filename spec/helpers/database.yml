@@ -1,4 +1,3 @@
-
 test:
   adapter: postgresql
   encoding: unicode
@@ -8,4 +7,3 @@ test:
   username: postgres
   password: password
   database: test_db
-  <<: *primary_config

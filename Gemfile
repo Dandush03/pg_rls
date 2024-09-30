@@ -24,4 +24,8 @@ group :development, :test do
 
   # Database Cleaner [https://github.com/DatabaseCleaner/database_cleaner]
   gem "database_cleaner"
+
+  # Ruby Strong Typing [https://github.com/soutaro/steep]
+  gem "rbs", require: false
+  gem "steep"
 end
