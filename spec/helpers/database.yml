@@ -1,0 +1,11 @@
+
+test:
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  host: localhost
+  port: 5432
+  username: postgres
+  password: password
+  database: test_db
+  <<: *primary_config
