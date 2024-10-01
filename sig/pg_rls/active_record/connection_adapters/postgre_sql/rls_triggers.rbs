@@ -1,0 +1,35 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module PostgreSQL
+        module RlsTriggers
+          def execute: (String) -> PG::Result
+
+          def trigger_exists?: (String, String) -> bool
+                             
+          def create_tenant_table_triggers: (String) -> void
+
+          def create_rls_table_triggers: (String) -> void
+
+          def drop_tenant_table_triggers: (String) -> void
+
+          def drop_rls_table_triggers: (String) -> void
+
+          private
+
+          def drop_trigger: (String, String) -> void
+
+          def create_trigger: (String, String, String, String, String) -> void
+
+          def create_rls_blocking_trigger: (String) -> void
+
+          def create_tenant_id_setter_trigger: (String) -> void
+
+          def create_tenant_id_update_blocker_trigger: (String) -> void
+        end
+      end
+    end
+  end
+end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "postgre_sql/rls_functions"
+require_relative "postgre_sql/rls_triggers"
 
 module PgRls
   module ActiveRecord
