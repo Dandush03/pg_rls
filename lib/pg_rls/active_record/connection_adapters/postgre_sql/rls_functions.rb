@@ -6,14 +6,16 @@ module PgRls
       module PostgreSQL
         # This module contains the logic to create, drop and validate RLS functions
         module RlsFunctions
+          include SqlHelperMethod
+
           def function_exists?(function_name)
-            query = <<~SQL.sanitize_sql
+            query = <<~SQL
               SELECT 1
               FROM pg_proc
               WHERE proname = '#{function_name}'
             SQL
 
-            execute(query).any?
+            execute_sql(query).any?
           end
 
           def create_rls_functions
@@ -31,26 +33,26 @@ module PgRls
           private
 
           def create_function(name, body)
-            query = <<~SQL.sanitize_sql
+            query = <<~SQL
               CREATE OR REPLACE FUNCTION #{name}()
                 RETURNS TRIGGER LANGUAGE plpgsql AS $$
                 #{body}
                 $$;
             SQL
 
-            execute(query)
+            execute_sql(query)
           end
 
           def drop_function(name)
-            query = <<~SQL.sanitize_sql
+            query = <<~SQL
               DROP FUNCTION IF EXISTS #{name}() CASCADE;
             SQL
 
-            execute(query)
+            execute_sql(query)
           end
 
           def create_rls_blocking_function
-            body = <<~SQL.sanitize_sql
+            body = <<~SQL
               BEGIN
                 RAISE EXCEPTION 'This column is guarded due to tenancy dependency';
               END
@@ -60,7 +62,7 @@ module PgRls
           end
 
           def create_tenant_id_setter_function
-            body = <<~SQL.sanitize_sql
+            body = <<~SQL
               BEGIN
                 new.tenant_id:= (current_setting('rls.tenant_id'));
                 RETURN new;
@@ -71,7 +73,7 @@ module PgRls
           end
 
           def create_tenant_id_update_blocker_function
-            body = <<~SQL.sanitize_sql
+            body = <<~SQL
               BEGIN
                 IF OLD.tenant_id IS NOT NULL AND NEW.tenant_id != OLD.tenant_id THEN
                   RAISE EXCEPTION 'Updating tenant_id is not allowed';

@@ -5,8 +5,6 @@ module PgRls
     module ConnectionAdapters
       module PostgreSQL
         module RlsFunctions
-          def execute: (String) -> PG::Result
-
           def function_exists?: (String) -> bool
                                                    
           def create_rls_functions: () -> void

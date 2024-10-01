@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module PostgreSQL
+        module SqlHelperMethod
+          private
+
+          def execute: (String) -> PG::Result
+
+          def execute_sql: (String) -> PG::Result
+        end
+      end
+    end
+  end
+end

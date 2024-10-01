@@ -5,8 +5,6 @@ module PgRls
     module ConnectionAdapters
       module PostgreSQL
         module RlsTriggers
-          def execute: (String) -> PG::Result
-
           def trigger_exists?: (String, String) -> bool
                              
           def create_tenant_table_triggers: (String) -> void

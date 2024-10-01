@@ -6,15 +6,17 @@ module PgRls
       module PostgreSQL
         # This module contains the logic to create, drop and validate RLS functions
         module RlsTriggers
+          include SqlHelperMethod
+
           def trigger_exists?(table_name, trigger_name)
-            query = <<~SQL.sanitize_sql
+            query = <<~SQL
               SELECT 1
               FROM pg_trigger
               WHERE tgname = '#{trigger_name}'
               AND tgrelid = '#{table_name}'::regclass;
             SQL
 
-            execute(query).any?
+            execute_sql(query).any?
           end
 
           def create_tenant_table_triggers(table_name)
@@ -38,21 +40,21 @@ module PgRls
           private
 
           def drop_trigger(table_name, trigger_name)
-            query = <<~SQL.sanitize_sql
+            query = <<~SQL
               DROP TRIGGER IF EXISTS #{trigger_name} ON #{table_name};
             SQL
 
-            execute(query)
+            execute_sql(query)
           end
 
           def create_trigger(table_name, trigger_name, function_name, timing, event)
-            query = <<~SQL.sanitize_sql
+            query = <<~SQL
               CREATE TRIGGER #{trigger_name}
                 #{timing} #{event} ON #{table_name}
                 FOR EACH ROW EXECUTE PROCEDURE #{function_name}();
             SQL
 
-            execute(query)
+            execute_sql(query)
           end
 
           def create_rls_blocking_trigger(table_name)
