@@ -7,9 +7,9 @@ module PgRls
         module SqlHelperMethod
           private
 
-          def execute: (String) -> PG::Result
+          def execute: (String) -> Array[PG::Result]
 
-          def execute_sql: (String) -> PG::Result
+          def execute_sql!: (String) -> Array[PG::Result]
         end
       end
     end

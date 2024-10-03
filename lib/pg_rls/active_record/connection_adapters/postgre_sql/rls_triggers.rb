@@ -16,7 +16,7 @@ module PgRls
               AND tgrelid = '#{table_name}'::regclass;
             SQL
 
-            execute_sql(query).any?
+            execute_sql!(query).any?
           end
 
           def create_tenant_table_triggers(table_name)
@@ -44,7 +44,7 @@ module PgRls
               DROP TRIGGER IF EXISTS #{trigger_name} ON #{table_name};
             SQL
 
-            execute_sql(query)
+            execute_sql!(query)
           end
 
           def create_trigger(table_name, trigger_name, function_name, timing, event)
@@ -54,7 +54,7 @@ module PgRls
                 FOR EACH ROW EXECUTE PROCEDURE #{function_name}();
             SQL
 
-            execute_sql(query)
+            execute_sql!(query)
           end
 
           def create_rls_blocking_trigger(table_name)

@@ -1,0 +1,48 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module PostgreSQL
+        # This module contains the logic to grant user privileges
+        module RlsUserStatements
+          include SqlHelperMethod
+
+          def create_rls_role: (String, String) -> void
+                             
+          def drop_rls_role: (String) -> void
+                           
+          def user_exists?: (String) -> bool
+                          
+          def drop_rls_user: (String) -> void
+                           
+          def create_rls_user: (String, String) -> void
+                             
+          def create_rls_group: () -> void
+                              
+          def drop_rls_group: () -> void
+                            
+          def assign_user_to_group: (String) -> void
+                                  
+          def remove_user_from_group: (String) -> void
+                                    
+          private
+
+          def user_exists_sql: (String) -> String
+                             
+          def drop_rls_user_sql: (String) -> String
+                               
+          def create_rls_user_sql: (String, String) -> String
+                                 
+          def create_rls_group_sql: () -> String
+                                  
+          def drop_rls_group_sql: () -> String
+                                
+          def assign_user_to_group_sql: (String) -> String
+                                      
+          def remove_user_from_group_sql: (String) -> String
+        end
+      end
+    end
+  end
+end

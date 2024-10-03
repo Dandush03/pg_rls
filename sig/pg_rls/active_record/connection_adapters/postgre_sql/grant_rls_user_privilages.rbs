@@ -1,0 +1,39 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module PostgreSQL
+        module GrantRlsUserPrivilages
+          include SqlHelperMethod
+
+          def grant_rls_user_privileges: (String) -> void
+                                       
+          def revoke_rls_user_privileges: (String) -> void
+                                        
+          private
+
+          def revoke_schema_usage: (String, String) -> void
+                                 
+          def revoke_default_sequence_privileges: (String, String) -> void
+                                                
+          def revoke_default_table_privileges: (String, String) -> void
+                                             
+          def revoke_existing_table_privileges: (String, String) -> void
+                                              
+          def revoke_existing_sequence_privileges: (String, String) -> void
+                                                 
+          def grant_schema_usage: (String, String) -> void
+                                
+          def grant_default_sequence_privileges: (String, String) -> void
+                                               
+          def grant_default_table_privileges: (String, String) -> void
+                                            
+          def grant_existing_table_privileges: (String, String) -> void
+                                             
+          def grant_existing_sequence_privileges: (String, String) -> void
+        end
+      end
+    end
+  end
+end

@@ -8,4 +8,9 @@ require_relative "pg_rls/version"
 
 # Row Level Security for PostgreSQL
 module PgRls
+  mattr_accessor :username
+  @@username = "app_user"
+
+  mattr_accessor :password
+  @@password = "password"
 end

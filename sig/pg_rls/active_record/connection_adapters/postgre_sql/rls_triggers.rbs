@@ -5,6 +5,8 @@ module PgRls
     module ConnectionAdapters
       module PostgreSQL
         module RlsTriggers
+          include SqlHelperMethod
+
           def trigger_exists?: (String, String) -> bool
                              
           def create_tenant_table_triggers: (String) -> void

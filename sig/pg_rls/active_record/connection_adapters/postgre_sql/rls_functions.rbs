@@ -5,6 +5,8 @@ module PgRls
     module ConnectionAdapters
       module PostgreSQL
         module RlsFunctions
+          include SqlHelperMethod
+
           def function_exists?: (String) -> bool
                                                    
           def create_rls_functions: () -> void
@@ -13,9 +15,9 @@ module PgRls
                                   
           private
 
-          def create_function: (String, String) -> PG::Result
+          def create_function: (String, String) -> Array[PG::Result]
                              
-          def drop_function: (String) -> PG::Result
+          def drop_function: (String) -> Array[PG::Result]
 
           def create_tenant_id_setter_function: () -> void
                                               

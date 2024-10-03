@@ -15,7 +15,7 @@ module PgRls
               WHERE proname = '#{function_name}'
             SQL
 
-            execute_sql(query).any?
+            execute_sql!(query).any?
           end
 
           def create_rls_functions
@@ -40,7 +40,7 @@ module PgRls
                 $$;
             SQL
 
-            execute_sql(query)
+            execute_sql!(query)
           end
 
           def drop_function(name)
@@ -48,7 +48,7 @@ module PgRls
               DROP FUNCTION IF EXISTS #{name}() CASCADE;
             SQL
 
-            execute_sql(query)
+            execute_sql!(query)
           end
 
           def create_rls_blocking_function
