@@ -38,11 +38,10 @@ module PgRls
 
     def reconstruct_db
       db_task = ::ActiveRecord::Tasks::DatabaseTasks
+      db_task.create(db_config)
       db_task.migration_class.connection_handler.establish_connection(db_config, clobber: true) do
         db_task.purge(db_config)
       end
-    rescue ::ActiveRecord::NoDatabaseError
-      db_task.create(db_config)
     end
   end
 end
