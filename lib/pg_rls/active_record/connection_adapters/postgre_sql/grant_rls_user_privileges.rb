@@ -5,7 +5,7 @@ module PgRls
     module ConnectionAdapters
       module PostgreSQL
         # This module contains the logic to grant user privileges
-        module GrantRlsUserPrivilages
+        module GrantRlsUserPrivileges
           include SqlHelperMethod
 
           def grant_rls_user_privileges(schema)
@@ -108,7 +108,3 @@ module PgRls
     end
   end
 end
-
-ActiveRecord::ConnectionAdapters::AbstractAdapter.include(
-  PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::GrantRlsUserPrivilages
-)

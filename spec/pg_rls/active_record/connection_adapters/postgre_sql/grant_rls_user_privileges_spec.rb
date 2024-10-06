@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::GrantRlsUserPrivilages do
+RSpec.describe PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::GrantRlsUserPrivileges do
   let(:connection) { ActiveRecord::Base.connection }
 
   before do

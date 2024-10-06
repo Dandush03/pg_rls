@@ -1,0 +1,28 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module PostgreSQL
+        # This module contains the logic to grant user privileges
+        module RlsPolicies
+          include SqlHelperMethod
+
+          def enable_table_rls: (String, String) -> void
+
+          def disable_table_rls: (String, String) -> void
+
+          private
+
+          def drop_rls_policy_sql: (String, String) -> String
+
+          def disable_row_level_security_sql: (String) -> String
+
+          def create_rls_policy_sql: (String, String) -> String
+
+          def enable_row_level_security_sql: (String) -> String
+        end
+      end
+    end
+  end
+end

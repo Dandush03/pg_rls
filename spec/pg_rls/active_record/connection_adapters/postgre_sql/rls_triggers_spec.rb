@@ -20,16 +20,16 @@ RSpec.describe PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::RlsTriggers 
     end
   end
 
-  describe "#create_rls_table_triggers" do
+  describe "#append_rls_table_triggers" do
     it "creates the tenant_id_setter trigger" do
-      ActiveRecord::Base.connection.create_rls_table_triggers("table_name")
+      ActiveRecord::Base.connection.append_rls_table_triggers("table_name")
 
       expect(ActiveRecord::Base.connection).to be_trigger_exists("table_name",
                                                                  "table_name_tenant_id_setter_trigger")
     end
 
     it "creates the tenant_id_update_blocker trigger" do
-      ActiveRecord::Base.connection.create_rls_table_triggers("table_name")
+      ActiveRecord::Base.connection.append_rls_table_triggers("table_name")
 
       expect(ActiveRecord::Base.connection).to be_trigger_exists("table_name",
                                                                  "table_name_tenant_id_update_blocker_trigger")
@@ -48,7 +48,7 @@ RSpec.describe PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::RlsTriggers 
 
   describe "#drop_rls_table_triggers" do
     it "drops the tenant_id_setter trigger" do
-      ActiveRecord::Base.connection.create_rls_table_triggers("table_name")
+      ActiveRecord::Base.connection.append_rls_table_triggers("table_name")
       ActiveRecord::Base.connection.drop_rls_table_triggers("table_name")
 
       expect(ActiveRecord::Base.connection).not_to be_trigger_exists("table_name",
@@ -56,7 +56,7 @@ RSpec.describe PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::RlsTriggers 
     end
 
     it "drops the tenant_id_update_blocker trigger" do
-      ActiveRecord::Base.connection.create_rls_table_triggers("table_name")
+      ActiveRecord::Base.connection.append_rls_table_triggers("table_name")
       ActiveRecord::Base.connection.drop_rls_table_triggers("table_name")
 
       expect(ActiveRecord::Base.connection).not_to be_trigger_exists("table_name",

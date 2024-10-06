@@ -14,6 +14,10 @@ module PgRls
         end
         class UserMissingSequencePrivilegesError < PgRls::Error
         end
+        class TableRlsNotEnabledError < PgRls::Error
+        end
+        class TableUserPolicyDoesNotExistError < PgRls::Error
+        end
       end
     end
   end

@@ -89,7 +89,3 @@ module PgRls
     end
   end
 end
-
-ActiveRecord::ConnectionAdapters::AbstractAdapter.include(
-  PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::RlsFunctions
-)

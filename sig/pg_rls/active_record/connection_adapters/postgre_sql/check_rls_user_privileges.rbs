@@ -4,7 +4,7 @@ module PgRls
   module ActiveRecord
     module ConnectionAdapters
       module PostgreSQL
-        module CheckRlsUserPrivilages
+        module CheckRlsUserPrivileges
           include SqlHelperMethod
 
           def check_rls_user_privileges!: (String, String) -> bool
@@ -12,6 +12,10 @@ module PgRls
           def check_table_privileges!: (String, String, String) -> bool
 
           def check_sequence_privileges!: (String, String, String) -> bool
+
+          def check_table_rls_enabled!: (String) -> bool
+
+          def check_table_user_policy_exists!: (String, String) -> bool
 
           private
 
@@ -38,6 +42,10 @@ module PgRls
           def check_default_sequence_privileges_sql: (String, String) -> String
 
           def check_sequence_privileges_sql: (String, String, String) -> String
+
+          def check_table_rls_enabled_sql: (String) -> String
+
+          def check_table_user_policy_exists_sql: (String, String) -> String
         end
       end
     end

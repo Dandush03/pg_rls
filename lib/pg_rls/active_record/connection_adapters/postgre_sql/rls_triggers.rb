@@ -23,7 +23,7 @@ module PgRls
             create_rls_blocking_trigger(table_name)
           end
 
-          def create_rls_table_triggers(table_name)
+          def append_rls_table_triggers(table_name)
             create_tenant_id_setter_trigger(table_name)
             create_tenant_id_update_blocker_trigger(table_name)
           end
@@ -91,7 +91,3 @@ module PgRls
     end
   end
 end
-
-ActiveRecord::ConnectionAdapters::AbstractAdapter.include(
-  PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::RlsTriggers
-)

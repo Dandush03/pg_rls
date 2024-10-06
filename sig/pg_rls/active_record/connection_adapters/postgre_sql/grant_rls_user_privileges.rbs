@@ -4,7 +4,7 @@ module PgRls
   module ActiveRecord
     module ConnectionAdapters
       module PostgreSQL
-        module GrantRlsUserPrivilages
+        module GrantRlsUserPrivileges
           include SqlHelperMethod
 
           def grant_rls_user_privileges: (String) -> void

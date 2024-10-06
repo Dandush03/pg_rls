@@ -9,6 +9,8 @@ module PgRls
         class UserMissingSchemaUsagePrivilegeError < PgRls::Error; end
         class UserMissingTablePrivilegesError < PgRls::Error; end
         class UserMissingSequencePrivilegesError < PgRls::Error; end
+        class TableRlsNotEnabledError < PgRls::Error; end
+        class TableUserPolicyDoesNotExistError < PgRls::Error; end
       end
     end
   end
