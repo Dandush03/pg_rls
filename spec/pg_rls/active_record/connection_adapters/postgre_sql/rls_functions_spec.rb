@@ -62,10 +62,10 @@ RSpec.describe PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::RlsFunctions
       expect(ActiveRecord::Base.connection).to be_function_exists("tenant_id_update_blocker")
     end
 
-    it "creates the rls_blocking_function function" do
+    it "creates the rls_exception function" do
       ActiveRecord::Base.connection.create_rls_functions
 
-      expect(ActiveRecord::Base.connection).to be_function_exists("rls_blocking_function")
+      expect(ActiveRecord::Base.connection).to be_function_exists("rls_exception")
     end
   end
 
@@ -84,11 +84,11 @@ RSpec.describe PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::RlsFunctions
       expect(ActiveRecord::Base.connection).not_to be_function_exists("tenant_id_update_blocker")
     end
 
-    it "drops the rls_blocking_function function" do
+    it "drops the rls_exception function" do
       ActiveRecord::Base.connection.create_rls_functions
       ActiveRecord::Base.connection.drop_rls_functions
 
-      expect(ActiveRecord::Base.connection).not_to be_function_exists("rls_blocking_function")
+      expect(ActiveRecord::Base.connection).not_to be_function_exists("rls_exception")
     end
   end
 end

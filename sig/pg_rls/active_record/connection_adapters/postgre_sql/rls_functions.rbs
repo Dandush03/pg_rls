@@ -23,7 +23,7 @@ module PgRls
                                               
           def create_tenant_id_update_blocker_function: () -> void
                                                       
-          def create_rls_blocking_function: () -> void
+          def create_rls_exception: () -> void
         end
       end
     end

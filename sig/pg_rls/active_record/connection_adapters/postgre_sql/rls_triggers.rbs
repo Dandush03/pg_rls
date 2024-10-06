@@ -23,7 +23,7 @@ module PgRls
 
           def create_trigger: (String, String, String, String, String) -> void
 
-          def create_rls_blocking_trigger: (String) -> void
+          def create_rls_exception_trigger: (String) -> void
 
           def create_tenant_id_setter_trigger: (String) -> void
 

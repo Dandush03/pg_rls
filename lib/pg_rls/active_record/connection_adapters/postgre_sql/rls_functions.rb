@@ -19,14 +19,14 @@ module PgRls
           end
 
           def create_rls_functions
-            create_rls_blocking_function
+            create_rls_exception
             create_tenant_id_setter_function
             create_tenant_id_update_blocker_function
           end
 
           def drop_rls_functions
             drop_function("tenant_id_setter")
-            drop_function("rls_blocking_function")
+            drop_function("rls_exception")
             drop_function("tenant_id_update_blocker")
           end
 
@@ -51,14 +51,14 @@ module PgRls
             execute_sql!(query)
           end
 
-          def create_rls_blocking_function
+          def create_rls_exception
             body = <<~SQL
               BEGIN
                 RAISE EXCEPTION 'This column is guarded due to tenancy dependency';
               END
             SQL
 
-            create_function("rls_blocking_function", body)
+            create_function("rls_exception", body)
           end
 
           def create_tenant_id_setter_function

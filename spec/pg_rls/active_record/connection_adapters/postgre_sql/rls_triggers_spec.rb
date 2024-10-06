@@ -12,11 +12,11 @@ RSpec.describe PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::RlsTriggers 
   end
 
   describe "#create_tenant_table_triggers" do
-    it "creates the rls_blocking_function trigger" do
+    it "creates the rls_exception trigger" do
       ActiveRecord::Base.connection.create_tenant_table_triggers("table_name")
 
       expect(ActiveRecord::Base.connection).to be_trigger_exists("table_name",
-                                                                 "table_name_rls_blocking_function_trigger")
+                                                                 "table_name_rls_exception_trigger")
     end
   end
 
@@ -37,12 +37,12 @@ RSpec.describe PgRls::ActiveRecord::ConnectionAdapters::PostgreSQL::RlsTriggers 
   end
 
   describe "#drop_tenant_table_triggers" do
-    it "drops the rls_blocking_function trigger" do
+    it "drops the rls_exception trigger" do
       ActiveRecord::Base.connection.create_tenant_table_triggers("table_name")
       ActiveRecord::Base.connection.drop_tenant_table_triggers("table_name")
 
       expect(ActiveRecord::Base.connection).not_to be_trigger_exists("table_name",
-                                                                     "table_name_rls_blocking_function_trigger")
+                                                                     "table_name_rls_exception_trigger")
     end
   end
 

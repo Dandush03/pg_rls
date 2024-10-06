@@ -20,7 +20,7 @@ module PgRls
           end
 
           def create_tenant_table_triggers(table_name)
-            create_rls_blocking_trigger(table_name)
+            create_rls_exception_trigger(table_name)
           end
 
           def append_rls_table_triggers(table_name)
@@ -29,7 +29,7 @@ module PgRls
           end
 
           def drop_tenant_table_triggers(table_name)
-            drop_trigger(table_name, "#{table_name}_rls_blocking_function_trigger")
+            drop_trigger(table_name, "#{table_name}_rls_exception_trigger")
           end
 
           def drop_rls_table_triggers(table_name)
@@ -57,11 +57,11 @@ module PgRls
             execute_sql!(query)
           end
 
-          def create_rls_blocking_trigger(table_name)
+          def create_rls_exception_trigger(table_name)
             create_trigger(
               table_name,
-              "#{table_name}_rls_blocking_function_trigger",
-              "rls_blocking_function",
+              "#{table_name}_rls_exception_trigger",
+              "rls_exception",
               "BEFORE",
               "UPDATE OF tenant_id"
             )
