@@ -85,8 +85,8 @@ module PgRls
         pool.lease_connection
       end
     else
+      PgRls::Logger.new.deprecation_warning('PgRls.pool_connection is deprecated and will be removed in future PgRls 0.2.0. Please use pool.lease_connection instead.')
       def pool_connection(pool)
-        PgRls.logger.deprecation_warning('PgRls.pool_connection is deprecated and will be removed in future PgRls 0.2.0. Please use pool.lease_connection instead.')
         pool.connection
       end
     end
