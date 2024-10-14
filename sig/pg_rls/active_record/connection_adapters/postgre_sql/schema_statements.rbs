@@ -1,0 +1,61 @@
+# frozen_string_literal: true
+# 
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module PostgreSQL
+        # This module contains the logic to create rls policies tables and functions
+        module SchemaStatements
+          def table_exists?: (String | Symbol) -> bool
+          def create_table: (String | Symbol, *untyped args) -> void
+          def drop_table: (String | Symbol, *untyped args) -> void
+          def add_column: (String | Symbol, String | Symbol, String | Symbol, *untyped args) -> void
+          def remove_column: (String | Symbol, String | Symbol, *untyped args) -> void
+
+          def create_rls_tenant_table: (String | Symbol, *untyped args) -> void
+          def convert_to_rls_tenant_table: (String | Symbol) -> void
+          def create_rls_table: (String | Symbol, *untyped args) -> void
+          def convert_to_rls_table: (String | Symbol) -> void
+          def drop_rls_tenant_table: (String | Symbol, *untyped args) -> void
+          def revert_from_rls_tenant_table: (String | Symbol) -> void
+          def drop_rls_table: (String | Symbol, *untyped args) -> void
+          def revert_from_rls_table: (String | Symbol) -> void
+
+          # Dynamically Generate the Inversion Methods
+          def invert_create_rls_tenant_table: (String | Symbol, *untyped args) -> void
+          def invert_convert_to_rls_tenant_table: (String | Symbol) -> void
+          def invert_create_rls_table: (String | Symbol, *untyped args) -> void
+          def invert_convert_to_rls_table: (String | Symbol) -> void
+
+          # Inherited Methods
+          
+          def check_rls_user_privileges!: (String | Symbol, String | Symbol) -> bool
+          def enable_table_rls: (String | Symbol, String | Symbol) -> void
+          def append_rls_table_triggers: (String | Symbol) -> void
+          def add_index: (String | Symbol, String | Symbol, *untyped args) -> void
+          def append_tenant_table_triggers: (String | Symbol) -> void
+          def create_rls_group: () -> void
+          def create_rls_role: (String | Symbol, String | Symbol) -> void
+          def create_rls_functions: () -> void
+          def drop_tenant_table_triggers: (String | Symbol) -> void
+          def disable_table_rls: (String | Symbol, String | Symbol) -> void
+          def drop_rls_functions: () -> void
+          def drop_rls_role: (String | Symbol) -> void
+          def drop_rls_group: () -> void
+          def drop_rls_table_triggers: (String | Symbol) -> void
+          def grant_rls_user_privileges: (String | Symbol) -> void
+          def revoke_rls_user_privileges: (String | Symbol) -> void
+
+          private
+
+          def create_rls_table_setup: (String | Symbol) -> void
+          def create_rls_tenant_table_setup: (String | Symbol) -> void
+          def create_rls_initialize_setup: () -> void
+          def drop_rls_table_setup: (String | Symbol) -> void
+          def drop_rls_initialize_setup: (String | Symbol) -> void
+        end
+      end
+    end
+  end
+end

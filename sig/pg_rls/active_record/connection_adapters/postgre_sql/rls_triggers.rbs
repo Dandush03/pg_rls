@@ -9,7 +9,7 @@ module PgRls
 
           def trigger_exists?: (String, String) -> bool
                              
-          def create_tenant_table_triggers: (String) -> void
+          def append_tenant_table_triggers: (String) -> void
 
           def append_rls_table_triggers: (String) -> void
 

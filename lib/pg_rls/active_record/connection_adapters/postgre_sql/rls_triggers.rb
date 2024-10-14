@@ -8,18 +8,17 @@ module PgRls
         module RlsTriggers
           include SqlHelperMethod
 
-          def trigger_exists?(table_name, trigger_name)
+          def trigger_exists?(table_name, function_name)
             query = <<~SQL
               SELECT 1
               FROM pg_trigger
-              WHERE tgname = '#{trigger_name}'
-              AND tgrelid = '#{table_name}'::regclass;
+              WHERE tgname = '#{table_name}_#{function_name}_trigger';
             SQL
 
             execute_sql!(query).any?
           end
 
-          def create_tenant_table_triggers(table_name)
+          def append_tenant_table_triggers(table_name)
             create_rls_exception_trigger(table_name)
           end
 

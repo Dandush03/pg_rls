@@ -9,6 +9,7 @@ require_relative "postgre_sql/rls_user_statements"
 require_relative "postgre_sql/check_rls_user_privileges"
 require_relative "postgre_sql/grant_rls_user_privileges"
 require_relative "postgre_sql/rls_policies"
+require_relative "postgre_sql/schema_statements"
 
 module PgRls
   module ActiveRecord

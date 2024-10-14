@@ -29,7 +29,7 @@ module PgRls
 
           def disable_row_level_security_sql(table_name)
             <<~SQL
-              ALTER TABLE #{table_name}
+              ALTER TABLE IF EXISTS #{table_name}
                 DISABLE ROW LEVEL SECURITY;
             SQL
           end

@@ -8,30 +8,42 @@ module PgRls
           include SqlHelperMethod
 
           def grant_rls_user_privileges: (String) -> void
-                                       
+
           def revoke_rls_user_privileges: (String) -> void
-                                        
+
           private
 
           def revoke_schema_usage: (String, String) -> void
-                                 
+
           def revoke_default_sequence_privileges: (String, String) -> void
-                                                
+
           def revoke_default_table_privileges: (String, String) -> void
-                                             
+
           def revoke_existing_table_privileges: (String, String) -> void
-                                              
+
           def revoke_existing_sequence_privileges: (String, String) -> void
-                                                 
+
           def grant_schema_usage: (String, String) -> void
-                                
+
           def grant_default_sequence_privileges: (String, String) -> void
-                                               
+
           def grant_default_table_privileges: (String, String) -> void
-                                            
+
           def grant_existing_table_privileges: (String, String) -> void
-                                             
+
           def grant_existing_sequence_privileges: (String, String) -> void
+
+          def revoke_schema_usage_sql: (String, String) -> String
+
+          def revoke_default_sequence_privileges_sql: (String, String) -> String
+
+          def revoke_default_table_privileges_sql: (String, String) -> String
+
+          def revoke_existing_table_privileges_sql: (String, String) -> String
+
+          def revoke_existing_sequence_privileges_sql: (String, String) -> String
+  
+          def role_applicable_sql_statement: (String, String) -> String
         end
       end
     end

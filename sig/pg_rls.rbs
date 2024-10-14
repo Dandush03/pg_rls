@@ -2,5 +2,16 @@
 
 module PgRls
   VERSION: String
-  # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+
+  @@schema: String | Symbol
+  def self.schema: -> (String | Symbol)
+  def self.schema=: (String | Symbol) -> (String | Symbol)
+
+  @@username: String | Symbol
+  def self.username: -> (String | Symbol)
+  def self.username=: (String | Symbol) -> (String | Symbol)
+
+  @@password: String | Symbol
+  def self.password: -> (String | Symbol)
+  def self.password=: (String | Symbol) -> (String | Symbol)
 end
