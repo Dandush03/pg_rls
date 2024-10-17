@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+class Rails::Engine
+  # Define isolate_namespace to accept a Module and return untyped
+  def self.isolate_namespace: (Module) -> untyped
+end
+
+module PgRls
+  # Engine
+  class Engine < ::Rails::Engine
+  end
+end

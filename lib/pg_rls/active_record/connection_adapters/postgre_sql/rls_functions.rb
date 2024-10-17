@@ -65,7 +65,7 @@ module PgRls
             body = <<~SQL
               BEGIN
                 new.tenant_id:= (current_setting('rls.tenant_id'));
-                RETURN new;
+                RETURN NEW;
               END;
             SQL
 

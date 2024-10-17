@@ -5,6 +5,8 @@ require_relative "pg_rls/errors"
 require_relative "pg_rls/active_record"
 require_relative "pg_rls/active_support"
 require_relative "pg_rls/version"
+require_relative "pg_rls/engine"
+require_relative "pg_rls/railtie"
 
 # Row Level Security for PostgreSQL
 module PgRls

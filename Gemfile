@@ -8,8 +8,9 @@ gemspec
 gem "rake", "~> 13.0"
 
 group :development, :test do
-  # Behaviour Driven Development Test [https://github.com/rspec/rspec-metagem]
-  gem "rspec"
+  # Guard automatically & intelligently launch tests [https://github.com/guard/guard-minitest]
+  gem "guard" # NOTE: this is necessary in newer versions
+  gem "guard-minitest"
 
   # Code and Debug Report [https://github.com/simplecov-ruby/simplecov]
   gem "simplecov", require: false
@@ -17,8 +18,6 @@ group :development, :test do
   gem "rubocop", require: false
   # Code Linting Performance optimization analysis [https://github.com/rubocop/rubocop-performance]
   gem "rubocop-performance", require: false
-  # Code Linting RSpec-specific analysis [https://github.com/rubocop/rubocop-rspec]
-  gem "rubocop-rspec", require: false
   # Code Linting Rake-specific analysis [https://github.com/rubocop/rubocop-rake]
   gem "rubocop-rake", require: false
 
@@ -29,4 +28,7 @@ group :development, :test do
   gem "rbs", require: false
   # Ruby Strong Typing Validations [https://github.com/soutaro/steep]
   gem "steep"
+
+  # Reduces boot times through caching; required in config/boot.rb
+  gem "bootsnap", require: false
 end

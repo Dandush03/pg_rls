@@ -1,5 +1,4 @@
 require:
-  - rubocop-rspec
   - rubocop-performance
   - rubocop-rake
 
@@ -22,3 +21,7 @@ Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
     - "pg_rls.gemspec"
+
+Style/Documentation:
+  Exclude:
+    - "test/**/*"

@@ -9,7 +9,9 @@ module PgRls
           private
 
           def execute_sql!(statement)
-            execute(statement.sanitize_sql)
+            transaction(requires_new: true) do
+              execute(statement.sanitize_sql)
+            end
           end
         end
       end

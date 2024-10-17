@@ -7,5 +7,15 @@
 /spec/reports/
 /tmp/
 
+/test/dummy/.bundle/
+/test/dummy/.yardoc
+/test/dummy/_yardoc/
+/test/dummy/coverage/
+/test/dummy/doc/
+/test/dummy/pkg/
+/test/dummy/spec/reports/
+/test/dummy/tmp/
+/test/dummy/log/
+
 # rspec failure tracking
 .rspec_status

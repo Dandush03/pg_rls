@@ -5,15 +5,6 @@ RED='\033[0;31m'
 YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
-echo -e "${YELLOW}Running RSpec tests...${NC}"
-bundle exec rspec
-if [ $? -eq 0 ]; then
-  echo -e "${GREEN}RSpec tests passed!${NC}"
-else
-  echo -e "${RED}RSpec tests failed!${NC}"
-  exit 1
-fi
-
 echo -e "${YELLOW}Running Rubocop...${NC}"
 bin/rubocop
 if [ $? -eq 0 ]; then
@@ -29,5 +20,14 @@ if [ $? -eq 0 ]; then
   echo -e "${GREEN}Steep passed!${NC}"
 else
   echo -e "${RED}Steep failed!${NC}"
+  exit 1
+fi
+
+echo -e "${YELLOW}Running tests...${NC}"
+bin/test
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}Tests passed!${NC}"
+else
+  echo -e "${RED}Tests failed!${NC}"
   exit 1
 fi
