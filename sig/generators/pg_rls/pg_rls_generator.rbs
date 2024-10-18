@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+module PgRls
+  module Generators
+    # PgRls Generator
+    class PgRlsGenerator < ::Rails::Generators::NamedBase
+    end
+  end
+end

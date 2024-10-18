@@ -6,6 +6,7 @@ module PG
     def ntuples: () -> Integer
     def nfields: () -> Integer
     def any?: () -> bool
+    def present?: () -> bool
     # You can add more methods as needed
   end
 end

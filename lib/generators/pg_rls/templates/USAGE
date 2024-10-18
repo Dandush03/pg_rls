@@ -1,0 +1,28 @@
+===============================================================================
+
+🎉 Congratulations! The PgRls gem has been successfully installed.
+
+To generate a model with secure Row-Level Security (RLS), run the following command:
+
+   rails g pg_rls ModelName
+
+or
+
+   rails generate pg_rls ModelName
+
+📌 Remember:
+
+- Replace `ModelName` with the actual name of your model (e.g., `User`, `Post`).
+- This will set up the necessary RLS policies and table configurations for multi-tenant support.
+
+🛠  Next Steps:
+
+1. After generating the model, review the generated migration and model files.
+2. Ensure your database is configured to support Row-Level Security.
+3. Run `rails db:migrate` to apply the generated migration.
+4. Customize the generated policies to fit your application's security needs.
+
+💡 Tip: Check the documentation at <https://github.com/Dandush03/pg_rls>
+   for more details on how to fine-tune RLS policies.
+
+===============================================================================

@@ -1,0 +1,5 @@
+class ConvertToPgRls<%= table_name.camelize %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    convert_to_rls_table :<%= table_name %>
+  end
+end

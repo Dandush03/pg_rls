@@ -6,6 +6,12 @@ module PgRls
       def gsub!: (Regexp, String) -> String
                
       def strip!: -> String
+                
+      def camelize: -> String
+                  
+      def constantize: -> Class
+                     
+      def underscore: -> String
     end
   end
 end

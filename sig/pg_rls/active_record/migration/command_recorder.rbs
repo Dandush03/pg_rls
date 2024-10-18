@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module Migration
+      # ActiveRecord Migration Command Recorder Extension
+      module CommandRecorder
+        REVERSIBLE_AND_IRREVERSIBLE_METHODS: ::Array[Symbol]
+
+        def self.included: (Class) -> void
+      end
+    end
+  end
+end

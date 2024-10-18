@@ -3,9 +3,21 @@
 module PgRls
   VERSION: String
 
-  @@schema: String | Symbol
-  def self.schema: -> (String | Symbol)
-  def self.schema=: (String | Symbol) -> (String | Symbol)
+  def self.setup: () { (untyped) -> untyped } -> untyped
+
+  def self.main_model: () -> untyped
+
+  @@search_methods: Array[Symbol]
+  def self.search_methods: -> Array[Symbol]
+  def self.search_methods=: (Array[Symbol]) -> Array[Symbol]
+
+  @@table_name: String | Symbol
+  def self.table_name: -> (String | Symbol)
+  def self.table_name=: (String | Symbol) -> (String | Symbol)
+
+  @@class_name: String | Symbol
+  def self.class_name: -> (String | Symbol)
+  def self.class_name=: (String | Symbol) -> (String | Symbol)
 
   @@username: String | Symbol
   def self.username: -> (String | Symbol)
@@ -14,4 +26,10 @@ module PgRls
   @@password: String | Symbol
   def self.password: -> (String | Symbol)
   def self.password=: (String | Symbol) -> (String | Symbol)
+
+  @@schema: String | Symbol
+  def self.schema: -> (String | Symbol)
+  def self.schema=: (String | Symbol) -> (String | Symbol)
+                  
+  def self.mattr_accessor: (Symbol) -> untyped
 end

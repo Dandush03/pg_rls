@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+module PgRls
+  # Generator to install the gem
+  class InstallGenerator < Rails::Generators::Base
+    attr_reader attributes: :untyped
+
+    def create_install_config: () -> void
+
+    def show_readme: () -> void
+
+    private
+
+    def set_pg_rls_config: () -> void
+
+    def invoke?: () -> bool
+  end
+end

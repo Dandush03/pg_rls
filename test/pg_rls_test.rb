@@ -3,6 +3,13 @@
 require "test_helper"
 
 class PgRlsTest < ActiveSupport::TestCase
+  class Organization; end # rubocop: disable Lint/EmptyClass
+
+  test "main_model returns the class name constantize" do
+    PgRls.class_name = "PgRlsTest::Organization"
+    assert_equal PgRls.main_model, PgRlsTest::Organization
+  end
+
   test "has a version number" do
     assert_not_nil PgRls::VERSION
   end

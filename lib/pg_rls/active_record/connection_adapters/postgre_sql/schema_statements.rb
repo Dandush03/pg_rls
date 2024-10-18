@@ -53,10 +53,8 @@ module PgRls
           }.each do |cmd, inv|
             [[inv, cmd], [cmd, inv]].uniq.each do |method, inverse|
               class_eval <<-RUBY, __FILE__, __LINE__ + 1
-                def invert_#{method}(*args, **attr, &block) # def invert_create_rls_tenant_table(*args, **attr, &block)
-                  attr.delete(:if_not_exists)               #   attr.delete(:if_not_exists)
-                  attr.delete(:if_exists)                   #   attr.delete(:if_exists)
-                  send(:#{inverse}, *args, **attr, &block)  #   send(:drop_rls_tenant_table, *args, **attr, &block)
+                def invert_#{method}(args, &block)          # def invert_create_table(args, &block)
+                  [:#{inverse}, args, block]                #   [:drop_table, args, block]
                 end                                         # end
               RUBY
             end

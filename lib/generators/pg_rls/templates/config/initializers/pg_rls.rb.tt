@@ -1,0 +1,8 @@
+PgRls.setup do |config|
+  config.class_name = :<%= PgRls.class_name %>
+  config.table_name = :<%= PgRls.table_name %>
+  config.search_methods = <%= "%i[#{PgRls.search_methods.join(' ')}]" %>
+
+  # config.username = Rails.application.credentials.dig(:database, :username)
+  # config.password = Rails.application.credentials.dig(:database, :password)
+end

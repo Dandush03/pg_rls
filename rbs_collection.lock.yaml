@@ -1,6 +1,22 @@
 ---
 path: ".gem_rbs_collection"
 gems:
+- name: actionpack
+  version: '7.2'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: actionview
+  version: '6.0'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
 - name: activemodel
   version: '7.0'
   source:
@@ -41,6 +57,10 @@ gems:
   version: '0'
   source:
     type: stdlib
+- name: io-console
+  version: '0'
+  source:
+    type: stdlib
 - name: logger
   version: '0'
   source:
@@ -53,6 +73,30 @@ gems:
   version: '0'
   source:
     type: stdlib
+- name: nokogiri
+  version: '1.11'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: rails-dom-testing
+  version: '2.0'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: railties
+  version: '6.0'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
 - name: securerandom
   version: '0'
   source:
@@ -61,7 +105,19 @@ gems:
   version: '0'
   source:
     type: stdlib
+- name: thor
+  version: '1.2'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
 - name: time
+  version: '0'
+  source:
+    type: stdlib
+- name: tsort
   version: '0'
   source:
     type: stdlib
