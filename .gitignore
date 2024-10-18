@@ -16,6 +16,3 @@
 /test/dummy/spec/reports/
 /test/dummy/tmp/
 /test/dummy/log/
-
-# rspec failure tracking
-.rspec_status

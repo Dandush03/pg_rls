@@ -146,7 +146,7 @@ Before each push, follow this workflow:
 3. Run tests:
 
    ```bash
-   bundle exec rspec
+   bin/test
    ```
 
 ### Releasing a New Version

@@ -65,7 +65,7 @@ module PgRls
           private
 
           def create_rls_table_setup(table_name)
-            add_column(table_name, :tenant_id, :uuid, default: nil)
+            add_column(table_name, :tenant_id, :uuid, null: false)
             enable_table_rls(table_name, PgRls.username)
             append_rls_table_triggers(table_name)
           end

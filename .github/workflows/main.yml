@@ -35,7 +35,7 @@ jobs:
           bundler-cache: true
 
       - name: Run RSpec
-        run: bundle exec rspec
+        run: bin/test
 
   lint:
     runs-on: ubuntu-latest
