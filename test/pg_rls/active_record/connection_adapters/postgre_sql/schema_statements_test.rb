@@ -104,11 +104,11 @@ module PgRls
 
               setup do
                 @tenant_uuid = SecureRandom.uuid
-                connection.execute("SET rls.tenant_id = '#{tenant_uuid}'")
+                connection.send(:execute_sql!, "SET rls.tenant_id = '#{tenant_uuid}'")
               end
 
               teardown do
-                connection.execute("RESET rls.tenant_id")
+                connection.send(:execute_sql!, "RESET rls.tenant_id")
               end
 
               rls_table_behavior_with_tenant_id(:test_table)
@@ -143,11 +143,11 @@ module PgRls
 
               setup do
                 @tenant_uuid = SecureRandom.uuid
-                connection.execute("SET rls.tenant_id = '#{tenant_uuid}'")
+                connection.send(:execute_sql!, "SET rls.tenant_id = '#{tenant_uuid}'")
               end
 
               teardown do
-                connection.execute("RESET rls.tenant_id")
+                connection.send(:execute_sql!, "RESET rls.tenant_id")
               end
 
               behaves_like_absence_of_rls_table_with_tenant_id(:test_table)
@@ -183,11 +183,11 @@ module PgRls
 
               setup do
                 @tenant_uuid = SecureRandom.uuid
-                connection.execute("SET rls.tenant_id = '#{tenant_uuid}'")
+                connection.send(:execute_sql!, "SET rls.tenant_id = '#{tenant_uuid}'")
               end
 
               teardown do
-                connection.execute("RESET rls.tenant_id")
+                connection.send(:execute_sql!, "RESET rls.tenant_id")
               end
 
               rls_table_behavior_with_tenant_id(:test_table)
@@ -229,11 +229,11 @@ module PgRls
 
               setup do
                 @tenant_uuid = SecureRandom.uuid
-                connection.execute("SET rls.tenant_id = '#{tenant_uuid}'")
+                connection.send(:execute_sql!, "SET rls.tenant_id = '#{tenant_uuid}'")
               end
 
               teardown do
-                connection.execute("RESET rls.tenant_id")
+                connection.send(:execute_sql!, "RESET rls.tenant_id")
               end
 
               behaves_like_absence_of_rls_table_with_tenant_id(:test_table)

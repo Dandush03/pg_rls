@@ -22,7 +22,7 @@ group :development, :test do
   gem "rubocop-rake", require: false
 
   # Database Cleaner [https://github.com/DatabaseCleaner/database_cleaner]
-  gem "database_cleaner"
+  gem "database_cleaner-active_record"
 
   # Ruby Strong Typing [https://github.com/ruby/rbs]
   gem "rbs", require: false

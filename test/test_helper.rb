@@ -40,5 +40,15 @@ module ActiveSupport
     end
 
     parallelize(workers: workers)
+
+    DatabaseCleaner.strategy = :transaction
+
+    setup do
+      DatabaseCleaner.start
+    end
+
+    teardown do
+      DatabaseCleaner.clean
+    end
   end
 end
