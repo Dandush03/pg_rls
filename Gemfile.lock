@@ -2,9 +2,9 @@ PATH
   remote: .
   specs:
     pg_rls (1.0.0)
-      activerecord (~> 7.2)
+      activerecord (>= 7.2)
       pg (~> 1.2)
-      railties (~> 7.2)
+      railties (>= 7.2)
       warden (~> 1.2)
 
 GEM
