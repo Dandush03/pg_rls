@@ -13,6 +13,8 @@ module ActiveRecord
       end
 
       def configuration_hash
+        return @configuration_hash if PgRls.excluded_shards.include?(@name.to_s)
+
         reset_pg_rls_configuration if db_changed?
 
         return admin_configuration_hash if PgRls.as_db_admin?
