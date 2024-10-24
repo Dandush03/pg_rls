@@ -11,7 +11,7 @@ module PgRls
 
     private
 
-    def set_pg_rls_config: () -> void
+    def pg_rls_config: () -> void
 
     def invoke?: () -> bool
   end
