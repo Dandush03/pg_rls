@@ -11,16 +11,22 @@ module PgRls
 
           setup do
             @connection = ::ActiveRecord::Base.connection
+            PgRls.username = "test_app_user"
+            PgRls.rls_role_group = "rls_test_group"
+          end
+
+          teardown do
+            PgRls.reset_config!
           end
 
           class CreateRlsRoleTest < self
             setup do
-              connection.create_rls_group
+              connection.create_rls_group("rls_test_group")
             end
 
             teardown do
               connection.drop_rls_role("test_app_user")
-              connection.drop_rls_group
+              connection.drop_rls_group("rls_test_group")
             end
 
             test "creates the role" do
@@ -38,7 +44,7 @@ module PgRls
             test "creates the role rls_group" do
               connection.create_rls_role("test_app_user", "password")
 
-              assert connection.user_exists?("rls_group")
+              assert connection.user_exists?("rls_test_group")
             end
           end
 
@@ -52,15 +58,15 @@ module PgRls
 
           class CreateRlsGroupTest < self
             test "creates the group" do
-              connection.create_rls_group
+              connection.create_rls_group("rls_test_group")
 
-              assert connection.user_exists?("rls_group")
+              assert connection.user_exists?("rls_test_group")
             end
           end
 
           class AssignUserToGroupTest < self
             test "assigns the user to the group" do
-              connection.create_rls_group
+              connection.create_rls_group("rls_test_group")
               connection.create_rls_user("test_app_user", "password")
               connection.assign_user_to_group("test_app_user")
 
@@ -78,7 +84,7 @@ module PgRls
 
           class DropRlsRoleTest < self
             setup do
-              connection.create_rls_group
+              connection.create_rls_group("rls_test_group")
               connection.create_rls_role("test_app_user", "password")
             end
 
@@ -99,7 +105,7 @@ module PgRls
             test "does not drops the group" do
               connection.drop_rls_role("test_app_user")
 
-              assert connection.user_exists?("rls_group")
+              assert connection.user_exists?("rls_test_group")
             end
           end
 
@@ -117,26 +123,26 @@ module PgRls
 
           class DropRlsGroupTest < self
             setup do
-              connection.create_rls_group
+              connection.create_rls_group("rls_test_group")
             end
 
             test "drops the group" do
-              connection.drop_rls_group
+              connection.drop_rls_group("rls_test_group")
 
-              refute connection.user_exists?("rls_group")
+              refute connection.user_exists?("rls_test_group")
             end
           end
 
           class RemoveUserFromGroupTest < self
             setup do
-              connection.create_rls_group
+              connection.create_rls_group("rls_test_group")
               connection.create_rls_user("test_app_user", "password")
               connection.assign_user_to_group("test_app_user")
             end
 
             teardown do
               connection.drop_rls_role("test_app_user")
-              connection.drop_rls_group
+              connection.drop_rls_group("rls_test_group")
             end
 
             test "removes the user from the group" do

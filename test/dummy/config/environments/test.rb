@@ -34,13 +34,15 @@ Rails.application.configure do
   config.action_controller.allow_forgery_protection = false
 
   # Print deprecation notices to the stderr.
-  config.active_support.deprecation = :stderr
+  config.active_support.deprecation = :raise
 
   # Raise exceptions for disallowed deprecations.
   config.active_support.disallowed_deprecation = :raise
 
   # Tell Active Support which deprecation messages to disallow.
   config.active_support.disallowed_deprecation_warnings = []
+
+  config.active_record.verbose_query_logs = true
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true

@@ -63,14 +63,18 @@ module PgRls
           private
 
           def create_rls_table_setup(table_name)
-            add_column(table_name, :tenant_id, :uuid, null: false)
+            add_column(table_name, :tenant_id, :uuid, null: false) unless column_exists?(table_name, :tenant_id)
             enable_table_rls(table_name, PgRls.username)
             append_rls_table_triggers(table_name)
           end
 
           def create_rls_tenant_table_setup(table_name)
-            add_column(table_name, :tenant_id, :uuid, default: "gen_random_uuid()", null: false)
-            add_index(table_name, :tenant_id, unique: true)
+            unless column_exists?(table_name, :tenant_id)
+              add_column(
+                table_name, :tenant_id, :uuid, default: "gen_random_uuid()", null: false
+              )
+            end
+            add_index(table_name, :tenant_id, unique: true) unless index_exists?(table_name, :tenant_id, unique: true)
             append_tenant_table_triggers(table_name)
           end
 

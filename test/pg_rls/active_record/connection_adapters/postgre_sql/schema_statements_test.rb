@@ -15,7 +15,13 @@ module PgRls
           attr_reader :connection
 
           setup do
+            PgRls.username = "test_app_user"
+            PgRls.rls_role_group = "test_rls_group"
             @connection = ::ActiveRecord::Base.connection
+          end
+
+          teardown do
+            PgRls.reset_config!
           end
 
           class CreateRlsTenantTableTest < self
@@ -51,12 +57,15 @@ module PgRls
             include RlsTenantTableBehavior
 
             setup do
+              PgRls.username = "test_app_user"
+              PgRls.rls_role_group = "test_rls_group"
               connection.create_table(:test_table) { |t| t.string :name }
               connection.convert_to_rls_tenant_table(:test_table)
             end
 
             teardown do
               connection.drop_table(:test_table, if_exists: true)
+              PgRls.reset_config!
             end
 
             behaves_like_rls_tenant_table(:test_table)

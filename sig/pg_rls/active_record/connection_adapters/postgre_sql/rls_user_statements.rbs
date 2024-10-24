@@ -18,9 +18,9 @@ module PgRls
                            
           def create_rls_user: (String, String) -> void
                              
-          def create_rls_group: () -> void
+          def create_rls_group: (?(String | Symbol)) -> void
                               
-          def drop_rls_group: () -> void
+          def drop_rls_group: (?(String | Symbol)) -> void
                             
           def assign_user_to_group: (String) -> void
                                   
@@ -34,9 +34,9 @@ module PgRls
                                
           def create_rls_user_sql: (String, String) -> String
                                  
-          def create_rls_group_sql: () -> String
+          def create_rls_group_sql: ((String | Symbol)) -> String
                                   
-          def drop_rls_group_sql: () -> String
+          def drop_rls_group_sql: ((String | Symbol)) -> String
                                 
           def assign_user_to_group_sql: (String) -> String
                                       

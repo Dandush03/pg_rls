@@ -30,12 +30,12 @@ module PgRls
             execute_sql!(create_rls_user_sql(name, password))
           end
 
-          def create_rls_group
-            execute_sql!(create_rls_group_sql)
+          def create_rls_group(name = PgRls.rls_role_group)
+            execute_sql!(create_rls_group_sql(name))
           end
 
-          def drop_rls_group
-            execute_sql!(drop_rls_group_sql)
+          def drop_rls_group(name = PgRls.rls_role_group)
+            execute_sql!(drop_rls_group_sql(name))
           end
 
           def assign_user_to_group(name)
@@ -75,21 +75,21 @@ module PgRls
             SQL
           end
 
-          def create_rls_group_sql
+          def create_rls_group_sql(role_name)
             <<~SQL
               DO $do$ BEGIN
-                IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'rls_group') THEN
-                  CREATE ROLE rls_group NOLOGIN;
+                IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '#{role_name}') THEN
+                  CREATE ROLE #{role_name} NOLOGIN;
                 END IF;
               END $do$;
             SQL
           end
 
-          def drop_rls_group_sql
+          def drop_rls_group_sql(role_name)
             <<~SQL
               DO $do$ BEGIN
-                IF EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'rls_group') THEN
-                  DROP ROLE rls_group;
+                IF EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '#{role_name}') THEN
+                  DROP ROLE #{role_name};
                 END IF;
               END $do$;
             SQL

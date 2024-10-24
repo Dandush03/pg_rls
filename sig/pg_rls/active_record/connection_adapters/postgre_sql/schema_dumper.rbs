@@ -1,0 +1,37 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module PostgreSQL
+        # Require to fix configuration super method invocation
+        module DummySchemaDumper
+          def tables: (StringIO) -> void
+        end
+
+        module SchemaDumper
+          include DummySchemaDumper
+
+          @rls_table_array: Array[String]
+          @rls_tenant_table: String
+
+          def tables: (StringIO) -> void
+
+          def table: (String, StringIO) -> void
+
+          private
+
+          def dump_table_to_string: (untyped, String) -> String
+
+          def rls_table?: (String) -> bool
+
+          def rls_tenant_table?: (String) -> bool
+
+          def rls_table_array: -> Array[String]
+
+          def fetch_rls_tables: -> Array[String]
+        end
+      end
+    end
+  end
+end

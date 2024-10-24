@@ -5,7 +5,21 @@ module ActiveRecord
   class Base
     def self.ignored_columns=: (Array[(Symbol | String)]) -> Array[Symbol]
                              
-    def self.ignored_columns: -> Array[Symbol]
+    def self.ignored_columns: () -> Array[Symbol]
+
+    def self.connection: () -> ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
+
+    def self.transaction: (requires_new: bool?) { () -> untyped } -> untyped
+                        
+    def self.connection_db_config: () -> ActiveRecord::DatabaseConfigurations::HashConfig       
+  end
+
+  class DatabaseConfigurations
+    class HashConfig
+      def configuration_hash: () -> Hash[Symbol, untyped]
+   
+      def name: () -> String
+    end
   end
 
   module Migration
@@ -36,11 +50,11 @@ module ActiveRecord
                     
       def migration_template: (String, ?String) -> void
                             
-      def table_name: -> String
+      def table_name: () -> String
                     
-      def skip_migration_creation?: -> bool
+      def skip_migration_creation?: () -> bool
                                   
-      def custom_parent?: -> bool
+      def custom_parent?: () -> bool
     end
 
     class Attribute
@@ -49,13 +63,22 @@ module ActiveRecord
 
       def attr_options: () -> Hash[Symbol, untyped]
 
-      def reference?: -> bool
+      def reference?: () -> bool
     end
   end
 
   module ConnectionAdapters
+    class AbstractAdapter
+      def rollback_db_transaction: () -> void
+    end
+
+    class PostgreSQLAdapter < AbstractAdapter
+    end
     module PostgreSQL
       class SchemaStatements
+      end
+
+      class SchemaDumper
       end
     end
   end

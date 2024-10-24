@@ -20,7 +20,8 @@ module PgRls
           end
 
           def rescue_sql_error?(error)
-            error.message.include?("PG::InFailedSqlTransaction") || error.message.include?("PG::TRDeadlockDetected")
+            error.message.include?("PG::InFailedSqlTransaction") ||
+              error.message.include?("PG::TRDeadlockDetected")
           end
         end
       end

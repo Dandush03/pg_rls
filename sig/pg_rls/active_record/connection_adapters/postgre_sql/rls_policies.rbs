@@ -8,19 +8,19 @@ module PgRls
         module RlsPolicies
           include SqlHelperMethod
 
-          def enable_table_rls: (String, String) -> void
+          def enable_table_rls: (String, ?(String | Symbol), ?(String | Symbol)) -> void
 
-          def disable_table_rls: (String, String) -> void
+          def disable_table_rls: (String, ?(String | Symbol), ?(String | Symbol)) -> void
 
           private
 
-          def drop_rls_policy_sql: (String, String) -> String
+          def drop_rls_policy_sql: ((String | Symbol), String, (String | Symbol)) -> String
 
-          def disable_row_level_security_sql: (String) -> String
+          def disable_row_level_security_sql: ((String | Symbol), String) -> String
 
-          def create_rls_policy_sql: (String, String) -> String
+          def create_rls_policy_sql: ((String | Symbol), String, (String | Symbol)) -> String
 
-          def enable_row_level_security_sql: (String) -> String
+          def enable_row_level_security_sql: ((String | Symbol), String) -> String
         end
       end
     end

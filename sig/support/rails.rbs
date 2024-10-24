@@ -3,6 +3,8 @@
 module Rails
   def self.application: () -> untyped
 
+  def self.env: () -> untyped
+
   class Engine
     # Define isolate_namespace to accept a Module and return untyped
     def self.isolate_namespace: (Module) -> untyped

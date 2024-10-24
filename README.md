@@ -37,6 +37,8 @@
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [How It Works](#how-it-works)
 - [Usage](#usage)
 - [Testing](#testing)
 - [Development](#development)
@@ -82,6 +84,51 @@ This gem will integrate PostgreSQL RLS to help you develop a great multitenancy 
    ```bash
    gem install pg_rls
    ```
+
+### Configuration
+
+You must configure the `rls_mode` in your `database.yml` file. This setting controls how RLS (Row-Level Security) connections are handled for your app. It supports three modes:
+
+- none: No RLS connections.
+- single: Only RLS connections, which is ideal for production environments.
+- dual: Both RLS and non-RLS connections, mainly for development and testing.
+
+Example configuration in database.yml for development:
+
+```ruby
+development:
+  <<: *default
+  database: dev_db
+  # Use 'dual' for development to switch between RLS and non-RLS connections.
+  rls_mode: <%= ENV.fetch('RLS_MODE', 'dual') %>  
+```
+
+#### Using the `dual` mode is not recommended in high-demand environments, as it will duplicate the connection pool for each RLS shard, leading to unnecessary overhead. Instead, configure the RLS mode to `single` or `none` and balance your requests accordingly. The `single` mode ensures only RLS connections are used, while `none` disables RLS for this environment
+
+#### For flexible production configurations, you can use an environment variable to set the rls_mode
+
+```ruby
+production:
+  <<: *default
+  database: prod_db
+  rls_mode: <%= ENV.fetch('RLS_MODE', 'dual') %>
+```
+
+### How It Works
+
+The `rls_mode` setting in your `database.yml` controls how your application handles database connections with Row-Level Security (RLS). Here's a breakdown of how each mode functions:
+
+1. **Single Mode:** In this mode, the application will modify the database connection’s `username` to `PgRls.username`, ensuring that all queries are executed with RLS rules enabled.
+   - **Effect:** Only RLS connections are used, and all operations are securely performed within the specified tenant context. This is recommended for production environments where strict RLS enforcement is needed, or when the application does not need to execute queries as an "admin" user.
+   - **Use Case:** When RLS is required for all operations to prevent unauthorized data access.
+
+2. **None Mode**: This mode does not modify any shards or connections. The username and connection behavior remain as defined in your database.yml, without applying the RLS username.
+   - **Effect:** No RLS rules are applied, and the application operates in a traditional mode without tenant-based restrictions.
+   - **Use Case:** Useful when you do not need to enforce tenant isolation through RLS, such as for administrative tasks or environments that do not require multi-tenancy.
+
+3. **Dual Mode:** In this mode, the application will duplicate each shard that has RLS enabled, adding a prefix of `rls_` to the shard name. Both RLS and non-RLS connections will be available. For example, if your shard is named animals, the RLS version will be named `rls_animals`.
+   - **Effect:** This maintains two connection pools per shard, one with RLS (`rls_` prefixed) and one without. While it provides flexibility, it also increases resource consumption by duplicating the connection pool.
+   - **Use Case:** This mode can be used in production environments for applications that require both RLS and non-RLS connections but is not recommended for extremely high-demand environments due to the overhead caused by duplicating the connection pools. In less demanding production settings, it offers useful flexibility.
 
 ## Usage
 

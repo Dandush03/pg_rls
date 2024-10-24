@@ -2,34 +2,53 @@
 
 module PgRls
   VERSION: String
+  DEFAULT_CONFIG_MAP: Hash[Symbol, (Symbol | Array[Symbol])]
 
   def self.setup: () { (untyped) -> untyped } -> untyped
 
+  def self.reset_config!: () -> void
+
   def self.main_model: () -> untyped
 
+  def self.look_up_connection_config: () -> Hash[Symbol, Hash[Symbol, Symbol]]
+
+  def self.connection_config?: () -> bool
+
+  def self.freeze_config!: () -> void
+                         
+  def self.invalid_connection_config: () -> bot
+
   @@search_methods: Array[Symbol]
-  def self.search_methods: -> Array[Symbol]
+  def self.search_methods: () -> Array[Symbol]
   def self.search_methods=: (Array[Symbol]) -> Array[Symbol]
 
   @@table_name: String | Symbol
-  def self.table_name: -> (String | Symbol)
+  def self.table_name: () -> (String | Symbol)
   def self.table_name=: (String | Symbol) -> (String | Symbol)
 
   @@class_name: String | Symbol
-  def self.class_name: -> (String | Symbol)
+  def self.class_name: () -> (String | Symbol)
   def self.class_name=: (String | Symbol) -> (String | Symbol)
 
   @@username: String | Symbol
-  def self.username: -> (String | Symbol)
+  def self.username: () -> (String | Symbol)
   def self.username=: (String | Symbol) -> (String | Symbol)
 
   @@password: String | Symbol
-  def self.password: -> (String | Symbol)
+  def self.password: () -> (String | Symbol)
   def self.password=: (String | Symbol) -> (String | Symbol)
 
   @@schema: String | Symbol
-  def self.schema: -> (String | Symbol)
+  def self.schema: () -> (String | Symbol)
   def self.schema=: (String | Symbol) -> (String | Symbol)
+
+  @@rls_role_group: String | Symbol
+  def self.rls_role_group: () -> (String | Symbol)
+  def self.rls_role_group=: (String | Symbol) -> (String | Symbol)
+                          
+  @@connects_to: nil | Hash[Symbol, Hash[Symbol, Symbol]]
+  def self.connects_to: () -> (Hash[Symbol, Hash[Symbol, Symbol]] | nil)
+  def self.connects_to=: (Hash[Symbol, Hash[Symbol, Symbol]] | nil) -> (Hash[Symbol, Hash[Symbol, Symbol]] | nil)
                   
   def self.mattr_accessor: (Symbol) -> untyped
 end

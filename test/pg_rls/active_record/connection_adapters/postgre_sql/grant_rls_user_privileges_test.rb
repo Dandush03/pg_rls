@@ -11,16 +11,19 @@ module PgRls
 
           setup do
             @connection = ::ActiveRecord::Base.connection
+            PgRls.username = "test_app_user"
+            PgRls.rls_role_group = "rls_test_group"
 
-            connection.create_rls_group
+            connection.create_rls_group("rls_test_group")
             connection.create_rls_role("test_app_user", "test_app_password")
           end
 
           teardown do
             connection.drop_rls_user("test_app_user")
             connection.revoke_rls_user_privileges("public")
-            connection.drop_rls_group
+            connection.drop_rls_group("rls_test_group")
             connection.drop_table(:test_table, if_exists: true)
+            PgRls.reset_config!
           end
 
           class GrantRlsUserPrivilegesTest < self
@@ -33,33 +36,33 @@ module PgRls
             test "grant usage on schema" do
               connection.grant_rls_user_privileges("public")
 
-              assert connection.send(:check_schema_usage_privilege!, "rls_group", "public")
+              assert connection.send(:check_schema_usage_privilege!, "rls_test_group", "public")
             end
 
             test "grant default sequence privileges" do
               connection.grant_rls_user_privileges("public")
 
-              assert connection.send(:check_default_sequence_privileges!, "rls_group", "public")
+              assert connection.send(:check_default_sequence_privileges!, "rls_test_group", "public")
             end
 
             test "grant default table privileges" do
               connection.grant_rls_user_privileges("public")
 
-              assert connection.send(:check_default_table_privileges!, "rls_group", "public")
+              assert connection.send(:check_default_table_privileges!, "rls_test_group", "public")
             end
 
             test "grant existing table privileges" do
               connection.create_table(:test_table)
               connection.grant_rls_user_privileges("public")
 
-              assert connection.send(:check_table_privileges!, "rls_group", "public", "test_table")
+              assert connection.send(:check_table_privileges!, "rls_test_group", "public", "test_table")
             end
 
             test "grant existing sequence privileges" do
               connection.create_table(:test_table)
               connection.grant_rls_user_privileges("public")
 
-              assert connection.send(:check_sequence_privileges!, "rls_group", "public", "test_table_id_seq")
+              assert connection.send(:check_sequence_privileges!, "rls_test_group", "public", "test_table_id_seq")
             end
           end
 
@@ -75,11 +78,19 @@ module PgRls
               end
             end
 
+            test "revoke table migrations privileges" do
+              connection.revoke_rls_user_privileges("public")
+
+              assert_raises(UserMissingTablePrivilegesError) do
+                connection.send(:check_table_privileges!, "rls_test_group", "public", "schema_migrations")
+              end
+            end
+
             test "revoke usage on schema" do
               connection.revoke_rls_user_privileges("public")
 
               assert_raises(UserMissingSchemaUsagePrivilegeError) do
-                connection.send(:check_schema_usage_privilege!, "rls_group", "public")
+                connection.send(:check_schema_usage_privilege!, "rls_test_group", "public")
               end
             end
 
@@ -87,7 +98,7 @@ module PgRls
               connection.revoke_rls_user_privileges("public")
 
               assert_raises(UserMissingSequencePrivilegesError) do
-                connection.send(:check_default_sequence_privileges!, "rls_group", "public")
+                connection.send(:check_default_sequence_privileges!, "rls_test_group", "public")
               end
             end
 
@@ -95,7 +106,7 @@ module PgRls
               connection.revoke_rls_user_privileges("public")
 
               assert_raises(UserMissingTablePrivilegesError) do
-                connection.send(:check_default_table_privileges!, "rls_group", "public")
+                connection.send(:check_default_table_privileges!, "rls_test_group", "public")
               end
             end
 
@@ -103,7 +114,7 @@ module PgRls
               connection.revoke_rls_user_privileges("public")
 
               assert_raises(UserMissingTablePrivilegesError) do
-                connection.send(:check_table_privileges!, "rls_group", "public", "test_table")
+                connection.send(:check_table_privileges!, "rls_test_group", "public", "test_table")
               end
             end
 
@@ -111,7 +122,7 @@ module PgRls
               connection.revoke_rls_user_privileges("public")
 
               assert_raises(UserMissingSequencePrivilegesError) do
-                connection.send(:check_sequence_privileges!, "rls_group", "public", "test_table_id_seq")
+                connection.send(:check_sequence_privileges!, "rls_test_group", "public", "test_table_id_seq")
               end
             end
           end

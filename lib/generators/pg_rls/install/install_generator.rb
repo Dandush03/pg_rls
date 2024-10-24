@@ -8,6 +8,7 @@ module PgRls
     attr_reader :attributes
 
     def create_install_config
+      set_pg_rls_config
       template "config/initializers/pg_rls.rb"
     end
 

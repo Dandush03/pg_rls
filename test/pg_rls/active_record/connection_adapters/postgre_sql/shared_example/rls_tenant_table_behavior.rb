@@ -5,16 +5,14 @@ module PgRls
     module ConnectionAdapters
       module PostgreSQL
         module RlsTenantTableBehavior
-          # rubocop:disable Metrics/MethodLength
-          # rubocop:disable Metrics/AbcSize
           def self.included(base)
-            base.define_singleton_method(:behaves_like_rls_tenant_table) do |table_name| # rubocop:disable Metrics/BlockLength
+            base.define_singleton_method(:behaves_like_rls_tenant_table) do |table_name|
               test "ensure that a rls tenant table exists" do
                 assert connection.table_exists?(table_name)
               end
 
               test "creates rls_group and user with default privileges" do
-                assert connection.check_rls_user_privileges!("app_user", "public")
+                assert connection.check_rls_user_privileges!("test_app_user", "public")
               end
 
               test "creates tenant_id_setter function" do
@@ -53,7 +51,7 @@ module PgRls
             base.define_singleton_method(:behaves_like_absence_of_rls_tenant_table) do |table_name|
               test "rls_group and user with default privileges does not exists" do
                 assert_raises(PgRls::Error) do
-                  connection.check_rls_user_privileges!("app_user", "public")
+                  connection.check_rls_user_privileges!("test_app_user", "public")
                 end
               end
 
@@ -74,8 +72,6 @@ module PgRls
               end
             end
           end
-          # rubocop:enable Metrics/MethodLength
-          # rubocop:enable Metrics/AbcSize
         end
       end
     end

@@ -12,6 +12,8 @@ module PgRls
           def transaction: (*untyped args, **untyped attr) { () ->  Array[PG::Result] } -> Array[PG::Result]
 
           def execute_sql!: (String) -> Array[PG::Result]
+
+          def rescue_sql_error?: (StandardError) -> bool
         end
       end
     end

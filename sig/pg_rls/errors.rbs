@@ -2,5 +2,7 @@
 
 module PgRls
   class Error < StandardError
+    class InvalidConnectionConfig < Error
+    end
   end
 end

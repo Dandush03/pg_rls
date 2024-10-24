@@ -7,27 +7,27 @@ module PgRls
         module RlsTriggers
           include SqlHelperMethod
 
-          def trigger_exists?: (String, String) -> bool
+          def trigger_exists?: (String, String, ?(String | Symbol)) -> bool
                              
-          def append_tenant_table_triggers: (String) -> void
+          def append_tenant_table_triggers: (String, ?(String | Symbol)) -> void
 
-          def append_rls_table_triggers: (String) -> void
+          def append_rls_table_triggers: (String, ?(String | Symbol)) -> void
 
-          def drop_tenant_table_triggers: (String) -> void
+          def drop_tenant_table_triggers: (String, ?(String | Symbol)) -> void
 
-          def drop_rls_table_triggers: (String) -> void
+          def drop_rls_table_triggers: (String, ?(String | Symbol)) -> void
 
           private
 
-          def drop_trigger: (String, String) -> void
+          def drop_trigger: ((String | Symbol), String, String) -> void
 
-          def create_trigger: (String, String, String, String, String) -> void
+          def create_trigger: ((String | Symbol), String, String, String, String, String) -> void
 
-          def create_rls_exception_trigger: (String) -> void
+          def create_rls_exception_trigger: ((String | Symbol), String) -> void
 
-          def create_tenant_id_setter_trigger: (String) -> void
+          def create_tenant_id_setter_trigger: ((String | Symbol), String) -> void
 
-          def create_tenant_id_update_blocker_trigger: (String) -> void
+          def create_tenant_id_update_blocker_trigger: ((String | Symbol), String) -> void
         end
       end
     end

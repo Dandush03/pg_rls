@@ -8,8 +8,11 @@ module PgRls
     class ActiveRecordGenerator < ::ActiveRecord::Generators::ModelGenerator
       source_root File.expand_path("../templates", __dir__.to_s)
 
-      class_option :parent, type: :string, default: "PgRlsApplicationRecord",
+      class_option :parent, type: :string, default: "ApplicationRecord",
                             desc: "The parent class for the generated model"
+
+      class_option :rls_parent, type: :string, default: "PgRls::Record",
+                                desc: "The parent class for the rls generated model"
 
       # Need to override so it will not check for class collision
       def check_class_collision
@@ -58,6 +61,16 @@ module PgRls
 
       def installing?
         Kernel.const_defined?("PgRls::InstallGenerator")
+      end
+
+      def parent_class_name
+        return rls_parent unless installing?
+
+        super
+      end
+
+      def rls_parent
+        options[:rls_parent]
       end
 
       def migration_template_prefix

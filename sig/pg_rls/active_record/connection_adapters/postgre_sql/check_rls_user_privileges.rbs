@@ -7,45 +7,45 @@ module PgRls
         module CheckRlsUserPrivileges
           include SqlHelperMethod
 
-          def check_rls_user_privileges!: (String, String) -> bool
+          def check_rls_user_privileges!: ((String | Symbol), ?(String | Symbol), ?(String | Symbol)) -> bool
 
-          def check_table_privileges!: (String, String, String) -> bool
+          def check_table_privileges!: ((String | Symbol), (String | Symbol), (String | Symbol)) -> bool
 
-          def check_sequence_privileges!: (String, String, String) -> bool
+          def check_sequence_privileges!: ((String | Symbol), (String | Symbol), (String | Symbol)) -> bool
 
-          def check_table_rls_enabled!: (String) -> bool
+          def check_table_rls_enabled!: ((String | Symbol), ?(String | Symbol)) -> bool
 
-          def check_table_user_policy_exists!: (String, String) -> bool
+          def check_table_user_policy_exists!: ((String | Symbol), (String | Symbol), ?(String | Symbol)) -> bool
 
           private
 
-          def check_user_exists!: (String) -> bool
+          def check_user_exists!: ((String | Symbol)) -> bool
 
-          def check_user_in_rls_group!: (String) -> bool
+          def check_user_in_rls_group!: ((String | Symbol)) -> bool
 
-          def check_schema_usage_privilege!: (String, String) -> bool
+          def check_schema_usage_privilege!: ((String | Symbol), (String | Symbol)) -> bool
 
-          def check_default_table_privileges!: (String, String) -> bool
+          def check_default_table_privileges!: ((String | Symbol), (String | Symbol)) -> bool
 
-          def check_default_sequence_privileges!: (String, String) -> bool
+          def check_default_sequence_privileges!: ((String | Symbol), (String | Symbol)) -> bool
 
-          def check_user_exists_sql: (String) -> String
+          def check_user_exists_sql: ((String | Symbol)) -> String
 
-          def check_user_in_rls_group_sql: (String) -> String
+          def check_user_in_rls_group_sql: ((String | Symbol)) -> String
 
-          def check_schema_usage_privilege_sql: (String, String) -> String
+          def check_schema_usage_privilege_sql: ((String | Symbol), (String | Symbol)) -> String
 
-          def check_default_table_privileges_sql: (String, String) -> String
+          def check_default_table_privileges_sql: ((String | Symbol), (String | Symbol)) -> String
 
-          def check_table_privileges_sql: (String, String, String) -> String
+          def check_table_privileges_sql: ((String | Symbol), (String | Symbol), (String | Symbol)) -> String
 
-          def check_default_sequence_privileges_sql: (String, String) -> String
+          def check_default_sequence_privileges_sql: ((String | Symbol), (String | Symbol)) -> String
 
-          def check_sequence_privileges_sql: (String, String, String) -> String
+          def check_sequence_privileges_sql: ((String | Symbol), (String | Symbol), (String | Symbol)) -> String
 
-          def check_table_rls_enabled_sql: (String) -> String
+          def check_table_rls_enabled_sql: ((String | Symbol), (String | Symbol)) -> String
 
-          def check_table_user_policy_exists_sql: (String, String) -> String
+          def check_table_user_policy_exists_sql: ((String | Symbol), (String | Symbol), (String | Symbol)) -> String
         end
       end
     end

@@ -39,7 +39,9 @@ module PgRls
               connection.send(:create_function, "function_name", "BEGIN RETURN NULL; END;")
               assert connection.send(:function_exists?, "function_name")
 
-              connection.send(:create_trigger, "test_table", "trigger_name", "function_name", "BEFORE", "INSERT")
+              connection.send(
+                :create_trigger, "public", "test_table", "trigger_name", "function_name", "BEFORE", "INSERT"
+              )
               assert_nil(connection.send(:execute_sql!, "INSERT INTO test_table (name) VALUES ('test')").first)
 
               connection.send(:create_function, "function_name", "BEGIN RAISE EXCEPTION 'banana'; END;")
@@ -47,7 +49,7 @@ module PgRls
                 connection.send(:execute_sql!, "INSERT INTO test_table (name) VALUES ('test')")
               end
             ensure
-              connection.send(:drop_trigger, "test_table", "trigger_name")
+              connection.send(:drop_trigger, "public", "test_table", "trigger_name")
               connection.drop_table :test_table
               connection.send(:drop_function, "function_name")
             end

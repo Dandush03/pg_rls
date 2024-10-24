@@ -1,0 +1,4 @@
+module PgRls
+  class Record < ::ActiveRecord::Base
+  end
+end

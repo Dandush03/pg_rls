@@ -32,6 +32,8 @@ module PgRls
       def clean_indexes_attributes!: () -> void
 
       def model_file_exists?: () -> bool
+
+      def rls_parent: () -> String
     end
   end
 end

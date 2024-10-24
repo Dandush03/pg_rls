@@ -11,15 +11,18 @@ module PgRls
 
           setup do
             @connection = ::ActiveRecord::Base.connection
-            connection.create_rls_group
+            PgRls.username = "test_app_user"
+            PgRls.rls_role_group = "rls_test_group"
+            connection.create_rls_group("rls_test_group")
             connection.create_rls_role("test_app_user", "test_app_password")
           end
 
           teardown do
             connection.revoke_rls_user_privileges("public") if connection.user_exists?("test_app_user")
             connection.drop_rls_role("test_app_user")
-            connection.drop_rls_group
+            connection.drop_rls_group("rls_test_group")
             connection.drop_table(:test_table, if_exists: true)
+            PgRls.reset_config!
           end
 
           class CheckRlsUserPrivilegesTest < self
@@ -70,12 +73,12 @@ module PgRls
             test "checks the user schema usage privileges" do
               connection.grant_rls_user_privileges("public")
 
-              assert connection.send(:check_schema_usage_privilege!, "rls_group", "public")
+              assert connection.send(:check_schema_usage_privilege!, "rls_test_group", "public")
             end
 
             test "raises an error if the user does not have the schema usage privileges" do
               assert_raises(UserMissingSchemaUsagePrivilegeError) do
-                connection.send(:check_schema_usage_privilege!, "rls_group", "public")
+                connection.send(:check_schema_usage_privilege!, "rls_test_group", "public")
               end
             end
           end
@@ -84,12 +87,12 @@ module PgRls
             test "checks the user default table privileges" do
               connection.grant_rls_user_privileges("public")
 
-              assert connection.send(:check_default_table_privileges!, "rls_group", "public")
+              assert connection.send(:check_default_table_privileges!, "rls_test_group", "public")
             end
 
             test "raises an error if the user does not have the default table privileges" do
               assert_raises(UserMissingTablePrivilegesError) do
-                connection.send(:check_default_table_privileges!, "rls_group", "public")
+                connection.send(:check_default_table_privileges!, "rls_test_group", "public")
               end
             end
           end
@@ -99,12 +102,12 @@ module PgRls
               connection.grant_rls_user_privileges("public")
               connection.create_table(:test_table)
 
-              assert connection.send(:check_table_privileges!, "rls_group", "public", "test_table")
+              assert connection.send(:check_table_privileges!, "rls_test_group", "public", "test_table")
             end
 
             test "raises an error if the user does not have the table privileges" do
               assert_raises(UserMissingTablePrivilegesError) do
-                connection.send(:check_table_privileges!, "rls_group", "public", "test_table")
+                connection.send(:check_table_privileges!, "rls_test_group", "public", "test_table")
               end
             end
           end
@@ -113,12 +116,12 @@ module PgRls
             test "checks the user default sequence privileges" do
               connection.grant_rls_user_privileges("public")
 
-              assert connection.send(:check_default_sequence_privileges!, "rls_group", "public")
+              assert connection.send(:check_default_sequence_privileges!, "rls_test_group", "public")
             end
 
             test "raises an error if the user does not have the default sequence privileges" do
               assert_raises(UserMissingSequencePrivilegesError) do
-                connection.send(:check_default_sequence_privileges!, "rls_group", "public")
+                connection.send(:check_default_sequence_privileges!, "rls_test_group", "public")
               end
             end
           end
@@ -128,12 +131,12 @@ module PgRls
               connection.grant_rls_user_privileges("public")
               connection.create_table(:test_table)
 
-              assert connection.send(:check_sequence_privileges!, "rls_group", "public", "test_table_id_seq")
+              assert connection.send(:check_sequence_privileges!, "rls_test_group", "public", "test_table_id_seq")
             end
 
             test "raises an error if the user does not have the sequence privileges" do
               assert_raises(UserMissingSequencePrivilegesError) do
-                connection.send(:check_sequence_privileges!, "rls_group", "public", "test_table_id_seq")
+                connection.send(:check_sequence_privileges!, "rls_test_group", "public", "test_table_id_seq")
               end
             end
           end

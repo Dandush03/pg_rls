@@ -10,6 +10,7 @@ require_relative "postgre_sql/check_rls_user_privileges"
 require_relative "postgre_sql/grant_rls_user_privileges"
 require_relative "postgre_sql/rls_policies"
 require_relative "postgre_sql/schema_statements"
+require_relative "postgre_sql/schema_dumper"
 
 module PgRls
   module ActiveRecord
@@ -19,6 +20,8 @@ module PgRls
         def self.included(base)
           # Dynamically include all modules into the adapter
           constants.each do |const_name|
+            next if const_name == :SchemaDumper
+
             mod = const_get(const_name)
             base.include(mod) if mod.is_a?(Module) && !mod.is_a?(Class)
           end

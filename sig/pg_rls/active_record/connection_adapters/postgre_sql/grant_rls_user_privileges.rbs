@@ -7,43 +7,47 @@ module PgRls
         module GrantRlsUserPrivileges
           include SqlHelperMethod
 
-          def grant_rls_user_privileges: (String) -> void
+          def grant_rls_user_privileges: (?(String | Symbol), ?(String | Symbol)) -> void
 
-          def revoke_rls_user_privileges: (String) -> void
+          def revoke_rls_user_privileges: (?(String | Symbol), ?(String | Symbol)) -> void
 
           private
 
-          def revoke_schema_usage: (String, String) -> void
+          def revoke_schema_usage: ((String | Symbol), (String | Symbol)) -> void
 
-          def revoke_default_sequence_privileges: (String, String) -> void
+          def revoke_schema_migration_table_privileges: ((String | Symbol), (String | Symbol)) -> void
 
-          def revoke_default_table_privileges: (String, String) -> void
+          def revoke_default_sequence_privileges: ((String | Symbol), (String | Symbol)) -> void
 
-          def revoke_existing_table_privileges: (String, String) -> void
+          def revoke_default_table_privileges: ((String | Symbol), (String | Symbol)) -> void
 
-          def revoke_existing_sequence_privileges: (String, String) -> void
+          def revoke_existing_table_privileges: ((String | Symbol), (String | Symbol)) -> void
 
-          def grant_schema_usage: (String, String) -> void
+          def revoke_existing_sequence_privileges: ((String | Symbol), (String | Symbol)) -> void
 
-          def grant_default_sequence_privileges: (String, String) -> void
+          def grant_schema_usage: ((String | Symbol), (String | Symbol)) -> void
 
-          def grant_default_table_privileges: (String, String) -> void
+          def grant_schema_migration_table_privileges: ((String | Symbol), (String | Symbol)) -> void
 
-          def grant_existing_table_privileges: (String, String) -> void
+          def grant_default_sequence_privileges: ((String | Symbol), (String | Symbol)) -> void
 
-          def grant_existing_sequence_privileges: (String, String) -> void
+          def grant_default_table_privileges: ((String | Symbol), (String | Symbol)) -> void
 
-          def revoke_schema_usage_sql: (String, String) -> String
+          def grant_existing_table_privileges: ((String | Symbol), (String | Symbol)) -> void
 
-          def revoke_default_sequence_privileges_sql: (String, String) -> String
+          def grant_existing_sequence_privileges: ((String | Symbol), (String | Symbol)) -> void
 
-          def revoke_default_table_privileges_sql: (String, String) -> String
+          def revoke_schema_usage_sql: ((String | Symbol), (String | Symbol)) -> String
 
-          def revoke_existing_table_privileges_sql: (String, String) -> String
+          def revoke_default_sequence_privileges_sql: ((String | Symbol), (String | Symbol)) -> String
 
-          def revoke_existing_sequence_privileges_sql: (String, String) -> String
+          def revoke_default_table_privileges_sql: ((String | Symbol), (String | Symbol)) -> String
+
+          def revoke_existing_table_privileges_sql: ((String | Symbol), (String | Symbol)) -> String
+
+          def revoke_existing_sequence_privileges_sql: ((String | Symbol), (String | Symbol)) -> String
   
-          def role_applicable_sql_statement: (String, String) -> String
+          def role_applicable_sql_statement: ((String | Symbol), (String | Symbol)) -> String
         end
       end
     end

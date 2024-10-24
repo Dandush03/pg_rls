@@ -46,6 +46,8 @@ module PgRls
           def drop_rls_table_triggers: (String | Symbol) -> void
           def grant_rls_user_privileges: (String | Symbol) -> void
           def revoke_rls_user_privileges: (String | Symbol) -> void
+          def index_exists?: (String | Symbol, String | Symbol, *untyped args) -> bool
+          def column_exists?: (String | Symbol, String | Symbol) -> bool
 
           private
 

@@ -5,4 +5,7 @@ PgRls.setup do |config|
 
   # config.username = Rails.application.credentials.dig(:database, :username)
   # config.password = Rails.application.credentials.dig(:database, :password)
+
+  # config.rls_role_group = "rls_group"
+  # config.schema = "public"
 end
