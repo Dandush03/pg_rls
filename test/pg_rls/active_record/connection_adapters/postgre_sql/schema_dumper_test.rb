@@ -7,7 +7,7 @@ module PgRls
     module ConnectionAdapters
       module PostgreSQL
         class SchemaDumperTest < ::ActiveSupport::TestCase
-          def setup
+          setup do
             PgRls.reset_config!
             PgRls.class_name = :Tenant
             PgRls.table_name = :tenants
