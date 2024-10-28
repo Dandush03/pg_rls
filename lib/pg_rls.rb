@@ -46,6 +46,7 @@ module PgRls
       end
     end
 
+    # :nocov:
     def freeze_config! # rubocop:disable Metrics/MethodLength
       PgRls.singleton_class.class_eval do
         PgRls.class_variables.each do |var_name|
@@ -65,6 +66,7 @@ module PgRls
         end
       end
     end
+    # :nocov:
 
     def look_up_connection_config
       default_connection_db_config = ::ActiveRecord::Base.connection_db_config
