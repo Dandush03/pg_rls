@@ -1,0 +1,7 @@
+module ActiveSupport
+  class Deprecation
+    def warn: (String) -> void
+                 
+    def initialize: (String, String) -> void
+  end
+end

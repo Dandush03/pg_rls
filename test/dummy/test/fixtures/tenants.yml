@@ -9,8 +9,10 @@ one:
   subdomain: one-subdomain
   created_at: 2021-07-07 00:00:00
   updated_at: 2021-07-07 00:00:00
+  tenant_id: 205bbedd-b728-488f-ab65-c83b4a28cf4f
 two:
   name: two
   subdomain: two-subdomain
   created_at: 2021-07-07 00:00:00
   updated_at: 2021-07-07 00:00:00
+  tenant_id: 205bbedd-b728-488f-ab65-c83b4a28cf4c

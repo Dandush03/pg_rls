@@ -5,6 +5,8 @@ module PgRls
   class Record < ::ActiveRecord::Base
     self.abstract_class = true
 
+    self.ignored_columns += %w[tenant_id]
+
     connects_to(**PgRls.connects_to)
   end
 end

@@ -4,5 +4,11 @@ module PgRls
   class Error < StandardError
     class InvalidConnectionConfig < Error
     end
+
+    class InvalidSearchInput < Error
+    end
+
+    class TenantNotFound < Error
+    end
   end
 end

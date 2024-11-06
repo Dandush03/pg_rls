@@ -5,6 +5,10 @@ require "test_helper"
 class PgRlsTest < ActiveSupport::TestCase
   class Organization; end # rubocop: disable Lint/EmptyClass
 
+  teardown do
+    PgRls.reset_config!
+  end
+
   test "main_model returns the class name constantize" do
     PgRls.stub :class_name, "PgRlsTest::Organization" do
       assert_equal PgRlsTest::Organization, PgRls.main_model

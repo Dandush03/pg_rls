@@ -4,8 +4,12 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
-# column: value
-#
-two: {}
-# column: value
+one:
+  title: Post 1
+  content: Post 1 content
+  tenant_id: 205bbedd-b728-488f-ab65-c83b4a28cf4f
+
+two:
+  title: Post 2
+  content: Post 2 content
+  tenant_id: 205bbedd-b728-488f-ab65-c83b4a28cf4f

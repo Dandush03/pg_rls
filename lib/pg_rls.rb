@@ -2,6 +2,8 @@
 
 require "active_record"
 require "forwardable"
+
+require_relative "pg_rls/deprecation"
 require_relative "pg_rls/errors"
 require_relative "pg_rls/active_record"
 require_relative "pg_rls/active_support"

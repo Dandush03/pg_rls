@@ -5,7 +5,9 @@
 # below each fixture, per the syntax in the comments below
 #
 one:
-  content: MyText
+  content: Content 1 body
+  # tenant_id: 205bbedd-b728-488f-ab65-c83b4a28cf4f
 
 two:
-  content: MyText
+  content: Content 2 body
+  # tenant_id: 205bbedd-b728-488f-ab65-c83b4a28cf4f

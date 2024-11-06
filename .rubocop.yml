@@ -30,7 +30,7 @@ Style/Documentation:
   Exclude:
     - test/**/*
 
-Style/ModuleLength:
+Metrics/ModuleLength:
   Enabled: true
   Exclude:
     - lib/pg_rls/active_record/connection_adapters/postgre_sql/check_rls_user_privileges.rb
