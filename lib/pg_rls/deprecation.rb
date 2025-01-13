@@ -3,7 +3,13 @@
 module PgRls
   # Deprecator Module
   module Deprecation
-    def self.warn(message)
+    attr_reader :invoked
+
+    def self.warn(message, method) # OPCINAL SI LO AGREGAS AGREGA PRUEBAS
+      @invoked ||= []
+      return if @invoked.include?(method)
+
+      @invoked << method
       logger.warn(message)
     end
 

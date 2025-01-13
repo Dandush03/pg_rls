@@ -70,20 +70,37 @@ module PgRls
     end
     # :nocov:
 
-    def look_up_connection_config
+    def admin_execute(sql = nil) # Agregar Este METODO en otro archivo Y SUS PRUEBAS
+      PgRls::Record.connected_to(shard: :admin) do
+        return yield.presence if block_given?
+
+        PgRls::Record.connection.execute(sql).presence
+      end
+    end
+
+
+    def look_up_connection_config # Agregar Este METODO en otro archivo desglosandolo Y SUS PRUEBAS
       default_connection_db_config = ::ActiveRecord::Base.connection_db_config
       default_connection_name = default_connection_db_config.name
 
       config_hash = case default_connection_db_config.configuration_hash[:rls_mode]
                     when "dual"
-                      { writing: "rls_#{default_connection_name}", reading: "rls_#{default_connection_name}" }
-                    when "single", "none"
-                      { writing: default_connection_db_config.name, reading: default_connection_db_config.name }
+                      {
+                        shards: {
+                          rls: { writing: "rls_#{default_connection_name}", reading: "rls_#{default_connection_name}" },
+                          admin: { writing: default_connection_name, reading: default_connection_name }
+                        }
+                      }
+                    when "single"
+                      { database: { writing: "rls_#{default_connection_name}",
+                                    reading: "rls_#{default_connection_name}" } }
+                    when "none"
+                      { database: { writing: default_connection_name, reading: default_connection_name } }
                     end
 
       return invalid_connection_config unless config_hash
 
-      PgRls.connects_to = { database: config_hash.transform_values(&:to_sym) }
+      PgRls.connects_to = config_hash.deep_transform_values(&:to_sym)
     end
 
     def connection_config?

@@ -29,10 +29,11 @@ module PgRls
           Current.session.reset_rls
         end
 
-        def self.with_tenant!(...)
+        def self.with_tenant!(...) # TOTALMENTE OPCIOANL SI NO QUIERES CAMBIAR TODO EN LABELS LIGHT PEROOO AGREGAR PRUEBASSSS
           PgRls::Deprecation.warn(
             "This method is deprecated and will be removed in future versions. " \
-            "please use PgRls::Tenant.run_within instead."
+            "please use PgRls::Tenant.run_within instead.",
+            :with_tenant!
           )
           run_within(...)
         end
