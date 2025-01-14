@@ -70,7 +70,7 @@ module PgRls
     end
     # :nocov:
 
-    def admin_execute(sql = nil) # Agregar Este METODO en otro archivo Y SUS PRUEBAS
+    def admin_execute(sql = nil)
       PgRls::Record.connected_to(shard: :admin) do
         return yield.presence if block_given?
 
