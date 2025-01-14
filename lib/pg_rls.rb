@@ -79,7 +79,7 @@ module PgRls
     end
 
 
-    def look_up_connection_config # Agregar Este METODO en otro archivo desglosandolo Y SUS PRUEBAS
+    def look_up_connection_config
       default_connection_db_config = ::ActiveRecord::Base.connection_db_config
       default_connection_name = default_connection_db_config.name
 
