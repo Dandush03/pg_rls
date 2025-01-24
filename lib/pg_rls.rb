@@ -4,6 +4,7 @@ require "active_record"
 require "forwardable"
 
 require_relative "pg_rls/deprecation"
+require_relative "pg_rls/admin"
 require_relative "pg_rls/errors"
 require_relative "pg_rls/active_record"
 require_relative "pg_rls/active_support"
@@ -69,15 +70,6 @@ module PgRls
       end
     end
     # :nocov:
-
-    def admin_execute(sql = nil)
-      PgRls::Record.connected_to(shard: :admin) do
-        return yield.presence if block_given?
-
-        PgRls::Record.connection.execute(sql).presence
-      end
-    end
-
 
     def look_up_connection_config
       default_connection_db_config = ::ActiveRecord::Base.connection_db_config

@@ -40,12 +40,6 @@ class PgRlsTest < ActiveSupport::TestCase
     assert_equal expected_defaults, PgRls::DEFAULT_CONFIG_MAP
   end
 
-  test "admin_execute configures the connection to use the admin shard" do
-    PgRls.stub :connects_to, { shards: { admin: { writing: :admin, reading: :admin } } } do
-      assert_equal "primary", PgRls.admin_execute { ::ActiveRecord::Base.connection_db_config.name }
-    end
-  end
-
   test "look_up_connection_config sets connection config based on default if rls mode is single" do
     db_config = ::ActiveRecord::Base.connection_db_config.configuration_hash.dup
     hash_config = ::ActiveRecord::DatabaseConfigurations::HashConfig.new("test", "primary",
