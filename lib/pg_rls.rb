@@ -11,6 +11,7 @@ require_relative "pg_rls/active_support"
 require_relative "pg_rls/version"
 require_relative "pg_rls/engine"
 require_relative "pg_rls/railtie"
+require_relative "pg_rls/connection_config"
 
 # Row Level Security for PostgreSQL
 module PgRls
@@ -35,7 +36,7 @@ module PgRls
 
       yield self
 
-      look_up_connection_config unless connection_config?
+      ConnectionConfig.look_up_connection_config unless ConnectionConfig.connection_config?
       freeze_config! unless Rails.env.test?
     end
 
@@ -70,40 +71,6 @@ module PgRls
       end
     end
     # :nocov:
-
-    def look_up_connection_config
-      default_connection_db_config = ::ActiveRecord::Base.connection_db_config
-      default_connection_name = default_connection_db_config.name
-
-      config_hash = case default_connection_db_config.configuration_hash[:rls_mode]
-                    when "dual"
-                      {
-                        shards: {
-                          rls: { writing: "rls_#{default_connection_name}", reading: "rls_#{default_connection_name}" },
-                          admin: { writing: default_connection_name, reading: default_connection_name }
-                        }
-                      }
-                    when "single"
-                      { database: { writing: "rls_#{default_connection_name}",
-                                    reading: "rls_#{default_connection_name}" } }
-                    when "none"
-                      { database: { writing: default_connection_name, reading: default_connection_name } }
-                    end
-
-      return invalid_connection_config unless config_hash
-
-      PgRls.connects_to = config_hash.deep_transform_values(&:to_sym)
-    end
-
-    def connection_config?
-      PgRls.connects_to&.key?(:database) || false
-    end
-
-    def invalid_connection_config
-      raise PgRls::Error::InvalidConnectionConfig,
-            "you must edit your database.yml file to include the RLS configuration, " \
-            "or set the RLS configuration manually in the PgRls initializer"
-    end
   end
 
   mattr_accessor :search_methods
