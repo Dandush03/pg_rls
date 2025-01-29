@@ -36,7 +36,8 @@ module PgRls
 
       yield self
 
-      ConnectionConfig.look_up_connection_config unless ConnectionConfig.connection_config?
+      connection_config = PgRls::ConnectionConfig.new
+      connection_config.look_up_connection_config unless connection_config.connection_config?
       freeze_config! unless Rails.env.test?
     end
 
