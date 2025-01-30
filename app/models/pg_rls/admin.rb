@@ -4,7 +4,7 @@ module PgRls
   # The admin class provides the admin_execute method to execute
   # queries on the admin shard.
   class Admin
-    def self.admin_execute(sql = nil)
+    def self.execute(sql = nil)
       PgRls::Record.connected_to(shard: :admin) do
         return yield.presence if block_given?
 
