@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
+# This file of the PgRls module provides methods to interact with the admin shard
 module PgRls
-  # The admin class provides the admin_execute method to execute
-  # queries on the admin shard.
+  # The Admin class provides the admin_execute method to execute
   class Admin
     def self.execute(sql = nil)
       PgRls::Record.connected_to(shard: :admin) do

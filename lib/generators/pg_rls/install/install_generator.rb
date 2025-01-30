@@ -7,8 +7,12 @@ module PgRls
 
     attr_reader :attributes
 
+    def initialize(args, *options)
+      pg_rls_config(args.first)
+      super
+    end
+
     def create_install_config
-      set_pg_rls_config
       template "config/initializers/pg_rls.rb"
     end
 
@@ -20,8 +24,7 @@ module PgRls
 
     private
 
-    def set_pg_rls_config
-      tenant_model_or_table = @args.first
+    def pg_rls_config(tenant_model_or_table)
       raise "Tenant model or table name is required" if tenant_model_or_table.blank?
 
       PgRls.class_name = tenant_model_or_table.capitalize.singularize.to_sym

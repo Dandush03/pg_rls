@@ -17,7 +17,7 @@ class PgRlsAdminTest < ActiveSupport::TestCase
   test "execute method can select records from the admin shard" do
     PgRls.stub :connects_to, { shards: { admin: { writing: :admin, reading: :admin } } } do
       result = PgRls::Admin.execute("SELECT 1 AS one")
-      assert_equal [{"one" => 1}], result.to_a
+      assert_equal [{ "one" => 1 }], result.to_a
     end
   end
 
@@ -27,7 +27,7 @@ class PgRlsAdminTest < ActiveSupport::TestCase
       PgRls::Admin.execute("INSERT INTO test_table (name) VALUES ('initial')")
       PgRls::Admin.execute("UPDATE test_table SET name = 'updated' WHERE name = 'initial'")
       result = PgRls::Admin.execute("SELECT name FROM test_table WHERE name = 'updated'")
-      assert_equal [{"name" => "updated"}], result.to_a
+      assert_equal [{ "name" => "updated" }], result.to_a
     ensure
       PgRls::Admin.execute("DROP TABLE IF EXISTS test_table")
     end
@@ -36,7 +36,7 @@ class PgRlsAdminTest < ActiveSupport::TestCase
   test "admin_execute method delegates to Admin.execute" do
     PgRls.stub :connects_to, { shards: { admin: { writing: :admin, reading: :admin } } } do
       result = PgRls.admin_execute("SELECT 1 AS one")
-      assert_equal [{"one" => 1}], result.to_a
+      assert_equal [{ "one" => 1 }], result.to_a
     end
   end
 end
