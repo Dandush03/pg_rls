@@ -64,7 +64,6 @@ module PgRls
       end
 
       def parent_class_name
-        return options[:parent] if options[:parent].present?
         return rls_parent unless installing?
 
         super

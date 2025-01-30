@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require_relative "../../../lib/pg_rls/deprecation"
+require_relative "../../../app/models/pg_rls/admin"
 
 class PgRlsAdminTest < ActiveSupport::TestCase
   teardown do
@@ -37,6 +39,17 @@ class PgRlsAdminTest < ActiveSupport::TestCase
     PgRls.stub :connects_to, { shards: { admin: { writing: :admin, reading: :admin } } } do
       result = PgRls.admin_execute("SELECT 1 AS one")
       assert_equal [{ "one" => 1 }], result.to_a
+    end
+  end
+
+  test "admin_execute method issues a deprecation warning" do
+    PgRls.stub :connects_to, { shards: { admin: { writing: :admin, reading: :admin } } } do
+      # rubocop:disable Layout/LineLength
+      output_regex = /DEPRECATION WARNING: This method is deprecated and will be removed in future versions. please use PgRls::Admin.execute instead./
+      # rubocop:enable Layout/LineLength
+      assert_output(nil, output_regex) do
+        PgRls.admin_execute("SELECT 1 AS one")
+      end
     end
   end
 end

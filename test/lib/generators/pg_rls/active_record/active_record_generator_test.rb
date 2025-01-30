@@ -3,6 +3,7 @@
 require "test_helper"
 require "generators/pg_rls/active_record/active_record_generator"
 
+# rubocop:disable Metrics/ClassLength
 class ActiveRecordGeneratorTest < Rails::Generators::TestCase
   tests PgRls::Generators::ActiveRecordGenerator
   destination File.expand_path("../tmp", __dir__)
@@ -137,4 +138,24 @@ class ActiveRecordGeneratorTest < Rails::Generators::TestCase
 
     assert_migration "db/migrate/backport_pg_rls_to_users.rb"
   end
+
+  test "rls_parent returns the correct value" do
+    generator = run_default_generator(["User"], { rls_parent: "CustomRlsRecord" })
+    assert_equal "CustomRlsRecord", generator.send(:rls_parent)
+  end
+
+  test "parent_class_name returns the correct value" do
+    generator = run_default_generator(["User"], { rls_parent: "CustomRlsRecord" })
+    generator.define_singleton_method(:installing?) { false }
+    assert_equal "CustomRlsRecord", generator.send(:parent_class_name)
+
+    generator = run_default_generator(["User"], { rls_parent: "CustomRlsRecord" })
+    generator.define_singleton_method(:installing?) { true }
+    assert_equal "ApplicationRecord", generator.send(:parent_class_name)
+
+    generator = run_default_generator(["User"])
+    generator.define_singleton_method(:installing?) { true }
+    assert_equal "ApplicationRecord", generator.send(:parent_class_name)
+  end
 end
+# rubocop:enable Metrics/ClassLength
