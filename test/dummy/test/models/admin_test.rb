@@ -32,4 +32,11 @@ class PgRlsAdminTest < ActiveSupport::TestCase
       PgRls::Admin.execute("DROP TABLE IF EXISTS test_table")
     end
   end
+
+  test "admin_execute method delegates to Admin.execute" do
+    PgRls.stub :connects_to, { shards: { admin: { writing: :admin, reading: :admin } } } do
+      result = PgRls.admin_execute("SELECT 1 AS one")
+      assert_equal [{"one" => 1}], result.to_a
+    end
+  end
 end

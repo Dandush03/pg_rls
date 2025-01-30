@@ -12,4 +12,13 @@ module PgRls
       end
     end
   end
+
+  # Alias for the Admin.execute method
+  def self.admin_execute(sql = nil, &block)
+    Deprecation.warn(
+      "This method is deprecated and will be removed in future versions. " \
+      "please use PgRls::Admin.execute instead."
+    )
+    Admin.execute(sql, &block)
+  end
 end
