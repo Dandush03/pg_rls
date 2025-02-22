@@ -26,13 +26,13 @@ module PgRls
         return if class_coalescing?
 
         generate_abstract_class if database && !custom_parent?
-        template("app/models/model.rb", model_path)
+        template("app/models/model.rb", model_path, parent_class_name: parent_class_name)
       end
 
       def upgrade_model_file
         return unless class_coalescing? && model_file_exists?
 
-        gsub_file(model_path, /< ApplicationRecord/, "< #{options[:parent]}")
+        gsub_file(model_path, /< ApplicationRecord/, "< #{parent_class_name}")
       end
 
       def create_migration_file

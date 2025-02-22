@@ -22,6 +22,7 @@ module PgRls
 
       def reset_rls
         PgRls::Record.connection.exec_query("RESET rls.tenant_id", prepare: true)
+        PgRls::Tenant::Current.reset
 
         nil
       end

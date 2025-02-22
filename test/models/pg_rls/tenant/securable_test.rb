@@ -8,6 +8,7 @@ module PgRls
       fixtures :tenants
       def setup
         @tenant = PgRls::Tenant.new
+        PgRls::Tenant::Current.session = @tenant
       end
 
       test "set_rls sets tenant_id in connection" do
@@ -19,6 +20,7 @@ module PgRls
       test "reset_rls resets tenant_id in connection" do
         PgRls::Record.connection.stub :execute, true do
           assert_nil @tenant.reset_rls
+          assert_nil PgRls::Tenant::Current.session
         end
       end
 

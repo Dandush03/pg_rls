@@ -40,10 +40,10 @@ module PgRls
         Tenant::Searchable.stub :by_rls_object, tenant do
           tenant.stub :set_rls, true do
             tenant.stub :reset_rls, true do
-              output = "DEPRECATION WARNING: This method is deprecated and will be removed in future versions. " \
-                       "please use PgRls::Tenant.run_within instead. (called from with_tenant! at " \
-                       "/home/dlaloush/dandush03/pg_rls/app/models/pg_rls/tenant/switchable.rb:33)\n"
-              assert_output(nil, output) do
+              # rubocop:disable Layout/LineLength
+              output_regex = /DEPRECATION WARNING: This method is deprecated and will be removed in future versions. please use PgRls::Tenant.run_within instead. \(called from with_tenant! at .*switchable.rb:33\)\n/
+              # rubocop:enable Layout/LineLength
+              assert_output(nil, output_regex) do
                 result = Tenant.with_tenant!("tenant_input") { "block result" }
                 assert_equal "block result", result
               end
