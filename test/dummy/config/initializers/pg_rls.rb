@@ -10,4 +10,6 @@ PgRls.setup do |config|
 
   # config.rls_role_group = "rls_group"
   # config.schema = "public"
+
+  config.current_attributes = %i[post]
 end

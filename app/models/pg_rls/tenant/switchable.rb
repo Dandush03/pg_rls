@@ -14,19 +14,19 @@ module PgRls
         end
 
         def self.switch!(tenant)
-          Current.session = Searchable.by_rls_object(tenant)
+          PgRls::Current.tenant = Searchable.by_rls_object(tenant)
 
-          raise PgRls::Error::TenantNotFound, "No tenant found for #{Current.session}" unless Current.session.present?
+          raise PgRls::Error::TenantNotFound, "No tenant found for #{tenant}" unless PgRls::Current.tenant.present?
 
-          Current.session.set_rls
+          PgRls::Current.tenant.set_rls
         end
 
         def self.run_within(tenant)
           switch!(tenant)
 
-          yield(Current.session).presence
+          yield(PgRls::Current.tenant).presence
         ensure
-          Current.session.reset_rls
+          PgRls::Current.tenant.reset_rls
         end
 
         def self.with_tenant!(...)

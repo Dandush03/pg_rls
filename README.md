@@ -12,7 +12,7 @@
 [![Hireable][hireable]][hireable-url]
 
 <p align="center">
-  
+
   <h3 align="center">
     <a href="https://github.com/Dandush03/pg_rls">
         <img src="./assets/logo.svg" alt="Logo" width="80" height="80">
@@ -100,7 +100,7 @@ development:
   <<: *default
   database: dev_db
   # Use 'dual' for development to switch between RLS and non-RLS connections.
-  rls_mode: <%= ENV.fetch('RLS_MODE', 'dual') %>  
+  rls_mode: <%= ENV.fetch('RLS_MODE', 'dual') %>
 ```
 
 #### Using the `dual` mode is not recommended in high-demand environments, as it will duplicate the connection pool for each RLS shard, leading to unnecessary overhead. Instead, configure the RLS mode to `single` or `none` and balance your requests accordingly. The `single` mode ensures only RLS connections are used, while `none` disables RLS for this environment
@@ -129,6 +129,50 @@ The `rls_mode` setting in your `database.yml` controls how your application hand
 3. **Dual Mode:** In this mode, the application will duplicate each shard that has RLS enabled, adding a prefix of `rls_` to the shard name. Both RLS and non-RLS connections will be available. For example, if your shard is named animals, the RLS version will be named `rls_animals`.
    - **Effect:** This maintains two connection pools per shard, one with RLS (`rls_` prefixed) and one without. While it provides flexibility, it also increases resource consumption by duplicating the connection pool.
    - **Use Case:** This mode can be used in production environments for applications that require both RLS and non-RLS connections but is not recommended for extremely high-demand environments due to the overhead caused by duplicating the connection pools. In less demanding production settings, it offers useful flexibility.
+
+### Configuring `PgRls::Current`
+
+You can configure `PgRls::Current` dynamically using an initializer. This allows you to specify the attributes that should be tracked in the request context. By default, `PgRls::Current` stores tenant-related information, but you can extend it as needed.
+
+#### **Defining Custom Current Attributes**
+To configure the attributes, update your Rails initializer (`config/initializers/pg_rls.rb`):
+
+```ruby
+PgRls.setup do |config|
+  current_attributes = %i[organization__branch]
+end
+```
+
+This ensures that your custom attributes are loaded and available across requests.
+
+#### **Using `__` Convention for Subclasses**
+Inspired by Stimulus controllers, `PgRls::Current` supports a **double underscore (`__`) convention** to allow easy reference to subclasses of your models.
+
+For example, if you have the following models:
+
+```ruby
+class Organization < ApplicationRecord; end
+class Organization::Branch < ApplicationRecord; end
+```
+
+You can dynamically access `Organization::Branch.first` using:
+
+```ruby
+PgRls::Current.organization__branch  # Resolves to Organization::Branch.first
+```
+
+This works because the `PgRls::Current` implementation automatically transforms attribute names with `__` into proper class names, making it easy to extend without manual configurations.
+
+This approach provides a flexible way to structure your tenant-based logic without requiring manual mappings for every subclass.
+
+#### **Ensuring Proper RLS Configuration**
+Since `PgRls::Current` uses `.first` to retrieve the record, you should ensure that the table is under **Row-Level Security (RLS)** and that the attribute used is **unique** within the tenant's scope. If the record is not unique, it is recommended to **manually set the attribute** to avoid unintended results from querying the first available record.
+
+Example of setting the attribute manually:
+
+```ruby
+PgRls::Current.organization__branch = Organization::Branch.find_by(name: 'Main Branch')
+```
 
 ## Usage
 

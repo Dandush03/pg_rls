@@ -21,7 +21,8 @@ module PgRls
     "@@username": :app_user,
     "@@password": :password,
     "@@schema": :public,
-    "@@rls_role_group": :rls_group
+    "@@rls_role_group": :rls_group,
+    "@@current_attributes": []
   }.freeze
 
   class << self
@@ -96,4 +97,7 @@ module PgRls
 
   mattr_accessor :connects_to
   @@connects_to = nil
+
+  mattr_accessor :current_attributes
+  @@current_attributes = []
 end

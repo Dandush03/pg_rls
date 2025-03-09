@@ -1,11 +1,52 @@
+# frozen_string_literal: true
+
+# PgRls Configuration
+# ----------------------
+# Use this file to configure PgRls to fit your application's needs.
+# Below are the default settings and examples of how to customize them.
+#
+# You can modify these settings as needed and restart your application.
+
 PgRls.setup do |config|
+  # The main class name used for the RLS tenant model.
+  # This should be the base model representing your tenant (e.g., :organization, :account, etc.).
+  # Default: Derived from your tenant model specified during installation.
   config.class_name = :<%= PgRls.class_name %>
+
+  # The name of the database table where tenant information is stored.
+  # Ensure this table is properly configured with RLS enabled.
+  # Default: Derived from your tenant model.
   config.table_name = :<%= PgRls.table_name %>
+
+  # The methods used to search for the tenant. These methods should exist on the tenant model.
+  # Default: Search methods specified during installation.
   config.search_methods = <%= "%i[#{PgRls.search_methods.join(' ')}]" %>
 
+  # The attributes that should be tracked in the request context.
+  # This allows you to specify which attributes PgRls::Current should manage dynamically.
+  # By default, this is an empty array, as only the current tenant is tracked for RLS purposes.
+  # You can add additional attributes when needed, such as theme, branch, etc.
+  config.current_attributes = []
+
+  # If you need to track additional attributes dynamically, use the `__` convention.
+  # This allows calling nested models with a double underscore, inspired by Stimulus controllers.
+  # Example: If `organization__branch` is added, it will resolve to Organization::Branch.first
+  # config.current_attributes = %i[organization__branch]
+
+  # Database credentials for the RLS user (if needed).
+  # If using Rails credentials, ensure they are correctly stored in config/credentials.yml.enc.
+  # Uncomment and update these lines if you need to provide explicit credentials.
   # config.username = Rails.application.credentials.dig(:database, :username)
   # config.password = Rails.application.credentials.dig(:database, :password)
 
+  # The database role group used for RLS operations.
+  # This role acts as a base role, allowing multiple users to be assigned this role for consistent access control.
+  # Default: "rls_group"
   # config.rls_role_group = "rls_group"
+
+  # The database schema where your tenant tables are located.
+  # Default: "public"
   # config.schema = "public"
+
+  # You can add additional custom configurations here if needed.
 end

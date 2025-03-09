@@ -40,7 +40,8 @@ class PgRlsTest < ActiveSupport::TestCase
       "@@username": :app_user,
       "@@password": :password,
       "@@schema": :public,
-      "@@rls_role_group": :rls_group
+      "@@rls_role_group": :rls_group,
+      "@@current_attributes": []
     }
     assert_equal expected_defaults, PgRls::DEFAULT_CONFIG_MAP
   end
