@@ -14,14 +14,14 @@ module PgRls
         end
       end
 
-      def set_rls
-        PgRls::Record.connection.exec_query("SET rls.tenant_id = '#{tenant_id}'", prepare: true)
+      def set_rls(connection = PgRls::Record.connection)
+        connection.exec_query("SET rls.tenant_id = '#{tenant_id}'", prepare: true)
 
         self
       end
 
-      def reset_rls
-        PgRls::Record.connection.exec_query("RESET rls.tenant_id", prepare: true)
+      def reset_rls(connection = PgRls::Record.connection)
+        connection.exec_query("RESET rls.tenant_id", prepare: true)
         PgRls::Current.reset
 
         nil
