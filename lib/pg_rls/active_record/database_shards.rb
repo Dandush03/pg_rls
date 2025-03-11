@@ -57,7 +57,8 @@ module PgRls
         {
           "username" => PgRls.username.to_s,
           "password" => PgRls.password.to_s,
-          "database_tasks" => false
+          "database_tasks" => false,
+          "rls" => true
         }
       end
 

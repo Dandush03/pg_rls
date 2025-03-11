@@ -35,10 +35,8 @@ module PgRls
       case db_config.configuration_hash[:rls_mode]
       when "dual"
         build_dual_mode_config(connection_name)
-      when "single"
+      when "single", "none"
         build_single_mode_config(connection_name)
-      when "none"
-        build_none_mode_config(connection_name)
       end
     end
 
@@ -52,15 +50,6 @@ module PgRls
     end
 
     def build_single_mode_config(connection_name)
-      {
-        database: {
-          writing: "rls_#{connection_name}",
-          reading: "rls_#{connection_name}"
-        }
-      }
-    end
-
-    def build_none_mode_config(connection_name)
       {
         database: {
           writing: connection_name,

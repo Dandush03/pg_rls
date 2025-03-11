@@ -20,13 +20,6 @@ module PgRls
         self
       end
 
-      def reset_rls(connection = PgRls::Record.connection)
-        connection.exec_query("RESET rls.tenant_id", prepare: true)
-        PgRls::Current.reset
-
-        nil
-      end
-
       def readonly?
         true
       end

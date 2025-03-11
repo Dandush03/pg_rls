@@ -7,19 +7,6 @@ module PgRls
     class SearchableTest < ::ActiveSupport::TestCase
       fixtures :tenants
 
-      setup do
-        PgRls.class_name = :Tenant
-        PgRls.table_name = :tenants
-        PgRls.search_methods = %i[subdomain tenant_id id]
-        # DatabaseCleaner.strategy = :truncation
-        @searchable = Searchable.new("search_input")
-      end
-
-      teardown do
-        PgRls.reset_config!
-        # DatabaseCleaner.strategy = :transaction
-      end
-
       test "by_rls_object with Tenant input" do
         tenant = tenants(:one)
         assert_equal PgRls::Tenant.find(tenant.id), Searchable.by_rls_object(tenant)

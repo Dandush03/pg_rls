@@ -15,8 +15,8 @@ class PgRlsConnectionConfigTest < ActiveSupport::TestCase
     ::ActiveRecord::Base.stub :connection_db_config, hash_config do
       config = PgRls::ConnectionConfig.new
       config.look_up_connection_config
-      assert_equal PgRls.connects_to[:database][:writing], :rls_primary
-      assert_equal PgRls.connects_to[:database][:reading], :rls_primary
+      assert_equal PgRls.connects_to[:database][:writing], :primary
+      assert_equal PgRls.connects_to[:database][:reading], :primary
     end
   end
 
