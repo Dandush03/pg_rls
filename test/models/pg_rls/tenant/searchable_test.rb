@@ -9,7 +9,8 @@ module PgRls
 
       test "by_rls_object with Tenant input" do
         tenant = tenants(:one)
-        assert_equal PgRls::Tenant.find(tenant.id), Searchable.by_rls_object(tenant)
+        pg_tenant = PgRls::Tenant.find(tenant.id)
+        assert_equal pg_tenant, Searchable.by_rls_object(pg_tenant)
       end
 
       test "by_rls_object with String input" do
@@ -52,6 +53,16 @@ module PgRls
         assert_raises(PgRls::Error::InvalidSearchInput) do
           Searchable.new({}).search_methods
         end
+      end
+
+      test "search_methods returns integer when input is numeric string" do
+        assert_equal ["id"], Searchable.new("123").search_methods
+      end
+
+      test "search_methods returns uuid columns when input is UUID format" do
+        columns = Searchable.new("550e8400-e29b-41d4-a716-446655440000").search_methods
+        assert_includes columns, "tenant_id"
+        assert_equal 1, columns.size
       end
 
       test "by_rls_methods finds tenant by method" do

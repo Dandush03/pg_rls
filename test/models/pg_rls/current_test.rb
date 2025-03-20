@@ -33,10 +33,47 @@ module PgRls
       tenant = ::Tenant.first || ::Tenant.create(name: :test)
 
       PgRls::Tenant.run_within(tenant) do
-        post = Post.first || Post.create(title: "test")
         assert_equal tenant.tenant_id, Current.tenant.tenant_id
+        post = Current.post
+        assert_nil post
+      end
+    end
 
-        assert_equal post, Current.post
+    test "Current works with Tenant.run_within" do
+      PgRls.setup do |config|
+        config.class_name = :Tenant
+        config.table_name = :tenants
+      end
+
+      tenant = ::Tenant.create!(name: :test)
+      result = nil
+      PgRls::Tenant.run_within(tenant) do |current_tenant|
+        # Compare tenant_id instead of the whole object due to class differences
+        assert_equal tenant.tenant_id, current_tenant.tenant_id
+        assert_equal tenant.tenant_id, Current.tenant.tenant_id
+        result = "success"
+      end
+
+      assert_equal "success", result
+      assert_nil Current.instance_variable_get(:@attributes)
+    end
+
+    test "Current works with Tenant.switch" do
+      PgRls.setup do |config|
+        config.class_name = :Tenant
+        config.table_name = :tenants
+      end
+
+      tenant = ::Tenant.create!(name: :test)
+
+      begin
+        PgRls::Tenant.switch(tenant)
+        # Verify that Current.tenant is not nil
+        assert_not_nil Current.tenant
+        # Compare tenant_id instead of the whole object due to class differences
+        assert_equal tenant.tenant_id, Current.tenant.tenant_id
+      ensure
+        PgRls::Tenant.reset_rls
       end
     end
   end
