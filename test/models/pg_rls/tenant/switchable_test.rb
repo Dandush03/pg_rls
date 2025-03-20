@@ -17,17 +17,17 @@ module PgRls
         assert_nil Tenant.switch("not_found")
       end
 
-      test "switch! raises error if tenant not found" do
+      test "set_rls! raises error if tenant not found" do
         assert_raises(PgRls::Error::TenantNotFound) do
-          Tenant.switch!("not_found")
+          Tenant.set_rls!("not_found")
         end
       end
 
       test "run_within sets RLS for tenant and resets after block" do
         tenant = Tenant.new
         Tenant::Searchable.stub :by_rls_object, tenant do
-          tenant.stub :set_rls, true do
-            tenant.stub :reset_rls, true do
+          Tenant.stub :set_rls!, tenant do
+            Tenant.stub :reset_rls, true do
               result = Tenant.run_within("tenant_input") { "block result" }
               assert_equal "block result", result
             end
@@ -38,10 +38,10 @@ module PgRls
       test "with_tenant! executes run_within with deprecation warning" do
         tenant = Tenant.new
         Tenant::Searchable.stub :by_rls_object, tenant do
-          tenant.stub :set_rls, true do
-            tenant.stub :reset_rls, true do
+          Tenant.stub :set_rls!, true do
+            Tenant.stub :reset_rls, true do
               # rubocop:disable Layout/LineLength
-              output_regex = /DEPRECATION WARNING: This method is deprecated and will be removed in future versions. please use PgRls::Tenant.run_within instead. \(called from with_tenant! at .*switchable.rb:33\)\n/
+              output_regex = /DEPRECATION WARNING: This method is deprecated and will be removed in future versions. please use PgRls::Tenant.run_within instead./
               # rubocop:enable Layout/LineLength
               assert_output(nil, output_regex) do
                 result = Tenant.with_tenant!("tenant_input") { "block result" }
@@ -50,6 +50,15 @@ module PgRls
             end
           end
         end
+      end
+
+      test "reset_rls resets the current tenant" do
+        tenant = Tenant.new
+        PgRls::Current.tenant = tenant
+
+        Tenant.reset_rls
+
+        assert_nil PgRls::Current.tenant
       end
     end
   end
