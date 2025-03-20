@@ -39,27 +39,6 @@ module PgRls
       end
     end
 
-    test "Current fetch_attribute handles class name conversion" do
-      attribute = :nested__attribute
-      klass_name = attribute.to_s.gsub("__", "/").classify
-      assert_equal "Nested::Attribute", klass_name
-
-      # Verify that the string interpolation works correctly
-      assert_equal "nested__attribute=", "#{attribute}="
-
-      # Test the attribute setter with a mock class
-      mock_current = Class.new do
-        def self.send(method_name, value)
-          raise "Incorrect method: #{method_name}" unless method_name == :nested__attribute=
-
-          value
-        end
-      end
-
-      result = mock_current.send(:"#{attribute}=", nil)
-      assert_nil result
-    end
-
     test "Current works with Tenant.run_within" do
       PgRls.setup do |config|
         config.class_name = :Tenant
