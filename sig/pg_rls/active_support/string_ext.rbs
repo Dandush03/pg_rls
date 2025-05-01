@@ -12,6 +12,12 @@ module PgRls
       def constantize: -> Class
                      
       def underscore: -> String
+
+      def pluralize: () -> String
+
+      def singularize: () -> String
+
+      def blank?: () -> bool
     end
   end
 end

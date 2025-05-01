@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails/generators/active_record/model/model_generator"
+require_relative "../install/install_generator"
 
 module PgRls
   module Generators

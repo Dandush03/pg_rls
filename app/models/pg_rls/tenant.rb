@@ -4,6 +4,6 @@ module PgRls
   # Tenant model
   class Tenant < Record
     include Securable
-    include Switchable
+    extend Switchable
   end
 end

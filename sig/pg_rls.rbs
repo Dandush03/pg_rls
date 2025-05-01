@@ -2,15 +2,13 @@
 
 module PgRls
   VERSION: String
-  DEFAULT_CONFIG_MAP: Hash[Symbol, (Symbol | Array[Symbol])]
+  DEFAULT_CONFIG_MAP: Hash[Symbol, (Symbol | Array[Symbol] | Array[untyped] | String)]
 
   def self.setup: () { (untyped) -> untyped } -> untyped
 
   def self.reset_config!: () -> void
 
   def self.main_model: () -> untyped
-
-  def self.look_up_connection_config: () -> Hash[Symbol, Hash[Symbol, Symbol]]
 
   def self.connection_config?: () -> bool
 
@@ -49,6 +47,14 @@ module PgRls
   @@connects_to: nil | Hash[Symbol, Hash[Symbol, Symbol]]
   def self.connects_to: () -> (Hash[Symbol, Hash[Symbol, Symbol]] | nil)
   def self.connects_to=: (Hash[Symbol, Hash[Symbol, Symbol]] | nil) -> (Hash[Symbol, Hash[Symbol, Symbol]] | nil)
-                  
+
+  @@current_attributes: Array[untyped]
+  def self.current_attributes: () -> Array[untyped]
+  def self.current_attributes=: (Array[untyped]) -> Array[untyped]
+
+  @@abstract_base_record_class: String | Symbol
+  def self.abstract_base_record_class: () -> (String | Symbol)
+  def self.abstract_base_record_class=: (String | Symbol) -> (String | Symbol)
+
   def self.mattr_accessor: (Symbol) -> untyped
 end

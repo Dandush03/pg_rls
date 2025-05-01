@@ -1,0 +1,11 @@
+module PgRls
+  module ActiveSupport
+    module Hash
+      def deep_transform_values: () { (untyped) -> untyped } -> untyped
+    end
+  end
+end
+
+class Hash[unchecked out K, unchecked out V]
+  include PgRls::ActiveSupport::Hash
+end

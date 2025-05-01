@@ -45,11 +45,20 @@ module PgRls
             drop_rls_table_setup(table_name)
           end
 
+          def create_rls_index(table_name, columns, **options)
+            add_index(table_name, rls_index_columns(columns), **options)
+          end
+
+          def drop_rls_index(table_name, columns, **options)
+            remove_index(table_name, rls_index_columns(columns), **options)
+          end
+
           {
             create_rls_tenant_table: :drop_rls_tenant_table,
             convert_to_rls_tenant_table: :revert_from_rls_tenant_table,
             create_rls_table: :drop_rls_table,
-            convert_to_rls_table: :revert_from_rls_table
+            convert_to_rls_table: :revert_from_rls_table,
+            create_rls_index: :drop_rls_index
           }.each do |cmd, inv|
             [[inv, cmd], [cmd, inv]].uniq.each do |method, inverse|
               class_eval <<-RUBY, __FILE__, __LINE__ + 1
@@ -97,6 +106,12 @@ module PgRls
             revoke_rls_user_privileges(PgRls.schema)
             drop_rls_role(PgRls.username)
             drop_rls_group
+          end
+
+          def rls_index_columns(columns)
+            cols = Array(columns).map(&:to_sym)
+            cols << :tenant_id unless cols.include?(:tenant_id)
+            cols
           end
         end
       end

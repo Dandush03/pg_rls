@@ -5,25 +5,21 @@ module PgRls
     module ConnectionAdapters
       # ActiveRecord ConnectionPool Connection Adapter Extension
       module ConnectionPool
-        def checkin(conn)
-          return unless rls_connection?
-
-          conn.exec_query("SET rls.tenant_id TO DEFAULT", prepare: true)
-        ensure
-          super
-        end
-
         def checkout(checkout_timeout = @checkout_timeout)
           conn = super
           return conn unless rls_connection?
+          return reset_rls_used_connections(conn) if PgRls::Current.tenant.nil?
 
-          PgRls::Current.tenant&.set_rls(conn)
-
+          PgRls::Current.tenant.set_rls(conn)
           conn
         end
 
         def rls_connection?
           pool_config.db_config.configuration_hash[:rls] == true
+        end
+
+        def reset_rls_used_connections(connection)
+          PgRls::Tenant.reset_rls_used_connections(connection)
         end
       end
     end

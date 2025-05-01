@@ -3,10 +3,18 @@ require:
   - rubocop-rake
 
 AllCops:
+  SuggestExtensions: false
   TargetRubyVersion: 3.0
   NewCops: enable
   Exclude:
+    - vendor/**/*
+    - bin/**/*
+    - db/**/*
+    - test/dummy/**/*
     - test/dummy/db/schema.rb
+    - test/lib/generators/pg_rls/tmp/**/*
+    - test/lib/generators/tmp/**/*
+    - lib/pg_rls/active_record/test_databases.rb
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

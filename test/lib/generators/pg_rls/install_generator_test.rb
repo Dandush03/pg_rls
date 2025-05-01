@@ -5,7 +5,7 @@ require "generators/pg_rls/install/install_generator"
 
 class InstallGeneratorTest < Rails::Generators::TestCase
   tests PgRls::InstallGenerator
-  destination File.expand_path("../tmp", __dir__)
+  destination File.expand_path("./tmp_install_generator", __dir__)
 
   setup do
     prepare_destination

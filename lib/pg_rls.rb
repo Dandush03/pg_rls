@@ -4,7 +4,7 @@ require "active_record"
 require "forwardable"
 
 require_relative "pg_rls/deprecation"
-require_relative "pg_rls/errors"
+require_relative "pg_rls/error"
 require_relative "pg_rls/active_record"
 require_relative "pg_rls/active_support"
 require_relative "pg_rls/version"
@@ -22,7 +22,8 @@ module PgRls
     "@@password": :password,
     "@@schema": :public,
     "@@rls_role_group": :rls_group,
-    "@@current_attributes": []
+    "@@current_attributes": Array(nil),
+    "@@abstract_base_record_class": "ActiveRecord::Base"
   }.freeze
 
   class << self
@@ -84,10 +85,10 @@ module PgRls
   @@class_name = :Organization
 
   mattr_accessor :username
-  @@username = :app_user
+  @@username = ENV.fetch("POSTGRES_RLS_USERNAME", "app_user")
 
   mattr_accessor :password
-  @@password = "password"
+  @@password = ENV.fetch("POSTGRES_RLS_PASSWORD", "password")
 
   mattr_accessor :schema
   @@schema = :public
@@ -99,5 +100,8 @@ module PgRls
   @@connects_to = nil
 
   mattr_accessor :current_attributes
-  @@current_attributes = []
+  @@current_attributes = Array(nil)
+
+  mattr_accessor :abstract_base_record_class
+  @@abstract_base_record_class = "ActiveRecord::Base"
 end

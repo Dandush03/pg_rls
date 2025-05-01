@@ -254,6 +254,36 @@ module PgRls
               behaves_like_absence_of_rls_table_without_tenant_id(:test_table)
             end
           end
+
+          class RlsIndexMethodsTest < self
+            setup do
+              connection.create_rls_tenant_table(:test_table) do |t|
+                t.string :name
+                t.integer :age
+              end
+            end
+
+            teardown do
+              connection.drop_rls_tenant_table(:test_table, if_exists: true)
+            end
+
+            test "create_rls_index adds tenant_id if not present" do
+              connection.create_rls_index(:test_table, :name)
+              assert connection.index_exists?(:test_table, %i[name tenant_id])
+            end
+
+            test "create_rls_index does not duplicate tenant_id if already present" do
+              connection.create_rls_index(:test_table, %i[name tenant_id])
+              assert connection.index_exists?(:test_table, %i[name tenant_id])
+            end
+
+            test "drop_rls_index removes the index with tenant_id" do
+              connection.create_rls_index(:test_table, :age)
+              assert connection.index_exists?(:test_table, %i[age tenant_id])
+              connection.drop_rls_index(:test_table, :age)
+              assert_not connection.index_exists?(:test_table, %i[age tenant_id])
+            end
+          end
         end
       end
     end

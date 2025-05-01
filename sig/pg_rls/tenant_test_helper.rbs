@@ -1,0 +1,14 @@
+module PgRls::TenantTestHelper::TenantOverrides
+  @attributes: Hash[Symbol, untyped]
+  def tenant=: (untyped) -> void
+  def reset: () -> untyped
+  def initialize_tenant_history: () -> void
+  def store_current_tenant_in_history: () -> void
+  def assign_new_tenant: (untyped) -> void
+  def restore_tenant_history: (untyped) -> void
+  def restore_most_recent_tenant: () -> void
+end
+
+module PgRls::TenantTestHelper
+  include PgRls::TenantTestHelper::TenantOverrides
+end

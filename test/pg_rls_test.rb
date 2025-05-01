@@ -41,7 +41,8 @@ class PgRlsTest < ActiveSupport::TestCase
       "@@password": :password,
       "@@schema": :public,
       "@@rls_role_group": :rls_group,
-      "@@current_attributes": []
+      "@@current_attributes": [],
+      "@@abstract_base_record_class": "ActiveRecord::Base"
     }
     assert_equal expected_defaults, PgRls::DEFAULT_CONFIG_MAP
   end

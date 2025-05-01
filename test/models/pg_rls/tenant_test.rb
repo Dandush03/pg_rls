@@ -9,7 +9,7 @@ module PgRls
     end
 
     test "includes Switchable module" do
-      assert_includes Tenant.included_modules, Tenant::Switchable
+      assert_includes Tenant.singleton_class.included_modules, Tenant::Switchable
     end
   end
 end

@@ -11,5 +11,10 @@ module PgRls
     test "Connects to RLS connection" do
       assert_equal "rls_primary", Record.connection_db_config.name
     end
+
+    test "Record inherits from configured base class" do
+      expected_class = PgRls.abstract_base_record_class.constantize
+      assert_equal expected_class, Record.superclass
+    end
   end
 end
