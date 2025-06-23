@@ -1,0 +1,38 @@
+# frozen_string_literal: true
+
+module Rails
+  def self.application: () -> untyped
+
+  def self.env: () -> untyped
+
+  class Engine
+    # Define isolate_namespace to accept a Module and return untyped
+    def self.isolate_namespace: (Module) -> untyped
+  end
+
+  class Railtie
+  end
+
+  module Generators
+    class Error < StandardError
+    end
+
+    class NamedBase
+      def self.hook_for: (Symbol, required: bool) -> void
+    end
+
+    class Base
+      def self.hook_for: (Symbol, required: bool) -> void
+                       
+      def self.source_root: (String) -> void
+
+      def behavior: -> Symbol
+                  
+      def readme: (String) -> void                
+      
+      def template: (String, ?String) -> void
+                  
+      def gsub_file: (String, Regexp, String) -> void
+    end
+  end
+end

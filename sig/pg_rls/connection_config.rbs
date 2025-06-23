@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+module PgRls
+  class ConnectionConfig
+    @db_config: ActiveRecord::DatabaseConfigurations::HashConfig
+    @connection_name: String
+
+    def initialize: (?ActiveRecord::DatabaseConfigurations::HashConfig db_config) -> void
+    def look_up_connection_config: () -> (Hash[Symbol, Hash[Symbol, Symbol]] | nil)
+    def connection_config?: () -> bool
+    def invalid_connection_config: () -> nil
+    def build_config_hash: (ActiveRecord::DatabaseConfigurations::HashConfig db_config, String connection_name) -> (Hash[Symbol, Hash[Symbol, Hash[Symbol, String]]] | Hash[Symbol, Hash[Symbol, String]] | nil)
+    def build_dual_mode_config: (String connection_name) -> Hash[Symbol, Hash[Symbol, Hash[Symbol, String]]]
+    def build_single_mode_config: (String connection_name) -> Hash[Symbol, Hash[Symbol, String]]
+  end
+end

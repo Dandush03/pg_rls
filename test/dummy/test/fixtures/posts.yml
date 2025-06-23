@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the "{}" from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+one:
+  title: Post 1
+  content: Post 1 content
+  tenant_id: 205bbedd-b728-488f-ab65-c83b4a28cf4f
+
+two:
+  title: Post 2
+  content: Post 2 content
+  tenant_id: 205bbedd-b728-488f-ab65-c83b4a28cf4f

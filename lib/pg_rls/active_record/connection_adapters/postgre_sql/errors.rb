@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module PostgreSQL
+        class UserDoesNotExistError < PgRls::Error; end
+        class UserNotInPgRlsGroupError < PgRls::Error; end
+        class UserMissingSchemaUsagePrivilegeError < PgRls::Error; end
+        class UserMissingTablePrivilegesError < PgRls::Error; end
+        class UserMissingSequencePrivilegesError < PgRls::Error; end
+        class TableRlsNotEnabledError < PgRls::Error; end
+        class TableUserPolicyDoesNotExistError < PgRls::Error; end
+      end
+    end
+  end
+end

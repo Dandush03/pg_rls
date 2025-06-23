@@ -1,0 +1,34 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    # Require to fix configuration super method invocation
+    module DummyDatabaseShards
+      def configurations=: (Hash[String, untyped]) -> Hash[String, untyped]
+    end
+
+    module DatabaseShards
+      include DummyDatabaseShards
+
+      REQUIRED_CONFIGURATION_KEYS: Array[String]
+
+      def add_rls_configurations: (Hash[String, untyped], ?Hash[String, untyped]) -> Hash[String, untyped]
+      
+      def configurations=: (Hash[String, untyped]) -> Hash[String, untyped]
+
+      def configurations: () -> Hash[String, untyped]
+                        
+      def rls_shard_config?: (Hash[String, untyped]) -> bool
+                           
+      def adapter_configurations: (Hash[String, untyped], Hash[String, untyped], String) -> (::Hash[::String, untyped] | nil)
+
+      def rls_configuration: () -> Hash[String, untyped]
+
+      private
+
+      def add_primary_and_rls_config: (Hash[String, untyped], Hash[String, untyped], ?String) -> Hash[String, untyped]
+
+      def shard_config?: (Hash[String, untyped]) -> bool
+    end
+  end
+end

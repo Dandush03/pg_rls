@@ -1,115 +1,112 @@
 # frozen_string_literal: true
 
-require 'rails/generators/active_record/model/model_generator'
-require File.join(File.dirname(__FILE__), '../base')
+require "rails/generators/active_record/model/model_generator"
+require_relative "../install/install_generator"
 
 module PgRls
   module Generators
     # Active Record Generator
     class ActiveRecordGenerator < ::ActiveRecord::Generators::ModelGenerator
-      include ::PgRls::Base
+      source_root File.expand_path("../templates", __dir__.to_s)
 
-      source_root File.expand_path('./templates', __dir__)
+      class_option :parent, type: :string, default: "ApplicationRecord",
+                            desc: "The parent class for the generated model"
 
-      def check_class_collision; end
+      class_option :rls_parent, type: :string, default: "PgRls::Record",
+                                desc: "The parent class for the rls generated model"
 
-      def create_migration_file; end
-
-      def migration_exist?
-        @migration_exist ||= Dir.glob("#{migration_path}/*create_#{table_name}.rb").present?
-      end
-
-      def create_tenant_migration_file
-        return unless creating?
-
-        migration_template(create_migration_template_path,
-                           "#{migration_path}/#{create_file_sub_name}_#{table_name}.rb",
-                           migration_version:)
-      end
-
-      def convert_tenant_migration_file
-        unless creating?
-          migration_template(convert_migration_template_path,
-                             "#{migration_path}/#{convert_file_sub_name}_#{table_name}.rb",
-                             migration_version:)
-        end
-
-        return unless installation_in_progress?
-
-        migration_template('convert_migration_backport.rb.tt',
-                           "#{migration_path}/pg_rls_backport_#{table_name}.rb",
-                           migration_version:)
+      # Need to override so it will not check for class collision
+      def check_class_collision
+        super
+        @class_coalescing = false
+      rescue Rails::Generators::Error
+        @class_coalescing = true
       end
 
       def create_model_file
-        return if migration_exist?
+        return if class_coalescing?
 
-        generate_abstract_class if database && !parent
-
-        template model_template_path, model_file
+        generate_abstract_class if database && !custom_parent?
+        template("app/models/model.rb", model_path, parent_class_name: parent_class_name)
       end
 
-      def inject_method_to_model
-        return unless installation_in_progress?
+      def upgrade_model_file
+        return unless class_coalescing? && model_file_exists?
 
-        gsub_file(model_file, /Class #{class_name} < #{parent_class_name.classify}/mi) do |match|
-          "#{match}\n  def self.current\n    PgRls::Tenant.fetch\n  end\n"
+        gsub_file(model_path, /< ApplicationRecord/, "< #{parent_class_name}")
+      end
+
+      def create_migration_file
+        return if skip_migration_creation? || class_coalescing?
+
+        clean_indexes_attributes!
+        migration_template "db/migrate/create_#{migration_template_prefix}_table.rb",
+                           "db/migrate/create_#{migration_template_prefix}_#{table_name}.rb"
+      end
+
+      def upgrade_migration_file
+        return if skip_migration_creation? || !class_coalescing?
+
+        migration_template "db/migrate/convert_to_#{migration_template_prefix}_table.rb",
+                           "db/migrate/convert_to_#{migration_template_prefix}_#{table_name}.rb"
+      end
+
+      def backport_migration_file
+        return if skip_migration_creation? || installing? || !class_coalescing?
+
+        migration_template "db/migrate/backport_pg_rls_table.rb",
+                           "db/migrate/backport_pg_rls_to_#{table_name}.rb"
+      end
+
+      private
+
+      def installing?
+        Kernel.const_defined?("PgRls::InstallGenerator")
+      end
+
+      def parent_class_name
+        return rls_parent unless installing?
+
+        super
+      end
+
+      def rls_parent
+        options[:rls_parent]
+      end
+
+      def migration_template_prefix
+        installing? ? "pg_rls_tenant" : "pg_rls"
+      end
+
+      def generate_abstract_class
+        return if File.exist?(generate_abstract_class_path)
+
+        template "app/models/abstract_base_class.rb", generate_abstract_class_path
+      end
+
+      def model_path
+        File.join("app/models", class_path, "#{file_name}.rb")
+      end
+
+      def generate_abstract_class_path
+        File.join("app/models", "#{database.underscore}_record.rb")
+      end
+
+      def class_coalescing?
+        @class_coalescing
+      end
+
+      def clean_indexes_attributes!
+        return unless options[:indexes] == false
+
+        attributes.each do |a|
+          a.attr_options.delete(:index) if a.reference? && !a.has_index?
         end
       end
 
-      def model_file
-        File.join('app/models', class_path, "#{file_name}.rb")
+      def model_file_exists?
+        File.exist?(File.join(destination_root, model_path))
       end
-
-      def create_migration_template_path
-        return 'init_migration.rb.tt' if installation_in_progress?
-
-        'migration.rb.tt'
-      end
-
-      def convert_migration_template_path
-        return 'init_convert_migration.rb.tt' if installation_in_progress?
-
-        'convert_migration.rb.tt'
-      end
-
-      def model_template_path
-        return 'init_model.rb.tt' if installation_in_progress?
-
-        'model.rb.tt'
-      end
-
-      def create_file_sub_name
-        return 'pg_rls_create_tenant' if installation_in_progress?
-
-        'pg_rls_create'
-      end
-
-      def convert_file_sub_name
-        return 'pg_rls_convert_tenant' if installation_in_progress?
-
-        'pg_rls_convert'
-      end
-
-      def installation_in_progress?
-        shell.base.class.name.include?('Install')
-      end
-
-      def migration_version
-        "[#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}]"
-      end
-
-      def migration_path
-        db_migrate_path
-      end
-
-      def creating?
-        @creating ||= !migration_exist?
-      end
-
-      protected
-
-      def migration_action = 'add'
     end
   end
 end

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#f8f8f8"/>
+  <g transform="translate(20, 20)">
+    <path d="M80 0 L160 40 L160 120 L80 160 L0 120 L0 40 Z" fill="#ff4444"/>
+    <path d="M80 20 L140 52 L140 108 L80 140 L20 108 L20 52 Z" fill="#ffffff"/>
+    <text x="80" y="95" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="#ff4444">PgRls</text>
+  </g>
+</svg>

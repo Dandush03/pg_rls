@@ -1,0 +1,132 @@
+---
+path: ".gem_rbs_collection"
+gems:
+- name: actionpack
+  version: '7.2'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: actionview
+  version: '6.0'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: activemodel
+  version: '7.0'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: c718a9d97695937f952c72aec0c09632e1342201
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: activerecord
+  version: '7.2'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: c718a9d97695937f952c72aec0c09632e1342201
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: activesupport
+  version: '7.0'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: c718a9d97695937f952c72aec0c09632e1342201
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: concurrent-ruby
+  version: '1.1'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: c718a9d97695937f952c72aec0c09632e1342201
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: date
+  version: '0'
+  source:
+    type: stdlib
+- name: erb
+  version: '0'
+  source:
+    type: stdlib
+- name: io-console
+  version: '0'
+  source:
+    type: stdlib
+- name: logger
+  version: '0'
+  source:
+    type: stdlib
+- name: monitor
+  version: '0'
+  source:
+    type: stdlib
+- name: mutex_m
+  version: '0'
+  source:
+    type: stdlib
+- name: nokogiri
+  version: '1.11'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: rails-dom-testing
+  version: '2.0'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: rails-html-sanitizer
+  version: '1.6'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 4af987b9b70455bd4493ef5a10e885f36e6ca6f6
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: railties
+  version: '6.0'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: securerandom
+  version: '0'
+  source:
+    type: stdlib
+- name: singleton
+  version: '0'
+  source:
+    type: stdlib
+- name: thor
+  version: '1.2'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 218cf130d31f63e110e350efc3fa265311b0f238
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
+- name: time
+  version: '0'
+  source:
+    type: stdlib
+- name: tsort
+  version: '0'
+  source:
+    type: stdlib
+gemfile_lock_path: Gemfile.lock

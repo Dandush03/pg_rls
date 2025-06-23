@@ -1,0 +1,50 @@
+# frozen_string_literal: true
+
+module PgRls
+  module ActiveRecord
+    module ConnectionAdapters
+      module ConnectionPool
+        attr_reader checkout_timeout: untyped
+
+        def checkout: (?untyped checkout_timeout) -> untyped
+
+        def rls_connection?: () -> bool
+
+        def pool_config: () -> untyped
+
+        private def reset_rls_used_connections: (ActiveRecord::ConnectionAdapters::PostgreSQLAdapter conn) -> nil
+
+      end
+    end
+  end
+
+  class Tenant
+    def self.reset_rls_used_connections: (ActiveRecord::ConnectionAdapters::PostgreSQLAdapter conn) -> nil
+
+    def set_rls: (ActiveRecord::ConnectionAdapters::PostgreSQLAdapter conn) -> Tenant
+
+    def new_tenant?: () -> bool
+
+    def reused_connection?: (ActiveRecord::ConnectionAdapters::PostgreSQLAdapter conn) -> bool
+
+    def rls_connection_object_cache_by_thread=: (untyped value) -> untyped
+
+    def rls_connection_object_cache_by_thread: () -> untyped
+
+    def rls_used_connections: () -> untyped
+  end
+
+  module Current
+    def self.tenant: () -> Tenant
+  end
+end
+
+module ActiveRecord
+  module ConnectionAdapters
+    class ConnectionPool
+      attr_reader checkout_timeout: untyped
+    end
+  end
+end
+
+

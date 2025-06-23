@@ -1,0 +1,12 @@
+module PG
+  class Result
+    # Define methods that you are using from PG::Result, for example:
+    def each: () { (Hash[String, untyped]) -> void } -> void
+    def getvalue: (Integer, Integer) -> String
+    def ntuples: () -> Integer
+    def nfields: () -> Integer
+    def any?: () -> bool
+    def present?: () -> bool
+    # You can add more methods as needed
+  end
+end

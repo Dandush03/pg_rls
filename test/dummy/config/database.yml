@@ -1,0 +1,25 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  host: localhost
+  port: 5432
+  username: postgres
+  password: password
+
+test:
+  database: test_db
+  rls_mode: dual # single, dual or none
+  <<: *default
+
+development:
+  <<: *default
+  database: dev_db
+  rls_mode: dual # single, dual or none
+  # primary:
+  #   <<: *default
+  #   rls_mode: none # single, dual or none
+  #   database: dev_db
+  # animals:
+  #   <<: *default
+  #   database: dev_db

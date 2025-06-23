@@ -1,0 +1,9 @@
+module PgRls
+  module Deprecation
+    self.@logger: ::ActiveSupport::Deprecation
+
+    def self.warn: (String) -> void
+
+    def self.logger: () -> ::ActiveSupport::Deprecation
+  end
+end

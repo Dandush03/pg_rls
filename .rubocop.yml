@@ -1,29 +1,67 @@
 require:
-- rubocop-rails
-- rubocop-performance
-- rubocop-rspec
-- rubocop-rake
+  - rubocop-performance
+  - rubocop-rake
 
 AllCops:
+  SuggestExtensions: false
+  TargetRubyVersion: 3.0
   NewCops: enable
-Style/Documentation:
-  Enabled: false
+  Exclude:
+    - vendor/**/*
+    - bin/**/*
+    - db/**/*
+    - test/dummy/**/*
+    - test/dummy/db/schema.rb
+    - test/lib/generators/pg_rls/tmp/**/*
+    - test/lib/generators/tmp/**/*
+    - lib/pg_rls/active_record/test_databases.rb
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
 Style/ClassVars:
+  Enabled: true
   Exclude:
-  - 'lib/pg_rls.rb'
-Metrics/MethodLength:
-  Exclude:
-  - 'lib/pg_rls/schema/**/*'
-  - 'lib/pg_rls/database/prepared.rb'
+    - lib/pg_rls.rb
+
 Metrics/BlockLength:
+  Enabled: true
   Exclude:
-  - 'lib/pg_rls/database/tasks/admin_database.rake'
-Security/MarshalLoad:
+    - test/**/*
+    - pg_rls.gemspec
+
+Style/Documentation:
+  Enabled: true
   Exclude:
-  - 'lib/pg_rls/middleware/set_reset_connection.rb'
+    - test/**/*
+
 Metrics/ModuleLength:
+  Enabled: true
   Exclude:
-  - 'lib/pg_rls.rb'
-Naming/AccessorMethodName:
+    - lib/pg_rls/active_record/connection_adapters/postgre_sql/check_rls_user_privileges.rb
+    - lib/pg_rls/active_record/connection_adapters/postgre_sql/grant_rls_user_privileges.rb
+    - test/**/*
+Metrics/MethodLength:
+  Enabled: true
   Exclude:
-  - 'lib/pg_rls/tenant.rb'
+    - test/pg_rls/active_record/connection_adapters/postgre_sql/shared_example/rls_table_behavior.rb
+    - test/pg_rls/active_record/connection_adapters/postgre_sql/shared_example/rls_tenant_table_behavior.rb
+
+Metrics/AbcSize:
+  Enabled: true
+  Exclude:
+    - test/pg_rls/active_record/connection_adapters/postgre_sql/shared_example/rls_table_behavior.rb
+    - test/pg_rls/active_record/connection_adapters/postgre_sql/shared_example/rls_tenant_table_behavior.rb
+
+Metrics/CyclomaticComplexity:
+  Enabled: true
+  Exclude:
+    - test/pg_rls/active_record/connection_adapters/postgre_sql/shared_example/rls_table_behavior.rb
+
+Metrics/PerceivedComplexity:
+  Enabled: true
+  Exclude:
+    - test/pg_rls/active_record/connection_adapters/postgre_sql/shared_example/rls_table_behavior.rb

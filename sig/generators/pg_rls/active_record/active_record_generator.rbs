@@ -1,0 +1,43 @@
+# frozen_string_literal: true
+
+module PgRls
+  module Generators
+    class ActiveRecordGenerator < ::ActiveRecord::Generators::ModelGenerator
+      def check_class_collision: () -> void
+
+      def create_model_file: () -> void
+      
+      def upgrade_model_file: () -> void
+      
+      def create_migration_file: () -> void
+
+      def upgrade_migration_file: () -> void
+
+      def backport_migration_file: () -> void
+
+      def template: (String, String, **untyped) -> void
+
+      private
+
+      def installing?: () -> bool
+
+      def migration_template_prefix: () -> String
+
+      def generate_abstract_class: () -> void
+
+      def model_path: () -> String
+
+      def generate_abstract_class_path: () -> String
+
+      def class_coalescing?: () -> bool
+
+      def clean_indexes_attributes!: () -> void
+
+      def model_file_exists?: () -> bool
+
+      def parent_class_name: () -> String
+
+      def rls_parent: () -> String
+    end
+  end
+end

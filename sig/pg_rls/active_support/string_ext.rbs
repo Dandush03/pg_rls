@@ -1,0 +1,27 @@
+module PgRls
+  module ActiveSupport
+    module StringExt
+      def sanitize_sql: -> String
+                      
+      def gsub!: (Regexp, String) -> String
+               
+      def strip!: -> String
+                
+      def camelize: -> String
+                  
+      def constantize: -> Class
+                     
+      def underscore: -> String
+
+      def pluralize: () -> String
+
+      def singularize: () -> String
+
+      def blank?: () -> bool
+    end
+  end
+end
+
+class String
+  include PgRls::ActiveSupport::StringExt
+end

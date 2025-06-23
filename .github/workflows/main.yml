@@ -1,0 +1,116 @@
+name: Ruby
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Install packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips postgresql-client
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            pg_isready -h localhost -U postgres && exit 0
+            sleep 1
+          done
+          echo "Postgres no está listo"; exit 1
+
+      - name: Create app_user in Postgres
+        run: |
+          PGPASSWORD=password psql -h localhost -U postgres -d postgres -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'app_user') THEN CREATE ROLE app_user LOGIN PASSWORD 'password'; END IF; END \$\$;"
+
+      - name: Create DB & run migrations
+        env:
+          RAILS_ENV: test
+        run: bin/rails db:create db:migrate
+
+      - name: Run tests
+        run: bin/test
+
+      - name: Check 100% coverage
+        run: |
+          COVERAGE_FILE="coverage/.last_run.json"
+          if [ ! -f "$COVERAGE_FILE" ]; then
+            echo "Archivo de cobertura no encontrado: $COVERAGE_FILE"; exit 1
+          fi
+          COVERAGE=$(jq '.result.line' "$COVERAGE_FILE")
+          if [ "$COVERAGE" != "100.0" ]; then
+            echo "Coverage es $COVERAGE%, debe ser 100%"; exit 1
+          fi
+        shell: bash
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Lint code for consistent style
+        run: set -x; bin/rubocop --format simple
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Lint code for consistent style
+        run: bundle exec bundle audit --update
+
+  type_checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Strong types code for consistent types
+        run: bin/steep

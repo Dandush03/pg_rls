@@ -1,0 +1,5 @@
+class ConvertToPgRlsTenant<%= table_name.camelize %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    convert_to_rls_tenant_table :<%= table_name %>
+  end
+end

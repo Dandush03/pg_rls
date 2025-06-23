@@ -1,0 +1,14 @@
+class BackportPgRlsTo<%= table_name.camelize %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def up
+    # Suggested Code:
+    # PgRls.on_each_tenant do |tenant|
+    #   <%= class_name.camelize %>.where(identifier_reference_for_tenant: tenant.id)
+    #      .in_batches.update_all(tenant_id: tenant.tenant_id)
+    # end
+  end
+
+  def down
+    # Suggested Code:
+    # raise ActiveRecord::IrreversibleMigration, 'This migration is irreversible, please restore from backup.'
+  end
+end

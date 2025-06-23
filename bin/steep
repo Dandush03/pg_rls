@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "rubygems"
+require "bundler/setup"
+require "steep/rake_task"
+
+Steep::RakeTask.new do |t|
+  t.check.severity_level = :error
+  t.watch.verbose
+end
+
+Rake::Task["steep"].invoke
