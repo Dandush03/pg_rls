@@ -73,6 +73,7 @@ module ActiveRecord
     end
 
     class PostgreSQLAdapter < AbstractAdapter
+      def execute: (String) -> untyped
     end
     module PostgreSQL
       class SchemaStatements

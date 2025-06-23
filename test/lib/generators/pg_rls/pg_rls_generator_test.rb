@@ -5,7 +5,7 @@ require "generators/pg_rls/pg_rls_generator"
 
 class PgRlsGeneratorTest < Rails::Generators::TestCase
   tests PgRls::Generators::PgRlsGenerator
-  destination File.expand_path("../tmp", __dir__)
+  destination File.expand_path("./tmp_pg_rls_generator", __dir__)
 
   setup do
     prepare_destination

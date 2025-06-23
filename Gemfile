@@ -8,6 +8,8 @@ gemspec
 gem "rake", "~> 13.0"
 
 group :development, :test do
+  gem "rails", "~> 7.2.2"
+
   # Guard automatically & intelligently launch tests [https://github.com/guard/guard-minitest]
   gem "guard" # NOTE: this is necessary in newer versions
   gem "guard-minitest"
@@ -28,6 +30,9 @@ group :development, :test do
   gem "rbs", require: false
   # Ruby Strong Typing Validations [https://github.com/soutaro/steep]
   gem "steep"
+
+  # Ruby vulnerability checker [https://github.com/rubysec/bundler-audit]
+  gem "bundler-audit"
 
   # Reduces boot times through caching; required in config/boot.rb
   gem "bootsnap", require: false

@@ -40,6 +40,7 @@
   - [Configuration](#configuration)
   - [How It Works](#how-it-works)
 - [Usage](#usage)
+- [RLS Index Management Methods](#rls-index-management-methods)
 - [Testing](#testing)
 - [Development](#development)
   - [Development Workflow](#development-workflow)
@@ -196,6 +197,35 @@ PgRls::Current.organization__branch = Organization::Branch.find_by(name: 'Main B
    PgRls::Tenant.switch :app  # where 'app' is your tenant name
    ```
 
+## RLS Index Management Methods
+
+These functions help manage indexes on tables protected by Row Level Security (RLS), ensuring that the `tenant_id` field is always included in the indexes to maintain integrity and multitenant isolation.
+
+### `create_rls_index`
+Creates an index on an RLS-enabled table, automatically adding the `tenant_id` field if it is not present in the list of columns.
+
+**Usage:**
+```ruby
+create_rls_index(:users, [:email])
+# This will create an index on [:email, :tenant_id] for the users table
+```
+
+You can also pass additional options compatible with `add_index`:
+```ruby
+create_rls_index(:users, [:email], unique: true, name: 'index_users_on_email_and_tenant_id')
+```
+
+### `drop_rls_index`
+Removes an index created with `create_rls_index`, ensuring that the same columns (including `tenant_id`) are used.
+
+**Usage:**
+```ruby
+drop_rls_index(:users, [:email])
+# Removes the index on [:email, :tenant_id] for the users table
+```
+
+These functions are defined in `lib/pg_rls/active_record/connection_adapters/postgre_sql/schema_statements.rb` and are useful for maintaining index consistency in multitenant environments with RLS.
+
 ## Testing
 
 If you encounter `PG::InsufficientPrivilege: ERROR: permission denied`, override permissions by running:
@@ -212,6 +242,16 @@ config.before(:suite) do
   PgRls::Tenant.switch :app
 end
 ```
+
+### Running tests in parallel
+
+If you want to run your tests using `parallelize`, make sure to include the following in your test helper file (for example, `test_helper.rb` or `rails_helper.rb`):
+
+```ruby
+require "pg_rls/active_record/test_databases"
+```
+
+This is required for proper test database setup when running tests in parallel. You can see an example in the `test/test_helper.rb` file in this repository.
 
 ## Development
 

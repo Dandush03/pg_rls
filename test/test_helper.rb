@@ -9,6 +9,7 @@ require_relative "test_helpers/simplecov"
 
 require_relative "dummy/config/environment"
 require "pg_rls"
+require "pg_rls/active_record/test_databases"
 
 ActiveRecord::Migrator.migrations_paths = [File.expand_path(
   "dummy/db/migrate", __dir__
@@ -30,22 +31,34 @@ module ActiveSupport
   class TestCase
     workers = RUBY_PLATFORM.include?("darwin") ? 1 : :number_of_processors
 
-    parallelize_setup do |_worker|
-      SimpleCov.command_name "Job::#{Process.pid}" if const_defined?(:SimpleCov)
+    parallelize(workers: workers)
+
+    parallelize_setup do |worker|
+      SimpleCov.command_name "Worker-#{worker}" if const_defined?(:SimpleCov)
+      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.clean_with(:truncation)
+      setup_pg_rls if respond_to?(:setup_pg_rls)
     end
 
     parallelize_teardown do |_worker|
       SimpleCov.result if const_defined?(:SimpleCov)
     end
 
-    parallelize(workers: workers)
-
     setup do
       DatabaseCleaner.start
+      self.class.setup_pg_rls
     end
 
     teardown do
       DatabaseCleaner.clean
+      PgRls.reset_config!
+    end
+
+    def self.setup_pg_rls
+      PgRls.class_name = :Tenant
+      PgRls.table_name = :tenants
+      PgRls.search_methods = %i[subdomain tenant_id id]
+      PgRls.current_attributes = %i[post]
     end
   end
 end

@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   spec.metadata["rubygems_mfa_required"] = "true"
   spec.license = "MIT"
 
-  spec.add_dependency "activerecord", ">= 7.2", "< 9.0"
+  spec.add_dependency "activerecord", ">= 7.2.2", "< 9.0"
   spec.add_dependency "pg", "~> 1.2"
   spec.add_dependency "railties", ">= 7.2", "< 9.0"
   spec.add_dependency "warden", "~> 1.2"

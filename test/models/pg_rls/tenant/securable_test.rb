@@ -19,9 +19,9 @@ module PgRls
 
       test "reset_rls resets tenant_id in connection" do
         PgRls::Record.connection.stub :execute, true do
-          result = PgRls::Tenant.reset_rls
-
-          assert_equal({ post: nil, tenant: nil }, result)
+          attributes = { tenant: nil, tenant_history: [] }
+          assert_equal(PgRls::Tenant.reset_rls, attributes)
+          assert_equal(PgRls::Current.attributes, attributes)
           assert_nil PgRls::Current.tenant
         end
       end

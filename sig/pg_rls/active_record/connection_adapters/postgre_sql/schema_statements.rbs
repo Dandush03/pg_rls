@@ -33,7 +33,8 @@ module PgRls
           def check_rls_user_privileges!: (String | Symbol, String | Symbol) -> bool
           def enable_table_rls: (String | Symbol, String | Symbol) -> void
           def append_rls_table_triggers: (String | Symbol) -> void
-          def add_index: (String | Symbol, String | Symbol, *untyped args) -> void
+          def add_index: (String | Symbol, Array[String | Symbol] | String | Symbol, *untyped args) -> void
+          def remove_index: (String | Symbol, Array[String | Symbol] | String | Symbol, *untyped args) -> void
           def append_tenant_table_triggers: (String | Symbol) -> void
           def create_rls_group: () -> void
           def create_rls_role: (String | Symbol, String | Symbol) -> void
@@ -48,6 +49,8 @@ module PgRls
           def revoke_rls_user_privileges: (String | Symbol) -> void
           def index_exists?: (String | Symbol, String | Symbol, *untyped args) -> bool
           def column_exists?: (String | Symbol, String | Symbol) -> bool
+          def create_rls_index: (String | Symbol, Array[String | Symbol], **untyped args) -> void
+          def drop_rls_index: (String | Symbol, Array[String | Symbol], **untyped args) -> void
 
           private
 
@@ -56,6 +59,7 @@ module PgRls
           def create_rls_initialize_setup: () -> void
           def drop_rls_table_setup: (String | Symbol) -> void
           def drop_rls_initialize_setup: (String | Symbol) -> void
+          def rls_index_columns: (Array[String | Symbol]) -> Array[Symbol]
         end
       end
     end

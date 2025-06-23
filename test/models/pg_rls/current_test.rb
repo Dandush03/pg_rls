@@ -5,7 +5,7 @@ require "test_helper"
 module PgRls
   class CurrentTest < ::ActiveSupport::TestCase
     test "Current has a tenant attribute" do
-      assert Current.attributes.key?(:tenant), "Current should have a tenant attribute"
+      assert Current.defaults.key?(:tenant), "Current should have a tenant attribute"
     end
 
     test "Current attribute includes post attribute when added" do
@@ -16,7 +16,7 @@ module PgRls
       PgRls.send(:remove_const, "Current") if Object.const_defined?("PgRls::Current")
       load "app/models/pg_rls/current.rb"
 
-      assert Current.attributes.key?(:post), "Current should have a post attribute"
+      assert Current.defaults.key?(:post), "Current should have a post attribute"
     end
 
     test "Current fetches the tenant attribute" do
@@ -48,6 +48,31 @@ module PgRls
       tenant = ::Tenant.create!(name: :test)
       result = nil
       PgRls::Tenant.run_within(tenant) do |current_tenant|
+        # Compare tenant_id instead of the whole object due to class differences
+        assert_equal tenant.tenant_id, current_tenant.tenant_id
+        assert_equal tenant.tenant_id, Current.tenant.tenant_id
+        result = "success"
+      end
+
+      assert_equal "success", result
+      assert_nil Current.instance_variable_get(:@attributes)
+    end
+
+    test "Current works with Tenant.run_within and two blocks" do
+      PgRls.setup do |config|
+        config.class_name = :Tenant
+        config.table_name = :tenants
+      end
+
+      tenant = ::Tenant.create!(name: :test)
+      tenant2 = ::Tenant.create!(name: :test2)
+      result = nil
+      PgRls::Tenant.run_within(tenant) do |current_tenant|
+        PgRls::Tenant.run_within(tenant2) do |current_tenant2|
+          # Compare tenant2_id instead of the whole object due to class differences
+          assert_equal tenant2.tenant_id, current_tenant2.tenant_id
+          assert_equal tenant2.tenant_id, Current.tenant.tenant_id
+        end
         # Compare tenant_id instead of the whole object due to class differences
         assert_equal tenant.tenant_id, current_tenant.tenant_id
         assert_equal tenant.tenant_id, Current.tenant.tenant_id

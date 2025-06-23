@@ -14,6 +14,7 @@ module PgRls
 
           @rls_table_array: Array[String]
           @rls_tenant_table: String
+          @connection: ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
 
           def tables: (StringIO) -> void
 

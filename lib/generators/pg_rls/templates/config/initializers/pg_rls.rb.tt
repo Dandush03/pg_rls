@@ -39,6 +39,12 @@ PgRls.setup do |config|
   # config.username = Rails.application.credentials.dig(:database, :username)
   # config.password = Rails.application.credentials.dig(:database, :password)
 
+  # The base class from which PgRls::Record should inherit.
+  # This allows your PgRls models to inherit from the same base class as your application models.
+  # For Rails 5+ applications that use ApplicationRecord, this is particularly useful.
+  # Default: 'ActiveRecord::Base'
+  # config.abstract_base_record_class = 'ApplicationRecord'
+
   # The database role group used for RLS operations.
   # This role acts as a base role, allowing multiple users to be assigned this role for consistent access control.
   # Default: "rls_group"
