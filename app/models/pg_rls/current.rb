@@ -18,7 +18,7 @@ module PgRls
     end
 
     def tenant=(tenant)
-      @attributes.except(:tenant, :tenant_history).each_key { |key| @attributes[key] = nil }
+      PgRls.current_attributes.each { |key| @attributes[key] = nil }
       add_tenant_to_history
       super
       tenant&.set_rls
