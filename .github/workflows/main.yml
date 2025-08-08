@@ -38,6 +38,7 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+
       - name: Disabled frozen gems
         run: bundle config set frozen false
 
