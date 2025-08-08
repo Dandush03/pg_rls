@@ -62,18 +62,25 @@ module PgRls
       PgRls.setup do |config|
         config.class_name = :Tenant
         config.table_name = :tenants
+        config.current_attributes = %i[post]
       end
 
       tenant = ::Tenant.create!(name: :test)
       tenant2 = ::Tenant.create!(name: :test2)
+      post = PgRls::Tenant.run_within(tenant2) do
+        Post.create(title: "Test Post", content: "This is a test post.")
+      end
       result = nil
       PgRls::Tenant.run_within(tenant) do |current_tenant|
         PgRls::Tenant.run_within(tenant2) do |current_tenant2|
           # Compare tenant2_id instead of the whole object due to class differences
+          assert_equal Current.post, post
           assert_equal tenant2.tenant_id, current_tenant2.tenant_id
           assert_equal tenant2.tenant_id, Current.tenant.tenant_id
         end
+
         # Compare tenant_id instead of the whole object due to class differences
+        assert_nil Current.post
         assert_equal tenant.tenant_id, current_tenant.tenant_id
         assert_equal tenant.tenant_id, Current.tenant.tenant_id
         result = "success"
