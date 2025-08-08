@@ -18,6 +18,7 @@ module PgRls
     end
 
     def tenant=(tenant)
+      PgRls.current_attributes.each { |key| @attributes[key] = nil }
       add_tenant_to_history
       super
       tenant&.set_rls
