@@ -38,6 +38,9 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Disabled frozen gems
+        run: bundle config set frozen false
+
       - name: Wait for Postgres
         run: |
           for i in {1..30}; do
