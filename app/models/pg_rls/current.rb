@@ -41,7 +41,7 @@ module PgRls
 
     def restore_most_recent_tenant
       @attributes[:tenant] = @attributes[:tenant_history].pop
-      return PgRls::Tenant.reset_rls_used_connections if @attributes[:tenant].nil?
+      return PgRls::Tenant.reset_rls_used_connections if @attributes[:tenant].nil? && PgRls::Record.connection.present?
 
       @attributes[:tenant].set_rls
     end
