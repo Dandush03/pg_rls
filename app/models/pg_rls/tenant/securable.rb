@@ -18,6 +18,11 @@ module PgRls
         def reset_rls_used_connections(connection = PgRls::Record.connection)
           return connection if rls_connection_object_cache_by_thread.nil?
 
+          if connection.nil?
+            self.rls_connection_object_cache_by_thread = nil
+            return nil
+          end
+
           connection.exec_query("SET rls.tenant_id TO DEFAULT")
           self.rls_connection_object_cache_by_thread = nil
           connection
@@ -34,6 +39,7 @@ module PgRls
 
       def set_rls(connection = PgRls::Record.connection)
         self.class.reset_rls_used_connections if new_tenant?
+        return self if connection.nil?
         return self if reused_connection?(connection)
 
         connection.exec_query("SET rls.tenant_id = '#{tenant_id}'")

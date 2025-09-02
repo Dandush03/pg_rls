@@ -29,6 +29,27 @@ module PgRls
       test "readonly? is true" do
         assert @tenant.readonly?
       end
+
+      test "reset_rls_used_connections handles nil connection gracefully" do
+        # Set up cache to trigger the code path where connection would be used
+        PgRls::Tenant.rls_connection_object_cache_by_thread = Set.new(["test"])
+        
+        # This test reproduces the issue where PgRls::Record.connection returns nil
+        PgRls::Record.stub :connection, nil do
+          # This should not raise a NoMethodError and should clear the cache
+          result = PgRls::Tenant.reset_rls_used_connections
+          assert_nil result
+          assert_nil PgRls::Tenant.rls_connection_object_cache_by_thread
+        end
+      end
+
+      test "set_rls handles nil connection gracefully" do
+        PgRls::Record.stub :connection, nil do
+          # This should not raise a NoMethodError
+          result = @tenant.set_rls
+          assert_equal @tenant, result
+        end
+      end
     end
   end
 end
