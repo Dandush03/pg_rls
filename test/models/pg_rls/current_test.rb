@@ -90,6 +90,21 @@ module PgRls
       assert_nil Current.instance_variable_get(:@attributes)
     end
 
+    test "Current works without PgRls::Record.connection" do
+      PgRls.setup do |config|
+        config.class_name = :Tenant
+        config.table_name = :tenants
+        config.current_attributes = %i[post]
+      end
+
+      tenant = ::Tenant.create!(name: :test)
+      PgRls::Tenant.switch(tenant)
+      PgRls::Record.stub(:connection, nil) do
+        Current.reset
+        assert_nil Current.tenant
+      end
+    end
+
     test "Current works with Tenant.switch" do
       PgRls.setup do |config|
         config.class_name = :Tenant
