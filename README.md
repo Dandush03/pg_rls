@@ -335,4 +335,3 @@ If this project help you reduce time to develop, you can give me a cup of coffee
 [paypal-donate-code]: https://www.paypal.com/donate?hosted_button_id=QKZFZAMQNC8JL
 [donate]: https://img.shields.io/badge/Donate-PayPal-blue.svg
 [hireable]: https://cdn.rawgit.com/hiendv/hireable/master/styles/flat/yes.svg
-
