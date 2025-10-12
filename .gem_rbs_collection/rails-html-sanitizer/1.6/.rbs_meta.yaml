@@ -1,0 +1,9 @@
+---
+name: rails-html-sanitizer
+version: '1.6'
+source:
+  type: git
+  name: ruby/gem_rbs_collection
+  revision: 4af987b9b70455bd4493ef5a10e885f36e6ca6f6
+  remote: https://github.com/ruby/gem_rbs_collection.git
+  repo_dir: gems

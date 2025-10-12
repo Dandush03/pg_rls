@@ -22,12 +22,6 @@ module ActiveRecord
     end
   end
 
-  module Migration
-    class CommandRecorder
-      def self.included: (Class) -> void
-    end
-  end
-
   module Generators
     class ModelGenerator < ::Rails::Generators::Base
       def self.class_option: (Symbol, ?Hash[Symbol, untyped]) -> void
@@ -76,9 +70,6 @@ module ActiveRecord
       def execute: (String) -> untyped
     end
     module PostgreSQL
-      class SchemaStatements
-      end
-
       class SchemaDumper
       end
     end
