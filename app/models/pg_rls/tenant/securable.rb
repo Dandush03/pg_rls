@@ -33,7 +33,7 @@ module PgRls
       end
 
       def set_rls(connection = PgRls::Record.connection)
-        self.class.reset_rls_used_connections if new_tenant?
+        self.class.reset_rls_used_connections(connection) if new_tenant?
         return self if reused_connection?(connection)
 
         connection.exec_query("SET rls.tenant_id = '#{tenant_id}'")

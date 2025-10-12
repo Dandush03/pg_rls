@@ -1,0 +1,9 @@
+---
+name: actiontext
+version: '7.2'
+source:
+  type: git
+  name: ruby/gem_rbs_collection
+  revision: 10d80b1f45dd4241d64d40b49e622cd5d3cfa903
+  remote: https://github.com/ruby/gem_rbs_collection.git
+  repo_dir: gems

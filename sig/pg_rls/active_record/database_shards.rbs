@@ -13,13 +13,13 @@ module PgRls
       REQUIRED_CONFIGURATION_KEYS: Array[String]
 
       def add_rls_configurations: (Hash[String, untyped], ?Hash[String, untyped]) -> Hash[String, untyped]
-      
+
       def configurations=: (Hash[String, untyped]) -> Hash[String, untyped]
 
       def configurations: () -> Hash[String, untyped]
-                        
+
       def rls_shard_config?: (Hash[String, untyped]) -> bool
-                           
+
       def adapter_configurations: (Hash[String, untyped], Hash[String, untyped], String) -> (::Hash[::String, untyped] | nil)
 
       def rls_configuration: () -> Hash[String, untyped]

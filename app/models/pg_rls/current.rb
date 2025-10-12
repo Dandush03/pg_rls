@@ -18,6 +18,7 @@ module PgRls
     end
 
     def tenant=(tenant)
+      PgRls.current_attributes.each { |key| @attributes[key] = nil }
       add_tenant_to_history
       super
       tenant&.set_rls
@@ -40,6 +41,7 @@ module PgRls
 
     def restore_most_recent_tenant
       @attributes[:tenant] = @attributes[:tenant_history].pop
+      return unless PgRls::Record.connection.present?
       return PgRls::Tenant.reset_rls_used_connections if @attributes[:tenant].nil?
 
       @attributes[:tenant].set_rls

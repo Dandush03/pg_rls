@@ -51,7 +51,7 @@ module PgRls
       def target_type_by_string
         case search_input
         when /\A\d+\z/ then :integer
-        when /\A[0-9a-fA-F\-]{36}\z/ then :uuid
+        when /\A[0-9a-fA-F-]{36}\z/ then :uuid
         else :string
         end
       end

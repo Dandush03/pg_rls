@@ -23,15 +23,15 @@ module Rails
 
     class Base
       def self.hook_for: (Symbol, required: bool) -> void
-                       
+
       def self.source_root: (String) -> void
 
       def behavior: -> Symbol
-                  
-      def readme: (String) -> void                
-      
+
+      def readme: (String) -> void
+
       def template: (String, ?String) -> void
-                  
+
       def gsub_file: (String, Regexp, String) -> void
     end
   end

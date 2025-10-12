@@ -109,6 +109,7 @@ module PgRls
 
             class WhenRlsSet < self
               include RlsTableBehavior
+
               attr_reader :tenant_uuid
 
               setup do
