@@ -4,20 +4,20 @@ module ActiveRecord
 
   class Base
     def self.ignored_columns=: (Array[(Symbol | String)]) -> Array[Symbol]
-                             
+
     def self.ignored_columns: () -> Array[Symbol]
 
     def self.connection: () -> ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
 
     def self.transaction: (requires_new: bool?) { () -> untyped } -> untyped
-                        
-    def self.connection_db_config: () -> ActiveRecord::DatabaseConfigurations::HashConfig       
+
+    def self.connection_db_config: () -> ActiveRecord::DatabaseConfigurations::HashConfig
   end
 
   class DatabaseConfigurations
     class HashConfig
       def configuration_hash: () -> Hash[Symbol, untyped]
-   
+
       def name: () -> String
     end
   end
@@ -31,7 +31,7 @@ module ActiveRecord
   module Generators
     class ModelGenerator < ::Rails::Generators::Base
       def self.class_option: (Symbol, ?Hash[Symbol, untyped]) -> void
-                           
+
       def check_class_collision: () -> void
 
       @class_coalescing: bool
@@ -39,21 +39,21 @@ module ActiveRecord
       def destination_root: () -> String
 
       def attributes: () -> Array[ActiveRecord::Generators::Attribute]
-                    
+
       def options: () -> Hash[Symbol, untyped]
-                 
+
       def database: () -> String
-                  
+
       def file_name: () -> String
-                   
+
       def class_path: () -> String
-                    
+
       def migration_template: (String, ?String) -> void
-                            
+
       def table_name: () -> String
-                    
+
       def skip_migration_creation?: () -> bool
-                                  
+
       def custom_parent?: () -> bool
     end
 

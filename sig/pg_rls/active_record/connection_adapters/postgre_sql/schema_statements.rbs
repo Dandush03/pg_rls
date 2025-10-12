@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-# 
+#
 
 module PgRls
   module ActiveRecord
@@ -29,7 +29,7 @@ module PgRls
           def invert_convert_to_rls_table: (String | Symbol) -> void
 
           # Inherited Methods
-          
+
           def check_rls_user_privileges!: (String | Symbol, String | Symbol) -> bool
           def enable_table_rls: (String | Symbol, String | Symbol) -> void
           def append_rls_table_triggers: (String | Symbol) -> void

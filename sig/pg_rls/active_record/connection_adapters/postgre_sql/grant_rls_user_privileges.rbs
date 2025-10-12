@@ -46,7 +46,7 @@ module PgRls
           def revoke_existing_table_privileges_sql: ((String | Symbol), (String | Symbol)) -> String
 
           def revoke_existing_sequence_privileges_sql: ((String | Symbol), (String | Symbol)) -> String
-  
+
           def role_applicable_sql_statement: ((String | Symbol), (String | Symbol)) -> String
         end
       end

@@ -6,9 +6,9 @@ module PgRls
       def check_class_collision: () -> void
 
       def create_model_file: () -> void
-      
+
       def upgrade_model_file: () -> void
-      
+
       def create_migration_file: () -> void
 
       def upgrade_migration_file: () -> void
