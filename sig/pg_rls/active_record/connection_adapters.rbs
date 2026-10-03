@@ -3,6 +3,12 @@
 module PgRls
   module ActiveRecord
     module ConnectionAdapters
+      module RlsTenant
+        attr_accessor rls_tenant_id: String?
+
+        private def configure_connection: () -> void
+      end
+
       module ConnectionPool
         attr_reader checkout_timeout: untyped
 
@@ -23,15 +29,6 @@ module PgRls
 
     def set_rls: (ActiveRecord::ConnectionAdapters::PostgreSQLAdapter conn) -> Tenant
 
-    def new_tenant?: () -> bool
-
-    def reused_connection?: (ActiveRecord::ConnectionAdapters::PostgreSQLAdapter conn) -> bool
-
-    def rls_connection_object_cache_by_thread=: (untyped value) -> untyped
-
-    def rls_connection_object_cache_by_thread: () -> untyped
-
-    def rls_used_connections: () -> untyped
   end
 
   module Current
