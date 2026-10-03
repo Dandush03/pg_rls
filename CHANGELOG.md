@@ -5,13 +5,14 @@
 
 ### Fixes
 
-- **A connection could run as another tenant.** `Tenant#set_rls` skipped the `SET` when the thread had set that
-  connection before, going by a per-thread record of the connections it had set. Pooled connections move between
-  threads: once another thread had switched the connection to another tenant, the first thread got it back and ran
-  as that tenant. Since Rails 7.2 returns the connection to the pool between the queries of a request unless
-  something holds it, this could happen within a single request. The tenant is now recorded on the connection
-  itself (`rls_tenant_id`), so the `SET` is skipped only when the connection is already on that tenant — no more
-  statements than before, and none skipped that were needed.
+- **A connection handed between threads could keep another tenant.** `Tenant#set_rls` skipped the `SET` when the
+  thread had set that connection before, going by a per-thread record of the connections it had set. If a connection
+  changed threads while that record still listed it — released mid-request, or used across threads, as in system
+  tests where the test thread and the server's threads share a pool — the first thread got it back already switched
+  by another one and ran as that tenant. Apps that hold the connection for the whole request (pg_rls's own
+  `PgRls::Record.connection` calls lease it) were not exposed. The tenant is now recorded on the connection itself
+  (`rls_tenant_id`), so the `SET` is skipped only when the connection is already on that tenant: no more statements
+  than before, and none skipped that were needed.
 - A reconnect or a reset (`DISCARD ALL`) drops the session's tenant; the connection now knows it and sets it again.
 - `Tenant.reset_rls_used_connections` takes the tenant off the connection it is given, whichever thread set it.
 
