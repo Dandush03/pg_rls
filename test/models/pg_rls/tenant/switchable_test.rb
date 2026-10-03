@@ -52,6 +52,26 @@ module PgRls
         end
       end
 
+      # Nothing stubbed: the tenants are real, and what is read is the session's own setting at each level.
+      test "a nested run_within hands the session back to the tenant around it, and the outer one to none" do
+        one = tenants(:one)
+        two = tenants(:two)
+        seen = []
+
+        Tenant.run_within(one) do
+          seen << session_tenant
+          Tenant.run_within(two) do
+            seen << session_tenant
+            Tenant.run_within(one) { seen << session_tenant }
+            seen << session_tenant
+          end
+          seen << session_tenant
+        end
+        seen << session_tenant
+
+        assert_equal [one, two, one, two, one].map(&:tenant_id) << "", seen.map(&:to_s)
+      end
+
       test "reset_rls resets the current tenant" do
         tenant = Tenant.new
         PgRls::Current.tenant = tenant
@@ -59,6 +79,12 @@ module PgRls
         Tenant.reset_rls
 
         assert_nil PgRls::Current.tenant
+      end
+
+      private
+
+      def session_tenant
+        PgRls::Record.connection.select_value("SELECT current_setting('rls.tenant_id', true)")
       end
     end
   end
