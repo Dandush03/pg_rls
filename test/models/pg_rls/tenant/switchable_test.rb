@@ -40,9 +40,8 @@ module PgRls
         Tenant::Searchable.stub :by_rls_object, tenant do
           Tenant.stub :set_rls!, true do
             Tenant.stub :reset_rls, true do
-              # rubocop:disable Layout/LineLength
+              # rubocop:disable-next Layout/LineLength
               output_regex = /DEPRECATION WARNING: This method is deprecated and will be removed in future versions. please use PgRls::Tenant.run_within instead./
-              # rubocop:enable Layout/LineLength
               assert_output(nil, output_regex) do
                 result = Tenant.with_tenant!("tenant_input") { "block result" }
                 assert_equal "block result", result

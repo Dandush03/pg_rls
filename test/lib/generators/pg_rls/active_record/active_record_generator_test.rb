@@ -3,7 +3,7 @@
 require "test_helper"
 require "generators/pg_rls/active_record/active_record_generator"
 
-# rubocop:disable Metrics/ClassLength
+# rubocop:disable-next Metrics/ClassLength
 class ActiveRecordGeneratorTest < Rails::Generators::TestCase
   tests PgRls::Generators::ActiveRecordGenerator
   destination File.expand_path("../tmp_record_generator", __dir__)
@@ -158,4 +158,3 @@ class ActiveRecordGeneratorTest < Rails::Generators::TestCase
     assert_equal "ApplicationRecord", generator.send(:parent_class_name)
   end
 end
-# rubocop:enable Metrics/ClassLength
