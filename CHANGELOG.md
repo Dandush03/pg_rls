@@ -1,6 +1,31 @@
 
 # [Released]
 
+## [1.0.4] - 2026-10-06
+
+### Fixes
+
+- **A rolled-back transaction could leave a connection on another tenant than pg_rls recorded.** Postgres undoes a
+  `SET` made inside a transaction or a savepoint that rolls back, but `rls_tenant_id` kept the tenant set inside it.
+  The next switch to that tenant skipped its `SET` and ran on whatever tenant the session had before the
+  transaction, and a reset after it was skipped as if the connection had none. Only a tenant switched without being
+  restored inside a transaction that then rolls back is affected (`run_within` restores its own before the
+  rollback); a transactional test switching the tenant is exactly that, and a concurrency test then read nothing.
+  After anything that rolls back — `ROLLBACK`, `ROLLBACK TO SAVEPOINT`, `ROLLBACK AND CHAIN` (Rails restarting a
+  transaction that had not written), and a `COMMIT` of a transaction that had already failed, which Postgres turns
+  into a rollback — the connection's tenant is now unknown (`RlsTenant::UNKNOWN`): the next switch sets it, and a
+  reset resets it. The cost is one `SET` after a rollback; whether a transaction had failed is asked of the client
+  library, with no round trip. The rollback cases and the CI matrix below come from #42 (@david-pulgarin-skydropx).
+- **Parallel tests on Rails 8.1.** `PgRls::ActiveRecord::TestDatabases` named every worker's RLS databases after it,
+  but Rails 8.1 names hidden configurations itself, so they were named twice (`test_db_1-1`) and no worker came up.
+  It now names only the ones Rails left alone, on every version.
+
+### Compatibility
+
+- The suite runs in CI on Rails 7.2, 8.0 and 8.1 — every version the gemspec allows — with parallel workers
+  (`gemfiles/`, not packaged). On Rails 8.1 the suite's coverage report is written again: the workers' teardown
+  had stopped SimpleCov in the main process too.
+
 ## [1.0.3] - 2026-10-03
 
 ### Fixes

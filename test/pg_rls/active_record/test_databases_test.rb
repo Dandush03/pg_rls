@@ -11,6 +11,15 @@ module PgRls
         def create_and_load_schema(_index, env_name:); end
       end
 
+      # Rails from 8.1 on names every configuration a worker uses, hidden ones too.
+      class WorkerDatabasesNamingEveryOne
+        def create_and_load_schema(index, env_name:)
+          PgRls::Record.configurations.configs_for(env_name: env_name, include_hidden: true).each do |config|
+            config._database = "#{config.database}_#{index}"
+          end
+        end
+      end
+
       setup do
         @configs = PgRls::Record.configurations.configs_for(env_name: "test", include_hidden: true)
         @named = @configs.to_h { |config| [config, config.database] }
@@ -30,6 +39,13 @@ module PgRls
         @configs.select { |config| config.name == "primary" }.each do |config|
           assert_equal @named[config], config.database
         end
+      end
+
+      test "a configuration Rails has already named for the worker is not named again" do
+        WorkerDatabasesNamingEveryOne.new.extend(PgRls::ActiveRecord::TestDatabases)
+                                     .create_and_load_schema(3, env_name: "test")
+
+        @configs.each { |config| assert_equal "#{@named[config]}_3", config.database }
       end
     end
   end
