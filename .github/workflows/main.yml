@@ -24,6 +24,12 @@ jobs:
           - Gemfile
           - gemfiles/rails_8.0.gemfile
           - gemfiles/rails_8.1.gemfile
+        include:
+          # Rails 8.1 names parallel worker databases itself (`<db>_<i>`, hidden configurations included), which
+          # PgRls::ActiveRecord::TestDatabases then renames again: the workers never come up. One process until that
+          # is fixed.
+          - gemfile: gemfiles/rails_8.1.gemfile
+            parallel_workers: 1
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}
@@ -74,7 +80,9 @@ jobs:
         run: git checkout -- test/dummy/db/schema.rb
 
       - name: Run tests
-        run: bin/test
+        run: |
+          if [ -n "${{ matrix.parallel_workers }}" ]; then export PARALLEL_WORKERS="${{ matrix.parallel_workers }}"; fi
+          bin/test
 
       - name: Check 100% coverage
         run: |
