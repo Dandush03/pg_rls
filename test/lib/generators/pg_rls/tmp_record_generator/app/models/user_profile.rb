@@ -1,2 +1,0 @@
-class UserProfile < ApplicationRecord
-end
