@@ -62,6 +62,35 @@ module PgRls
         assert_equal one.tenant_id, session_tenant(connection)
       end
 
+      test "set_rls sets a connection again after a rollback took its tenant back to another one" do
+        connection = PgRls::Record.connection
+        one, two = tenants_named(:one, :two)
+        two.set_rls(connection)
+
+        # Postgres undoes the SET with the savepoint: the session is on `two` again, whatever was recorded.
+        connection.transaction(requires_new: true) do
+          one.set_rls(connection)
+          raise ::ActiveRecord::Rollback
+        end
+        one.set_rls(connection)
+
+        assert_equal one.tenant_id, session_tenant(connection)
+      end
+
+      test "reset_rls_used_connections resets a connection a rollback put back on a tenant" do
+        connection = PgRls::Record.connection
+        one, = tenants_named(:one)
+        one.set_rls(connection)
+
+        connection.transaction(requires_new: true) do
+          PgRls::Tenant.reset_rls_used_connections(connection)
+          raise ::ActiveRecord::Rollback
+        end
+        PgRls::Tenant.reset_rls_used_connections(connection)
+
+        assert_empty session_tenant(connection).to_s
+      end
+
       test "reset_rls_used_connections takes a connection's tenant off it" do
         connection = PgRls::Record.connection
         one, = tenants_named(:one)

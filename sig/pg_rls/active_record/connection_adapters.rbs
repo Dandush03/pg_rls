@@ -4,9 +4,21 @@ module PgRls
   module ActiveRecord
     module ConnectionAdapters
       module RlsTenant
-        attr_accessor rls_tenant_id: String?
+        UNKNOWN: Object
+
+        attr_accessor rls_tenant_id: String | Object | nil
 
         private def configure_connection: () -> void
+
+        def commit_db_transaction: () -> void
+
+        private def exec_rollback_db_transaction: () -> void
+
+        private def exec_restart_db_transaction: () -> void
+
+        private def exec_rollback_to_savepoint: (?String? name) -> void
+
+        private def aborted_transaction?: () -> bool
       end
 
       module ConnectionPool
