@@ -1,0 +1,2 @@
+class UserRole < CustomApplicationRecord
+end

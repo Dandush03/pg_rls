@@ -1,0 +1,2 @@
+class UserSession < PostgresRecord
+end

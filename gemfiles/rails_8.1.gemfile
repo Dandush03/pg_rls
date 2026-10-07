@@ -13,5 +13,6 @@ group :development, :test do
   gem "bootsnap", require: false
   gem "database_cleaner-active_record"
   gem "minitest", "~> 5.26" # Minitest 6 drops Object#stub, which the suite uses
+  gem "rubocop", "1.91.0", require: false # the Rakefile loads its rake task (bin/rails db:create)
   gem "simplecov", "~> 0.22.0", require: false
 end

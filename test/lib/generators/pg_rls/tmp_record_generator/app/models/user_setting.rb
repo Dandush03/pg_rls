@@ -1,0 +1,2 @@
+class UserSetting < ApplicationRecord
+end

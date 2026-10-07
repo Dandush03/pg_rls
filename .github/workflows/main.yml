@@ -68,6 +68,11 @@ jobs:
           RAILS_ENV: test
         run: bin/rails db:create db:migrate
 
+      # A newer Rails dumps schema.rb in its own format; the suite then reloads the schema from it and fails. The
+      # committed one is what the tests run against.
+      - name: Keep the committed schema
+        run: git checkout -- test/dummy/db/schema.rb
+
       - name: Run tests
         run: bin/test
 

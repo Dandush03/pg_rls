@@ -1,0 +1,2 @@
+class UserToken < PgRlsApplicationRecord
+end
