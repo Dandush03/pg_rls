@@ -16,3 +16,6 @@
 /test/dummy/spec/reports/
 /test/dummy/tmp/
 /test/dummy/log/
+
+# Left behind by the generator tests
+/test/lib/generators/pg_rls/tmp_*/

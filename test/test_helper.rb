@@ -40,8 +40,11 @@ module ActiveSupport
       setup_pg_rls if respond_to?(:setup_pg_rls)
     end
 
+    # A worker hands its coverage over before it exits. Only a worker: Rails 8.1 runs this in the process that
+    # started SimpleCov as well, and taking the result there stopped SimpleCov before its own exit, so the merged
+    # report — the one CI checks for 100% — was never written.
     parallelize_teardown do |_worker|
-      SimpleCov.result if const_defined?(:SimpleCov)
+      SimpleCov.result if const_defined?(:SimpleCov) && Process.pid != SimpleCov.pid
     end
 
     setup do

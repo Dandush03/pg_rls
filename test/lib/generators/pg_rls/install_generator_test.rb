@@ -8,6 +8,9 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   destination File.expand_path("./tmp_install_generator", __dir__)
 
   setup do
+    # A directory of its own for each parallel worker: tests of one class run in several, and one worker's
+    # cleanup took away the files another had just generated (a missing postgres_record.rb on CI).
+    self.destination_root = File.expand_path("./tmp_install_generator/#{Process.pid}", __dir__)
     prepare_destination
   end
 
