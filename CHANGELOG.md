@@ -5,16 +5,22 @@
 
 ### Fixes
 
-- **A rolled back transaction could leave a connection on another tenant.** Postgres takes a `SET` back when the
-  transaction it ran in rolls back, but the connection went on recording the tenant it had set (`rls_tenant_id`). A
-  connection on tenant A that switched to tenant B inside a transaction which then rolled back was on A again while
-  recording B, so the next `set_rls` to B was skipped and its queries ran as tenant A; with no tenant before the
-  transaction, they ran with none. The connection now forgets its tenant whenever Postgres may have taken a `SET`
-  back — `ROLLBACK`, `ROLLBACK TO SAVEPOINT`, `ROLLBACK AND CHAIN`, and a `COMMIT` that rolls back instead (the
-  transaction had already failed, or the commit itself fails) — even when the statement raises, and sets the tenant
-  again the next time it is asked to: at most one more `SET` after a rollback.
-- A connection that no longer knows its tenant is `RlsTenant::UNKNOWN`, not `nil`, so
-  `Tenant.reset_rls_used_connections` takes the tenant off it instead of taking it for a connection with none.
+- **After a rollback, `set_rls` could skip a `SET` it needed.** Postgres takes a `SET` back when the transaction it
+  ran in rolls back, but the connection kept recording the tenant it had set (`rls_tenant_id`). A connection on
+  tenant A that switched to tenant B inside a transaction that then rolled back was on A again while recording B, so
+  the next `set_rls` to B was skipped and its queries ran as tenant A (or with no tenant, when none was set before the
+  transaction). The connection now forgets its tenant after every statement that may take a `SET` back —
+  `ROLLBACK`, `ROLLBACK TO SAVEPOINT`, `ROLLBACK AND CHAIN`, and a `COMMIT` that rolls back instead (the transaction
+  had already failed, or the commit itself fails) — even when that statement raises, so the next `set_rls` or
+  `Tenant.reset_rls_used_connections` is never skipped: at most one more `SET` after a rollback.
+- Unchanged: between the rollback and that next `set_rls` or reset, the session stays on the tenant Postgres restored
+  (the one it had before the transaction or savepoint), as it did before.
+
+### Changed
+
+- `rls_tenant_id` is now `String | :unknown | nil`. `RlsTenant::UNKNOWN` (`:unknown`) means a rollback may have put
+  the session on any tenant, or none; `nil` still means no tenant. Code reading `rls_tenant_id` directly should treat
+  anything but a tenant id as "not known to be on that tenant".
 
 ## [1.0.3] - 2026-10-03
 

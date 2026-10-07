@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+# The test suite against Rails 8.0 (CI matrix): BUNDLE_GEMFILE=gemfiles/rails_8.0.gemfile bin/test
+source "https://rubygems.org"
+
+gemspec path: ".."
+
+gem "rake", "~> 13.0"
+
+group :development, :test do
+  gem "rails", "~> 8.0.0"
+
+  gem "bootsnap", require: false
+  gem "database_cleaner-active_record"
+  gem "minitest", "~> 5.26" # Minitest 6 drops Object#stub, which the suite uses
+  gem "simplecov", "~> 0.22.0", require: false
+end

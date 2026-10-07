@@ -45,13 +45,11 @@ module PgRls
         # deferred constraint can make it — and takes the transaction's `SET` back with it. Asking whether it failed
         # is answered by the client library, without a round trip.
         def commit_db_transaction
+          rolls_back_instead = rls_transaction_aborted?
           committed = false
-          aborted = rls_transaction_aborted?
-          result = super
-          committed = !aborted
-          result
+          super.tap { committed = true }
         ensure
-          forget_rls_tenant unless committed
+          forget_rls_tenant if rolls_back_instead || !committed
         end
 
         private
@@ -67,8 +65,11 @@ module PgRls
           self.rls_tenant_id = UNKNOWN
         end
 
+        # A connection the client library cannot ask is left to COMMIT, which raises the real error.
         def rls_transaction_aborted?
           @raw_connection&.transaction_status == ::PG::PQTRANS_INERROR
+        rescue ::PG::Error
+          false
         end
       end
     end

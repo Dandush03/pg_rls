@@ -164,6 +164,30 @@ module PgRls
           assert_equal @two.tenant_id, session_tenant
         end
 
+        test "a ROLLBACK that raises still leaves the connection not knowing its tenant" do
+          @one.set_rls(@connection)
+          # Rails swallows a lost connection on rollback (rollback_db_transaction): the ROLLBACK may never have run.
+          fail_on("ROLLBACK", ::ActiveRecord::ConnectionFailed)
+          @connection.transaction do
+            @two.set_rls(@connection)
+            raise ::ActiveRecord::Rollback
+          end
+
+          assert_equal RlsTenant::UNKNOWN, @connection.rls_tenant_id
+          assert_not_empty(statements_setting_the_tenant { @two.set_rls(@connection) })
+        end
+
+        test "a connection the client library cannot ask whether its transaction failed is left to COMMIT" do
+          @connection.transaction do
+            @one.set_rls(@connection)
+            def (@connection.instance_variable_get(:@raw_connection)).transaction_status
+              raise ::PG::ConnectionBad
+            end
+          end
+
+          assert_equal @one.tenant_id, @connection.rls_tenant_id, "the COMMIT went through"
+        end
+
         test "a committed transaction keeps its tenant, and the connection does not set it again" do
           @connection.transaction do
             @connection.transaction(requires_new: true) { @one.set_rls(@connection) }
@@ -208,6 +232,14 @@ module PgRls
         def write_post_of_the_session_tenant
           @connection.execute("INSERT INTO posts (title, created_at, updated_at) VALUES ('one''s', now(), now())")
           assert_equal 1, @connection.select_value("SELECT count(*) FROM posts")
+        end
+
+        def fail_on(statement, error)
+          @connection.define_singleton_method(:internal_execute) do |sql, *args, **options|
+            raise error if sql == statement
+
+            super(sql, *args, **options)
+          end
         end
 
         def write_something
