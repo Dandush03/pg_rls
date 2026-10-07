@@ -1,4 +1,10 @@
 module PG
+  PQTRANS_INERROR: Integer
+
+  class Connection
+    def transaction_status: () -> Integer
+  end
+
   class Result
     # Define methods that you are using from PG::Result, for example:
     def each: () { (Hash[String, untyped]) -> void } -> void

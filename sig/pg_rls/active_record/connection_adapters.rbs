@@ -4,9 +4,26 @@ module PgRls
   module ActiveRecord
     module ConnectionAdapters
       module RlsTenant
-        attr_accessor rls_tenant_id: String?
+        UNKNOWN: :unknown
+
+        @raw_connection: PG::Connection?
+
+        # nil: no tenant; UNKNOWN: a rollback may have put the session on any tenant, or none.
+        attr_accessor rls_tenant_id: String | :unknown | nil
+
+        def exec_rollback_db_transaction: () -> untyped
+
+        def exec_restart_db_transaction: () -> untyped
+
+        def exec_rollback_to_savepoint: (?String? name) -> untyped
+
+        def commit_db_transaction: () -> untyped
 
         private def configure_connection: () -> void
+
+        private def forget_rls_tenant: () -> :unknown
+
+        private def rls_transaction_aborted?: () -> bool
       end
 
       module ConnectionPool

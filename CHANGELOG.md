@@ -1,6 +1,21 @@
 
 # [Released]
 
+## [1.0.4] - 2026-10-06
+
+### Fixes
+
+- **A rolled back transaction could leave a connection on another tenant.** Postgres takes a `SET` back when the
+  transaction it ran in rolls back, but the connection went on recording the tenant it had set (`rls_tenant_id`). A
+  connection on tenant A that switched to tenant B inside a transaction which then rolled back was on A again while
+  recording B, so the next `set_rls` to B was skipped and its queries ran as tenant A; with no tenant before the
+  transaction, they ran with none. The connection now forgets its tenant whenever Postgres may have taken a `SET`
+  back — `ROLLBACK`, `ROLLBACK TO SAVEPOINT`, `ROLLBACK AND CHAIN`, and a `COMMIT` that rolls back instead (the
+  transaction had already failed, or the commit itself fails) — even when the statement raises, and sets the tenant
+  again the next time it is asked to: at most one more `SET` after a rollback.
+- A connection that no longer knows its tenant is `RlsTenant::UNKNOWN`, not `nil`, so
+  `Tenant.reset_rls_used_connections` takes the tenant off it instead of taking it for a connection with none.
+
 ## [1.0.3] - 2026-10-03
 
 ### Fixes
